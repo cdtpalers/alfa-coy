@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALFA Company — CCAFP Bulletin Board</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Exo+2:ital,wght@0,300;0,400;0,600;0,800;1,400&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+<style>
+  :root {
+    --g1: #00ff88;
+    --g2: #00c86a;
+    --g3: #008c4a;
+    --g4: #005c30;
+    --g5: #003d20;
+    --accent: #39ff6e;
+    --gold: #ffd700;
+    --red: #ff4444;
+    --blue: #44aaff;
+
+    /* Dark theme */
+    --bg: #030f07;
+    --bg2: #061a0d;
+    --bg3: #0a2614;
+    --surface: rgba(0,255,136,0.06);
+    --surface-hover: rgba(0,255,136,0.12);
+    --border: rgba(0,255,136,0.18);
+    --border-strong: rgba(0,255,136,0.35);
+    --text: #d4ffe8;
+    --text-muted: rgba(212,255,232,0.55);
+    --text-dim: rgba(212,255,232,0.35);
+    --glass-bg: rgba(6,26,13,0.72);
+    --glass-blur: blur(18px);
+    --shadow: 0 8px 32px rgba(0,255,136,0.08);
+    --glow: 0 0 20px rgba(0,255,136,0.2);
+  }
+  [data-theme="light"] {
+    --bg: #e8f5ee;
+    --bg2: #d4ede0;
+    --bg3: #c0e5cc;
+    --surface: rgba(0,140,74,0.08);
+    --surface-hover: rgba(0,140,74,0.15);
+    --border: rgba(0,140,74,0.22);
+    --border-strong: rgba(0,140,74,0.45);
+    --text: #0a2614;
+    --text-muted: rgba(10,38,20,0.6);
+    --text-dim: rgba(10,38,20,0.4);
+    --glass-bg: rgba(230,248,237,0.75);
+    --shadow: 0 8px 32px rgba(0,140,74,0.12);
+    --glow: 0 0 20px rgba(0,200,106,0.15);
+    --g1: #008c4a;
+    --g2: #007040;
+    --accent: #00b85a;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    overflow-x: hidden;
+    transition: background 0.4s, color 0.4s;
+  }
+
+  /* Animated BG grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 48px 48px;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 0;
+    animation: gridShift 30s linear infinite;
+  }
+  @keyframes gridShift { from { background-position: 0 0; } to { background-position: 48px 48px; } }
+
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(0,255,136,0.07), transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ── TOPBAR ── */
+  .topbar {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border-bottom: 1px solid var(--border-strong);
+    box-shadow: var(--shadow);
+  }
+  .topbar-inner {
+    display: flex; align-items: center; gap: 16px;
+    padding: 10px 24px;
+    max-width: 1800px; margin: 0 auto;
+  }
+  .logo-area {
+    display: flex; align-items: center; gap: 12px;
+    flex-shrink: 0;
+  }
+  .coa {
+    width: 46px; height: 46px;
+    background: linear-gradient(135deg, var(--g3), var(--g5));
+    border: 2px solid var(--g1);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px;
+    box-shadow: var(--glow);
+    position: relative;
+    overflow: hidden;
+  }
+  .coa::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(circle at 40% 30%, rgba(255,255,255,0.15), transparent 60%);
+  }
+  .brand h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px; font-weight: 700;
+    letter-spacing: 3px;
+    color: var(--g1);
+    line-height: 1;
+    text-shadow: 0 0 12px rgba(0,255,136,0.4);
+  }
+  .brand p {
+    font-size: 10px; font-weight: 300;
+    letter-spacing: 2px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* Scrollable nav */
+  .nav-scroll {
+    flex: 1;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .nav-scroll::-webkit-scrollbar { display: none; }
+  .nav-tabs {
+    display: flex; gap: 4px;
+    padding: 2px 4px;
+    min-width: max-content;
+  }
+  .nav-tab {
+    padding: 7px 14px;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px; font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .nav-tab::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--surface);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .nav-tab:hover::before { opacity: 1; }
+  .nav-tab:hover { color: var(--g1); border-color: var(--border); }
+  .nav-tab.active {
+    background: var(--surface-hover);
+    border-color: var(--border-strong);
+    color: var(--g1);
+    box-shadow: 0 0 12px rgba(0,255,136,0.1);
+    text-shadow: 0 0 8px rgba(0,255,136,0.3);
+  }
+  .nav-tab.active::after {
+    content: '';
+    position: absolute; bottom: 0; left: 10%; right: 10%; height: 2px;
+    background: var(--g1);
+    border-radius: 2px 2px 0 0;
+    box-shadow: 0 0 8px var(--g1);
+  }
+
+  .topbar-actions {
+    display: flex; align-items: center; gap: 10px; flex-shrink: 0;
+  }
+  .btn-icon {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    transition: all 0.2s;
+    backdrop-filter: blur(8px);
+  }
+  .btn-icon:hover { border-color: var(--g1); color: var(--g1); box-shadow: var(--glow); }
+
+  .status-pill {
+    display: flex; align-items: center; gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+  }
+  .status-dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--g1);
+    animation: pulse 2s infinite;
+    box-shadow: 0 0 6px var(--g1);
+  }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  /* ── CONTENT ── */
+  .content {
+    padding-top: 90px;
+    max-width: 1800px; margin: 0 auto;
+    padding-left: 20px; padding-right: 20px;
+    position: relative; z-index: 1;
+  }
+
+  /* Page sections */
+  .page { display: none; }
+  .page.active { display: block; animation: fadeUp 0.4s ease both; }
+  @keyframes fadeUp { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 24px 0 20px;
+    flex-wrap: wrap; gap: 12px;
+  }
+  .section-title {
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-icon {
+    width: 42px; height: 42px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--g3), var(--g5));
+    border: 1px solid var(--border-strong);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    box-shadow: var(--glow);
+  }
+  .section-title h2 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 26px; font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--g1);
+    text-shadow: 0 0 12px rgba(0,255,136,0.25);
+  }
+  .section-title p {
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'Share Tech Mono', monospace;
+    letter-spacing: 1px;
+    margin-top: 2px;
+  }
+
+  /* ── GLASS CARD ── */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    transition: border-color 0.25s, box-shadow 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+  .glass::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent, var(--g1), transparent);
+    opacity: 0.4;
+  }
+  .glass:hover { border-color: var(--border-strong); box-shadow: var(--glow); }
+
+  /* ── GRID LAYOUTS ── */
+  .grid-3 { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+  .grid-2 { display: grid; grid-template-columns: repeat(auto-fill, minmax(440px, 1fr)); gap: 16px; }
+  .grid-4 { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 16px; }
+
+  /* ── HOME PAGE ── */
+  .hero {
+    padding: 32px 32px 28px;
+    margin-bottom: 20px;
+    background: linear-gradient(135deg, var(--glass-bg), rgba(0,92,48,0.15));
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::after {
+    content: 'ALFA';
+    position: absolute; right: 24px; top: 50%; transform: translateY(-50%);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 120px; font-weight: 900;
+    color: var(--g1); opacity: 0.04;
+    letter-spacing: 8px;
+    pointer-events: none;
+    line-height: 1;
+  }
+  .hero-content { position: relative; z-index: 1; }
+  .hero h1 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 42px; font-weight: 800;
+    letter-spacing: 5px;
+    color: var(--g1);
+    text-shadow: 0 0 24px rgba(0,255,136,0.35);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .hero h1 span { color: var(--text); }
+  .hero p {
+    font-size: 14px; color: var(--text-muted);
+    letter-spacing: 2px;
+    font-family: 'Share Tech Mono', monospace;
+    margin-bottom: 20px;
+  }
+  .hero-stats {
+    display: flex; gap: 24px; flex-wrap: wrap;
+  }
+  .hero-stat {
+    display: flex; flex-direction: column;
+  }
+  .hero-stat .num {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 32px; font-weight: 700;
+    color: var(--g1);
+    line-height: 1;
+  }
+  .hero-stat .lbl {
+    font-size: 11px; color: var(--text-muted);
+    letter-spacing: 1px;
+    font-family: 'Share Tech Mono', monospace;
+    margin-top: 2px;
+  }
+  .divider-v { width: 1px; background: var(--border); margin: 0 4px; }
+
+  /* Stat cards */
+  .stat-card { padding: 20px 22px; }
+  .stat-card .label {
+    font-size: 11px; font-family: 'Share Tech Mono', monospace;
+    color: var(--text-muted); letter-spacing: 1px;
+    text-transform: uppercase; margin-bottom: 8px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .stat-card .label i { color: var(--g1); }
+  .stat-card .value {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 34px; font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+  .stat-card .sub {
+    font-size: 12px; color: var(--text-muted); margin-top: 4px;
+  }
+  .stat-card .bar {
+    height: 3px; border-radius: 2px;
+    background: var(--border);
+    margin-top: 12px;
+    overflow: hidden;
+  }
+  .stat-card .bar-fill {
+    height: 100%; border-radius: 2px;
+    background: linear-gradient(90deg, var(--g3), var(--g1));
+    box-shadow: 0 0 8px var(--g1);
+  }
+
+  /* Announcement card */
+  .ann-card { padding: 18px 20px; cursor: pointer; }
+  .ann-card:hover .ann-title { color: var(--g1); }
+  .ann-meta {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px; flex-wrap: wrap;
+  }
+  .tag {
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px; font-weight: 700;
+    letter-spacing: 1px; text-transform: uppercase;
+    font-family: 'Rajdhani', sans-serif;
+  }
+  .tag-green { background: rgba(0,255,136,0.12); border: 1px solid rgba(0,255,136,0.3); color: var(--g1); }
+  .tag-gold { background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.3); color: var(--gold); }
+  .tag-red { background: rgba(255,68,68,0.12); border: 1px solid rgba(255,68,68,0.3); color: var(--red); }
+  .tag-blue { background: rgba(68,170,255,0.12); border: 1px solid rgba(68,170,255,0.3); color: var(--blue); }
+  .ann-date { font-size: 11px; color: var(--text-dim); font-family: 'Share Tech Mono', monospace; }
+  .ann-title { font-family: 'Rajdhani', sans-serif; font-size: 17px; font-weight: 600; letter-spacing: 0.5px; margin-bottom: 6px; transition: color 0.2s; }
+  .ann-body { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+  .ann-source { margin-top: 10px; font-size: 11px; color: var(--text-dim); font-family: 'Share Tech Mono', monospace; display: flex; align-items: center; gap: 6px; }
+  .ann-source i { color: var(--g3); }
+
+  /* ── SHEETS INTEGRATION ── */
+  .sheets-config { padding: 20px 22px; margin-bottom: 20px; }
+  .sheets-config h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 16px; font-weight: 700; letter-spacing: 1px;
+    color: var(--g1); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .input-row { display: flex; gap: 10px; flex-wrap: wrap; }
+  .glass-input {
+    flex: 1; min-width: 200px;
+    padding: 9px 14px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    backdrop-filter: blur(8px);
+  }
+  .glass-input::placeholder { color: var(--text-dim); }
+  .glass-input:focus { border-color: var(--g1); box-shadow: 0 0 12px rgba(0,255,136,0.15); }
+  .btn {
+    padding: 9px 18px;
+    border-radius: 8px;
+    border: 1px solid var(--border-strong);
+    background: var(--surface-hover);
+    color: var(--g1);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 13px; font-weight: 700; letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .btn:hover { background: rgba(0,255,136,0.18); box-shadow: var(--glow); }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--g3), var(--g4));
+    border-color: var(--g2); color: #fff;
+  }
+  .btn-primary:hover { background: linear-gradient(135deg, var(--g2), var(--g3)); }
+  .btn-sm { padding: 6px 12px; font-size: 12px; }
+
+  /* feed status */
+  .feed-status {
+    padding: 8px 14px;
+    border-radius: 8px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    font-size: 12px; color: var(--text-muted);
+    font-family: 'Share Tech Mono', monospace;
+    margin-top: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .feed-status.ok { border-color: rgba(0,255,136,0.3); color: var(--g1); }
+  .feed-status.err { border-color: rgba(255,68,68,0.3); color: var(--red); }
+  .feed-status i { font-size: 14px; }
+
+  /* ── CALENDAR ── */
+  .cal-wrap { padding: 20px; }
+  .cal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .cal-header h3 {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 20px; font-weight: 700; letter-spacing: 2px;
+    color: var(--g1);
+  }
+  .cal-nav { display: flex; gap: 6px; }
+  .cal-grid {
+    display: grid; grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+  }
+  .cal-day-name {
+    text-align: center;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px; color: var(--text-dim);
+    padding: 4px 0;
+    letter-spacing: 1px;
+  }
+  .cal-day {
+    aspect-ratio: 1;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 14px; font-weight: 600;
+    position: relative;
+    background: transparent;
+  }
+  .cal-day:hover { background: var(--surface); border-color: var(--border); }
+  .cal-day.today { background: var(--surface-hover); border-color: var(--g1); color: var(--g1); box-shadow: 0 0 10px rgba(0,255,136,0.15); }
+  .cal-day.has-event::after {
+    content: ''; position: absolute; bottom: 4px;
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--g1); box-shadow: 0 0 4px var(--g1);
+  }
+  .cal-day.other-month { opacity: 0.3; }
+  .cal-day.selected { background: linear-gradient(135deg,var(--g4),var(--g3)); border-color: var(--g1); color: #fff; }
+
+  /* Event list */
+  .event-list { margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .event-item {
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display: flex; gap: 14px; align-items: flex-start;
+    transition: all 0.2s; cursor: pointer;
+  }
+  .event-item:hover { border-color: var(--border-strong); background: var(--surface-hover); }
+  .event-date-badge {
+    min-width: 44px;
+    text-align: center;
+    background: linear-gradient(135deg,var(--g4),var(--g3));
+    border-radius: 8px; padding: 6px 4px;
+    border: 1px solid var(--border-strong);
+  }
+  .event-date-badge .d { font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:800; color:var(--g1); line-height:1; }
+  .event-date-badge .m { font-size:10px; color:rgba(255,255,255,0.6); font-family:'Share Tech Mono',monospace; letter-spacing:1px; }
+  .event-info h4 { font-family:'Rajdhani',sans-serif; font-size:15px; font-weight:700; letter-spacing:0.5px; }
+  .event-info p { font-size:12px; color:var(--text-muted); margin-top:2px; }
+  .event-info .event-tags { margin-top:6px; display:flex; gap:6px; flex-wrap:wrap; }
+
+  /* Add event modal */
+  .modal-overlay {
+    position: fixed; inset:0; z-index:200;
+    background: rgba(3,15,7,0.7);
+    backdrop-filter: blur(6px);
+    display: flex; align-items: center; justify-content: center;
+    animation: fadeIn 0.2s ease;
+  }
+  .modal-overlay.hidden { display: none; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+  .modal {
+    width: min(600px, 95vw);
+    padding: 28px;
+    border-radius: 16px;
+    border: 1px solid var(--border-strong);
+    background: var(--glass-bg);
+    backdrop-filter: blur(24px);
+    box-shadow: 0 24px 64px rgba(0,0,0,0.4), var(--glow);
+    animation: slideUp 0.3s ease;
+  }
+  @keyframes slideUp { from{transform:translateY(20px);opacity:0} to{transform:none;opacity:1} }
+  .modal h3 {
+    font-family:'Rajdhani',sans-serif; font-size:22px; font-weight:700;
+    letter-spacing:2px; color:var(--g1); margin-bottom:20px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .form-group { margin-bottom:14px; }
+  .form-group label { display:block; font-size:11px; font-family:'Share Tech Mono',monospace; color:var(--text-muted); letter-spacing:1px; margin-bottom:6px; text-transform:uppercase; }
+  .form-row { display:flex; gap:10px; }
+  .form-row .form-group { flex:1; }
+  select.glass-input {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300ff88' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 12px center;
+    cursor:pointer;
+  }
+  textarea.glass-input { resize:vertical; min-height:80px; }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+
+  /* ── COMMANDER'S PAGE ── */
+  .commanders-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(200px,1fr)); gap:16px; }
+  .commander-card { padding:24px 20px; text-align:center; }
+  .commander-avatar {
+    width:72px; height:72px; border-radius:50%;
+    border:2px solid var(--border-strong);
+    margin:0 auto 14px;
+    background:linear-gradient(135deg,var(--g4),var(--g3));
+    display:flex; align-items:center; justify-content:center;
+    font-size:28px;
+    box-shadow:var(--glow);
+    position:relative;
+  }
+  .commander-rank {
+    position:absolute; bottom:-4px; right:-4px;
+    background:var(--g3); border:1px solid var(--g1);
+    border-radius:4px; padding:2px 6px;
+    font-family:'Share Tech Mono',monospace; font-size:9px;
+    color:var(--g1); letter-spacing:1px;
+  }
+  .commander-card h4 { font-family:'Rajdhani',sans-serif; font-size:16px; font-weight:700; letter-spacing:1px; }
+  .commander-card p { font-size:12px; color:var(--text-muted); margin-top:3px; font-family:'Share Tech Mono',monospace; }
+  .commander-card .role { margin-top:8px; }
+
+  /* ── TICKER ── */
+  .ticker-wrap {
+    position:fixed; bottom:0; left:0; right:0; z-index:100;
+    background:var(--glass-bg);
+    backdrop-filter:var(--glass-blur);
+    border-top:1px solid var(--border);
+    padding:6px 0; overflow:hidden;
+    height:34px;
+  }
+  .ticker-inner {
+    display:flex; align-items:center; gap:0;
+    white-space:nowrap;
+    animation: ticker 40s linear infinite;
+  }
+  .ticker-item {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:0 32px;
+    font-family:'Share Tech Mono',monospace; font-size:11px;
+    color:var(--text-muted);
+    border-right:1px solid var(--border);
+  }
+  .ticker-item i { color:var(--g1); }
+  @keyframes ticker { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+  .ticker-label {
+    position:absolute; left:0; top:0; bottom:0; z-index:2;
+    padding:0 12px;
+    background:linear-gradient(90deg,var(--glass-bg) 80%,transparent);
+    display:flex; align-items:center;
+    font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:2px; color:var(--g1);
+    border-right:1px solid var(--border);
+  }
+
+  /* ── COUNCIL PAGES ── */
+  .council-hero {
+    padding:24px 28px; margin-bottom:20px;
+    display:flex; align-items:center; gap:20px;
+  }
+  .council-crest {
+    width:64px; height:64px; border-radius:12px; flex-shrink:0;
+    background:linear-gradient(135deg,var(--g3),var(--g5));
+    border:2px solid var(--border-strong);
+    display:flex; align-items:center; justify-content:center;
+    font-size:28px; box-shadow:var(--glow);
+  }
+  .council-info h2 { font-family:'Rajdhani',sans-serif; font-size:28px; font-weight:800; letter-spacing:3px; color:var(--g1); line-height:1; }
+  .council-info p { font-size:12px; color:var(--text-muted); margin-top:4px; font-family:'Share Tech Mono',monospace; letter-spacing:1px; }
+  .council-info .council-mission { margin-top:8px; font-size:13px; color:var(--text); font-family:'Exo 2',sans-serif; line-height:1.5; max-width:600px; }
+
+  /* Data table */
+  .data-table-wrap { overflow-x:auto; padding:0 4px 4px; }
+  .data-table {
+    width:100%; border-collapse:collapse;
+    font-size:13px;
+  }
+  .data-table th {
+    padding:10px 16px; text-align:left;
+    font-family:'Rajdhani',sans-serif; font-size:12px; font-weight:700;
+    letter-spacing:1.5px; text-transform:uppercase;
+    color:var(--g1); border-bottom:1px solid var(--border-strong);
+    background:var(--surface);
+  }
+  .data-table td { padding:10px 16px; border-bottom:1px solid var(--border); color:var(--text-muted); font-family:'Share Tech Mono',monospace; font-size:12px; }
+  .data-table tr:last-child td { border-bottom:none; }
+  .data-table tr:hover td { background:var(--surface); color:var(--text); }
+
+  /* ── SCROLLBAR ── */
+  ::-webkit-scrollbar { width:6px; height:6px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--border-strong); border-radius:3px; }
+  ::-webkit-scrollbar-thumb:hover { background:var(--g3); }
+
+  /* ── SHEET FEED ── */
+  .ann-loading { text-align:center; padding:40px; color:var(--text-dim); font-family:'Share Tech Mono',monospace; font-size:13px; }
+  .empty-state { text-align:center; padding:48px 20px; color:var(--text-dim); }
+  .empty-state i { font-size:48px; margin-bottom:12px; display:block; opacity:0.3; }
+  .empty-state p { font-family:'Share Tech Mono',monospace; font-size:13px; }
+
+  /* Refresh badge */
+  .refresh-time { font-size:11px; color:var(--text-dim); font-family:'Share Tech Mono',monospace; display:flex; align-items:center; gap:6px; }
+
+  /* ── RESPONSIVE ── */
+  @media(max-width:768px) {
+    .hero h1 { font-size:28px; }
+    .hero::after { font-size:60px; }
+    .grid-3,.grid-2,.grid-4 { grid-template-columns:1fr; }
+    .topbar-inner { padding:8px 12px; gap:8px; }
+    .status-pill { display:none; }
+    .brand h1 { font-size:15px; letter-spacing:2px; }
+  }
+
+  /* Glow pulse on active */
+  @keyframes glowPulse { 0%,100%{box-shadow:0 0 12px rgba(0,255,136,0.15)} 50%{box-shadow:0 0 24px rgba(0,255,136,0.35)} }
+  .glow-anim { animation:glowPulse 3s infinite; }
+
+  /* Toggle switch */
+  .toggle { position:relative; width:44px; height:24px; }
+  .toggle input { opacity:0; width:0; height:0; }
+  .slider {
+    position:absolute; inset:0;
+    background:var(--surface); border:1px solid var(--border);
+    border-radius:12px; cursor:pointer; transition:0.3s;
+  }
+  .slider::before {
+    content:''; position:absolute;
+    width:18px; height:18px; border-radius:50%;
+    left:2px; top:2px;
+    background:var(--text-muted);
+    transition:0.3s;
+    box-shadow:0 0 6px rgba(0,0,0,0.3);
+  }
+  input:checked + .slider { background:var(--surface-hover); border-color:var(--g1); }
+  input:checked + .slider::before { transform:translateX(20px); background:var(--g1); box-shadow:0 0 8px var(--g1); }
+
+  .pb-40 { padding-bottom: 40px; }
+</style>
+</head>
+<body>
+
+<!-- ══ TOP BAR ══ -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="logo-area">
+      <div class="coa">⚔️</div>
+      <div class="brand">
+        <h1>ALFA CO.</h1>
+        <p>CCAFP • Bulletin Board</p>
+      </div>
+    </div>
+
+    <div class="nav-scroll">
+      <nav class="nav-tabs" id="mainNav">
+        <button class="nav-tab active" data-page="home"><i class="fa fa-home" style="margin-right:5px"></i>HOME</button>
+        <button class="nav-tab" data-page="s1">S1 COUNCIL</button>
+        <button class="nav-tab" data-page="s2">S2 COUNCIL</button>
+        <button class="nav-tab" data-page="s3">S3 COUNCIL</button>
+        <button class="nav-tab" data-page="s4">S4 COUNCIL</button>
+        <button class="nav-tab" data-page="s5">S5 COUNCIL</button>
+        <button class="nav-tab" data-page="s6">S6 COUNCIL</button>
+        <button class="nav-tab" data-page="s7">S7 COUNCIL</button>
+        <button class="nav-tab" data-page="s8">S8 COUNCIL</button>
+        <button class="nav-tab" data-page="s10">S10 COUNCIL</button>
+        <button class="nav-tab" data-page="athletic">ATHLETIC</button>
+        <button class="nav-tab" data-page="academic">ACADEMIC</button>
+        <button class="nav-tab" data-page="commanders">⭐ COMMANDERS</button>
+        <button class="nav-tab" data-page="calendar">📅 CALENDAR</button>
+      </nav>
+    </div>
+
+    <div class="topbar-actions">
+      <div class="status-pill"><span class="status-dot"></span>LIVE</div>
+      <button class="btn-icon" id="refreshBtn" title="Refresh feeds"><i class="fa fa-rotate"></i></button>
+      <button class="btn-icon" id="themeToggle" title="Toggle theme"><i class="fa fa-circle-half-stroke"></i></button>
+      <button class="btn-icon" id="addEventBtn" title="Add event"><i class="fa fa-calendar-plus"></i></button>
+    </div>
+  </div>
+</header>
+
+<!-- ══ MAIN CONTENT ══ -->
+<main class="content pb-40">
+
+  <!-- ██ HOME ██ -->
+  <div class="page active" id="page-home">
+    <div class="glass hero glow-anim">
+      <div class="hero-content">
+        <h1>ALFA <span>COMPANY</span></h1>
+        <p>▸ CADET CORPS ARMED FORCES OF THE PHILIPPINES • BULLETIN BOARD SYSTEM</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><span class="num" id="statAnn">—</span><span class="lbl">ANNOUNCEMENTS</span></div>
+          <div class="divider-v"></div>
+          <div class="hero-stat"><span class="num" id="statEvents">—</span><span class="lbl">UPCOMING EVENTS</span></div>
+          <div class="divider-v"></div>
+          <div class="hero-stat"><span class="num">12</span><span class="lbl">COUNCILS</span></div>
+          <div class="divider-v"></div>
+          <div class="hero-stat"><span class="num" id="statDate">—</span><span class="lbl">TODAY</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Google Sheets Config -->
+    <div class="glass sheets-config">
+      <h3><i class="fa-brands fa-google" style="color:#4CAF50"></i> GOOGLE SHEETS INTEGRATION</h3>
+      <div class="input-row">
+        <input type="text" class="glass-input" id="sheetUrl" placeholder="Paste Google Sheets CSV publish URL (File → Share → Publish to web → CSV)…" />
+        <button class="btn btn-primary" id="loadSheet"><i class="fa fa-link"></i> CONNECT</button>
+        <button class="btn" id="clearSheet"><i class="fa fa-xmark"></i> CLEAR</button>
+      </div>
+      <div class="feed-status hidden" id="feedStatus"></div>
+      <div style="margin-top:10px;font-size:11px;color:var(--text-dim);font-family:'Share Tech Mono',monospace;">
+        ⓘ Sheet must have columns: <strong style="color:var(--g1)">Title | Body | Date | Tag | Council | Priority</strong> — Changes reflect after page refresh or manual reload.
+      </div>
+    </div>
+
+    <!-- Pinned / Priority -->
+    <div class="section-header">
+      <div class="section-title">
+        <div class="section-icon">📌</div>
+        <div><h2>PRIORITY BULLETINS</h2><p>HIGH-PRIORITY ANNOUNCEMENTS</p></div>
+      </div>
+      <div class="refresh-time"><i class="fa fa-rotate" style="color:var(--g1)"></i><span id="lastRefresh">—</span></div>
+    </div>
+    <div class="grid-3" id="priorityAnn"></div>
+
+    <!-- All Announcements -->
+    <div class="section-header">
+      <div class="section-title">
+        <div class="section-icon">📋</div>
+        <div><h2>ALL ANNOUNCEMENTS</h2><p>COMPANY-WIDE BULLETINS</p></div>
+      </div>
+      <input type="text" class="glass-input" style="width:220px" id="searchAnn" placeholder="Search announcements…" />
+    </div>
+    <div class="grid-3" id="allAnn"></div>
+
+    <!-- Upcoming Events -->
+    <div class="section-header">
+      <div class="section-title">
+        <div class="section-icon">🗓</div>
+        <div><h2>UPCOMING EVENTS</h2><p>NEXT 30 DAYS</p></div>
+      </div>
+    </div>
+    <div class="event-list" id="homeEvents"></div>
+  </div>
+
+  <!-- ██ COUNCIL PAGES (S1–S10, Athletic, Academic) generated by JS ██ -->
+  <div class="page" id="page-s1"></div>
+  <div class="page" id="page-s2"></div>
+  <div class="page" id="page-s3"></div>
+  <div class="page" id="page-s4"></div>
+  <div class="page" id="page-s5"></div>
+  <div class="page" id="page-s6"></div>
+  <div class="page" id="page-s7"></div>
+  <div class="page" id="page-s8"></div>
+  <div class="page" id="page-s10"></div>
+  <div class="page" id="page-athletic"></div>
+  <div class="page" id="page-academic"></div>
+
+  <!-- ██ COMMANDERS ██ -->
+  <div class="page" id="page-commanders">
+    <div class="section-header">
+      <div class="section-title">
+        <div class="section-icon">⭐</div>
+        <div><h2>COMPANY COMMANDERS</h2><p>ALFA COMPANY CHAIN OF COMMAND</p></div>
+      </div>
+    </div>
+    <div class="commanders-grid" id="commandersGrid"></div>
+  </div>
+
+  <!-- ██ CALENDAR ██ -->
+  <div class="page" id="page-calendar">
+    <div class="section-header">
+      <div class="section-title">
+        <div class="section-icon">📅</div>
+        <div><h2>EVENT CALENDAR</h2><p>ALFA COMPANY SCHEDULE</p></div>
+      </div>
+      <button class="btn btn-primary" id="addEventBtn2"><i class="fa fa-plus"></i> ADD EVENT</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start;" class="cal-layout">
+      <div class="glass cal-wrap">
+        <div class="cal-header">
+          <h3 id="calMonth">—</h3>
+          <div class="cal-nav">
+            <button class="btn-icon" id="prevMonth"><i class="fa fa-chevron-left"></i></button>
+            <button class="btn-icon" id="nextMonth"><i class="fa fa-chevron-right"></i></button>
+          </div>
+        </div>
+        <div class="cal-grid" id="calGrid"></div>
+      </div>
+      <div class="glass" style="padding:20px">
+        <h3 style="font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:1px;color:var(--g1);margin-bottom:14px;">
+          <i class="fa fa-list"></i> ALL EVENTS
+        </h3>
+        <div class="event-list" id="eventList"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<!-- ══ TICKER ══ -->
+<div class="ticker-wrap">
+  <div class="ticker-label">📡 ALFA CO.</div>
+  <div class="ticker-inner" id="ticker">
+    <!-- populated by JS -->
+  </div>
+</div>
+
+<!-- ══ ADD EVENT MODAL ══ -->
+<div class="modal-overlay hidden" id="eventModal">
+  <div class="modal glass">
+    <h3><i class="fa fa-calendar-plus"></i> ADD COMPANY EVENT</h3>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Event Title *</label>
+        <input type="text" class="glass-input" id="evTitle" placeholder="Event name…" style="width:100%">
+      </div>
+      <div class="form-group" style="flex:0 0 160px">
+        <label>Category</label>
+        <select class="glass-input" id="evCat" style="width:100%">
+          <option value="training">Training</option>
+          <option value="formation">Formation</option>
+          <option value="academic">Academic</option>
+          <option value="athletic">Athletic</option>
+          <option value="ceremony">Ceremony</option>
+          <option value="activity">Activity</option>
+          <option value="other">Other</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>Date *</label>
+        <input type="date" class="glass-input" id="evDate" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label>Time</label>
+        <input type="time" class="glass-input" id="evTime" style="width:100%">
+      </div>
+      <div class="form-group">
+        <label>Council</label>
+        <select class="glass-input" id="evCouncil" style="width:100%">
+          <option value="all">All Company</option>
+          <option>S1</option><option>S2</option><option>S3</option><option>S4</option>
+          <option>S5</option><option>S6</option><option>S7</option><option>S8</option>
+          <option>S10</option><option>Athletic</option><option>Academic</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label>Description</label>
+      <textarea class="glass-input" id="evDesc" placeholder="Event details, venue, requirements…" style="width:100%"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn" id="cancelModal"><i class="fa fa-xmark"></i> CANCEL</button>
+      <button class="btn btn-primary" id="saveEvent"><i class="fa fa-floppy-disk"></i> SAVE EVENT</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════
+const state = {
+  theme: 'dark',
+  sheetData: [],
+  events: [],
+  calDate: new Date(),
+  selectedDate: null,
+};
+
+// Councils metadata
+const COUNCILS = {
+  s1: { name:'S1 COUNCIL', sub:'Personnel & Administration', icon:'👤', color:'#39ff6e', mission:'Responsible for personnel records, administrative matters, cadet welfare, and human resource management of ALFA Company.', cols:['Name','Rank','Position','Status'] },
+  s2: { name:'S2 COUNCIL', sub:'Intelligence & Security', icon:'🔍', color:'#44aaff', mission:'Handles intelligence reports, security assessments, threat analysis, and information management for the company.', cols:['Report','Classification','Date','Analyst'] },
+  s3: { name:'S3 COUNCIL', sub:'Operations & Training', icon:'⚙️', color:'#ffd700', mission:'Plans and executes all training activities, operational schedules, drills, and military exercises for ALFA Company.', cols:['Activity','Schedule','Venue','Officer-in-Charge'] },
+  s4: { name:'S4 COUNCIL', sub:'Logistics & Supply', icon:'📦', color:'#ff9944', mission:'Manages supply, equipment accountability, property management, and logistical support for all company operations.', cols:['Item','Quantity','Status','Custodian'] },
+  s5: { name:'S5 COUNCIL', sub:'Civil-Military Operations', icon:'🤝', color:'#aa88ff', mission:'Coordinates civil-military relations, community engagement, and outreach programs on behalf of ALFA Company.', cols:['Program','Partner','Date','Status'] },
+  s6: { name:'S6 COUNCIL', sub:'Signal & Communications', icon:'📡', color:'#44ffee', mission:'Manages communication systems, digital infrastructure, and information technology resources of the company.', cols:['System','Status','Operator','Remarks'] },
+  s7: { name:'S7 COUNCIL', sub:'Information & Education', icon:'📰', color:'#ff88aa', mission:'Handles information dissemination, education and training programs, media relations, and publications.', cols:['Publication','Type','Release Date','Editor'] },
+  s8: { name:'S8 COUNCIL', sub:'Finance & Budget', icon:'💰', color:'#ffd700', mission:'Oversees financial planning, budget management, fund accountability, and financial reporting for the company.', cols:['Fund','Amount','Purpose','Status'] },
+  s10: { name:'S10 COUNCIL', sub:'Inspector General', icon:'⚖️', color:'#ff6644', mission:'Conducts inspections, investigations, and ensures discipline, standards, and compliance within ALFA Company.', cols:['Case','Type','Date Filed','Status'] },
+  athletic: { name:'ATHLETIC COUNCIL', sub:'Sports & Physical Fitness', icon:'🏃', color:'#44ff88', mission:'Develops and manages sports programs, physical fitness training, athletic competitions, and wellness initiatives.', cols:['Sport','Schedule','Venue','Coach'] },
+  academic: { name:'ACADEMIC COUNCIL', sub:'Scholastic Affairs', icon:'🎓', color:'#88aaff', mission:'Oversees academic performance, study programs, tutorial sessions, and scholastic standards of company cadets.', cols:['Subject','Schedule','Tutor','Venue'] },
+};
+
+const COMMANDERS = [
+  { name:'Cdt Col. [Name]', rank:'CO', role:'Company Commander', icon:'🎖️' },
+  { name:'Cdt Lt Col. [Name]', rank:'XO', role:'Executive Officer', icon:'⭐' },
+  { name:'Cdt Maj. [Name]', rank:'S1-O', role:'Personnel Officer', icon:'👤' },
+  { name:'Cdt Maj. [Name]', rank:'S2-O', role:'Intelligence Officer', icon:'🔍' },
+  { name:'Cdt Maj. [Name]', rank:'S3-O', role:'Operations Officer', icon:'⚙️' },
+  { name:'Cdt Maj. [Name]', rank:'S4-O', role:'Logistics Officer', icon:'📦' },
+  { name:'Cdt Maj. [Name]', rank:'S5-O', role:'CMO Officer', icon:'🤝' },
+  { name:'Cdt Capt. [Name]', rank:'S6-O', role:'Signal Officer', icon:'📡' },
+  { name:'Cdt Capt. [Name]', rank:'S7-O', role:'Info Officer', icon:'📰' },
+  { name:'Cdt Capt. [Name]', rank:'S8-O', role:'Finance Officer', icon:'💰' },
+  { name:'Cdt Capt. [Name]', rank:'IG', role:'Inspector General', icon:'⚖️' },
+  { name:'Cdt 1Lt. [Name]', rank:'ATH', role:'Athletic Director', icon:'🏃' },
+  { name:'Cdt 1Lt. [Name]', rank:'ACA', role:'Academic Director', icon:'🎓' },
+  { name:'Cdt 2Lt. [Name]', rank:'1PLT', role:'1st Platoon Leader', icon:'🪖' },
+  { name:'Cdt 2Lt. [Name]', rank:'2PLT', role:'2nd Platoon Leader', icon:'🪖' },
+  { name:'Cdt 2Lt. [Name]', rank:'3PLT', role:'3rd Platoon Leader', icon:'🪖' },
+];
+
+const TAG_COLORS = {
+  urgent:'tag-red', important:'tag-gold', info:'tag-blue',
+  training:'tag-green', activity:'tag-green', default:'tag-green'
+};
+
+const CAT_COLORS = {
+  training:'tag-green', formation:'tag-gold', academic:'tag-blue',
+  athletic:'tag-green', ceremony:'tag-gold', activity:'tag-blue', other:'tag-green'
+};
+
+// Sample events pre-loaded
+state.events = [
+  { id:1, title:'Company Formation', date:'2025-04-28', time:'06:00', cat:'formation', council:'all', desc:'Full company formation and uniform inspection.' },
+  { id:2, title:'S3 Drill Practice', date:'2025-04-30', time:'14:00', cat:'training', council:'S3', desc:'Drill and ceremony practice at the parade grounds.' },
+  { id:3, title:'Academic Review', date:'2025-05-05', time:'09:00', cat:'academic', council:'Academic', desc:'Company-wide academic review session.' },
+  { id:4, title:'Intramurals', date:'2025-05-10', time:'07:00', cat:'athletic', council:'Athletic', desc:'Company intramural sports day.' },
+  { id:5, title:'Foundation Day', date:'2025-05-15', time:'08:00', cat:'ceremony', council:'all', desc:'CCAFP Foundation Day ceremony and parade.' },
+];
+
+// Sample sheet data (fallback demo)
+const DEMO_DATA = [
+  { Title:'Welcome to ALFA Co. Bulletin Board', Body:'This is the official digital bulletin board of ALFA Company, CCAFP. All cadets are reminded to check this board regularly for updates, announcements, and schedules.', Date:'2025-04-26', Tag:'info', Council:'all', Priority:'high' },
+  { Title:'S3: Drill and Ceremony Practice', Body:'All cadets are required to attend D&C practice this Saturday at 0700H at the parade grounds. Full BDU uniform required. Attendance is mandatory.', Date:'2025-04-25', Tag:'training', Council:'s3', Priority:'high' },
+  { Title:'S1: Roster Update Deadline', Body:'All cadets must submit updated personal information forms to S1 personnel no later than April 30. Forms available at the S1 office.', Date:'2025-04-24', Tag:'important', Council:'s1', Priority:'normal' },
+  { Title:'Academic: Study Hall Schedule', Body:'Weekly study hall sessions will be held every Monday and Wednesday from 1800-2000H at the study area. Academic council officers will be on duty to assist.', Date:'2025-04-23', Tag:'info', Council:'academic', Priority:'normal' },
+  { Title:'S4: Equipment Accountability', Body:'Quarterly equipment inspection will be conducted on May 3. All cadets must ensure issued equipment is in serviceable condition and accounted for.', Date:'2025-04-22', Tag:'urgent', Council:'s4', Priority:'high' },
+  { Title:'Athletic: Intramurals Sign-Up', Body:'Sign-up sheets for the company intramurals are now available. Available sports: basketball, volleyball, badminton, and track events. Deadline to sign up is May 1.', Date:'2025-04-21', Tag:'activity', Council:'athletic', Priority:'normal' },
+];
+
+// ═══════════════════════════════════════════════
+// THEME
+// ═══════════════════════════════════════════════
+document.getElementById('themeToggle').addEventListener('click', () => {
+  state.theme = state.theme === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', state.theme);
+  document.getElementById('themeToggle').querySelector('i').className =
+    state.theme === 'dark' ? 'fa fa-circle-half-stroke' : 'fa fa-sun';
+});
+
+// ═══════════════════════════════════════════════
+// NAVIGATION
+// ═══════════════════════════════════════════════
+document.getElementById('mainNav').addEventListener('click', e => {
+  const tab = e.target.closest('.nav-tab');
+  if (!tab) return;
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  tab.classList.add('active');
+  const page = document.getElementById('page-' + tab.dataset.page);
+  if (page) page.classList.add('active');
+  if (tab.dataset.page === 'calendar') renderCalendar();
+});
+
+// ═══════════════════════════════════════════════
+// ANNOUNCEMENTS
+// ═══════════════════════════════════════════════
+function tagClass(tag) {
+  return TAG_COLORS[tag?.toLowerCase()] || 'tag-green';
+}
+
+function annCardHTML(item) {
+  return `
+    <div class="glass ann-card">
+      <div class="ann-meta">
+        <span class="tag ${tagClass(item.Tag)}">${(item.Tag||'INFO').toUpperCase()}</span>
+        ${item.Priority==='high'?'<span class="tag tag-red">PRIORITY</span>':''}
+        <span class="ann-date">${item.Date||''}</span>
+      </div>
+      <div class="ann-title">${item.Title||'Untitled'}</div>
+      <div class="ann-body">${item.Body||''}</div>
+      <div class="ann-source"><i class="fa-brands fa-google"></i>${item.Council?item.Council.toUpperCase()+' COUNCIL':'ALFA CO.'}</div>
+    </div>`;
+}
+
+function renderAnnouncements(data) {
+  const priority = data.filter(d => d.Priority==='high');
+  const all = data;
+  const pEl = document.getElementById('priorityAnn');
+  const aEl = document.getElementById('allAnn');
+  pEl.innerHTML = priority.length ? priority.map(annCardHTML).join('') : '<div class="glass empty-state"><i class="fa fa-bullhorn"></i><p>No priority bulletins</p></div>';
+  aEl.innerHTML = all.length ? all.map(annCardHTML).join('') : '<div class="glass empty-state"><i class="fa fa-inbox"></i><p>No announcements yet. Connect a Google Sheet to get started.</p></div>';
+  document.getElementById('statAnn').textContent = all.length;
+  document.getElementById('lastRefresh').textContent = 'Updated ' + new Date().toLocaleTimeString();
+  updateTicker(data);
+}
+
+function filterAnn(query) {
+  const d = query ? state.sheetData.filter(r => JSON.stringify(r).toLowerCase().includes(query.toLowerCase())) : state.sheetData;
+  renderAnnouncements(d);
+}
+
+document.getElementById('searchAnn').addEventListener('input', e => filterAnn(e.target.value));
+
+// ═══════════════════════════════════════════════
+// GOOGLE SHEETS CSV
+// ═══════════════════════════════════════════════
+function setFeedStatus(msg, type='') {
+  const el = document.getElementById('feedStatus');
+  el.classList.remove('hidden','ok','err');
+  el.innerHTML = `<i class="fa ${type==='ok'?'fa-circle-check':type==='err'?'fa-circle-xmark':'fa-circle-info'}"></i> ${msg}`;
+  if (type) el.classList.add(type);
+}
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n');
+  if (lines.length < 2) return [];
+  const headers = lines[0].split(',').map(h => h.replace(/"/g,'').trim());
+  return lines.slice(1).map(line => {
+    const vals = [];
+    let cur='', inQ=false;
+    for (let ch of line) {
+      if (ch==='"') { inQ=!inQ; }
+      else if (ch===',' && !inQ) { vals.push(cur.trim()); cur=''; }
+      else cur+=ch;
+    }
+    vals.push(cur.trim());
+    const obj={};
+    headers.forEach((h,i)=>{ obj[h]=vals[i]||''; });
+    return obj;
+  });
+}
+
+async function loadGoogleSheet(url) {
+  if (!url) { setFeedStatus('Please enter a valid Google Sheets CSV URL.','err'); return; }
+  // Convert share URL to CSV export URL if needed
+  let csvUrl = url;
+  if (url.includes('/edit') || url.includes('/d/')) {
+    const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
+    if (match) csvUrl = `https://docs.google.com/spreadsheets/d/${match[1]}/export?format=csv`;
+  }
+  setFeedStatus('Connecting to Google Sheets…');
+  try {
+    const res = await fetch(csvUrl);
+    if (!res.ok) throw new Error('HTTP '+res.status);
+    const text = await res.text();
+    const data = parseCSV(text);
+    if (!data.length) throw new Error('Empty or unreadable sheet');
+    state.sheetData = data;
+    localStorage.setItem('alfa_sheet_url', url);
+    localStorage.setItem('alfa_sheet_data', JSON.stringify(data));
+    setFeedStatus(`✓ Loaded ${data.length} records from Google Sheets.`,'ok');
+    renderAnnouncements(data);
+    renderCouncilPages();
+  } catch(e) {
+    setFeedStatus('Could not fetch sheet. Ensure it is published (File → Share → Publish to web → CSV). Error: '+e.message,'err');
+  }
+}
+
+document.getElementById('loadSheet').addEventListener('click', () => {
+  loadGoogleSheet(document.getElementById('sheetUrl').value.trim());
+});
+document.getElementById('clearSheet').addEventListener('click', () => {
+  state.sheetData = DEMO_DATA;
+  document.getElementById('sheetUrl').value = '';
+  localStorage.removeItem('alfa_sheet_url');
+  localStorage.removeItem('alfa_sheet_data');
+  setFeedStatus('Cleared. Showing demo data.','');
+  renderAnnouncements(DEMO_DATA);
+  renderCouncilPages();
+});
+document.getElementById('refreshBtn').addEventListener('click', () => {
+  const url = localStorage.getItem('alfa_sheet_url');
+  if (url) loadGoogleSheet(url);
+  else { renderAnnouncements(state.sheetData); setFeedStatus('Refreshed.','ok'); }
+});
+
+// ═══════════════════════════════════════════════
+// COUNCIL PAGES
+// ═══════════════════════════════════════════════
+function renderCouncilPages() {
+  Object.keys(COUNCILS).forEach(key => {
+    const c = COUNCILS[key];
+    const pageEl = document.getElementById('page-'+key);
+    if (!pageEl) return;
+    const items = state.sheetData.filter(d => d.Council && (d.Council.toLowerCase()===key || d.Council.toLowerCase()==='all'));
+    const tableRows = items.slice(0,10).map(r=>`<tr>${c.cols.map(col=>`<td>${r[col]||'—'}</td>`).join('')}</tr>`).join('');
+    pageEl.innerHTML = `
+      <div class="glass council-hero">
+        <div class="council-crest">${c.icon}</div>
+        <div class="council-info">
+          <h2>${c.name}</h2>
+          <p>${c.sub.toUpperCase()}</p>
+          <div class="council-mission">${c.mission}</div>
+        </div>
+      </div>
+      <div class="section-header">
+        <div class="section-title">
+          <div class="section-icon">📋</div>
+          <div><h2>COUNCIL BULLETINS</h2><p>ANNOUNCEMENTS FOR ${c.name}</p></div>
+        </div>
+      </div>
+      ${items.length ? `<div class="grid-3">${items.map(annCardHTML).join('')}</div>` : '<div class="glass empty-state" style="padding:40px;text-align:center;"><i class="fa fa-inbox" style="font-size:40px;opacity:0.3;display:block;margin-bottom:10px;"></i><p style="font-family:\'Share Tech Mono\',monospace;color:var(--text-dim)">No bulletins from ${c.name}. Connect a Google Sheet to populate.</p></div>'}
+      ${items.length ? `
+      <div class="section-header"><div class="section-title"><div class="section-icon">📊</div><div><h2>SHEET DATA</h2><p>FROM CONNECTED GOOGLE SHEET</p></div></div></div>
+      <div class="glass" style="padding:0;overflow:hidden">
+        <div class="data-table-wrap"><table class="data-table"><thead><tr>${c.cols.map(col=>`<th>${col}</th>`).join('')}</tr></thead><tbody>${tableRows||'<tr><td colspan="${c.cols.length}" style="text-align:center;padding:30px">No data</td></tr>'}</tbody></table></div>
+      </div>` : ''}
+    `;
+  });
+}
+
+// ═══════════════════════════════════════════════
+// COMMANDERS PAGE
+// ═══════════════════════════════════════════════
+function renderCommanders() {
+  const grid = document.getElementById('commandersGrid');
+  grid.innerHTML = COMMANDERS.map(c => `
+    <div class="glass commander-card">
+      <div class="commander-avatar">${c.icon}<div class="commander-rank">${c.rank}</div></div>
+      <h4>${c.name}</h4>
+      <p>${c.role}</p>
+      <div class="role"><span class="tag tag-green">${c.rank}</span></div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════
+// CALENDAR
+// ═══════════════════════════════════════════════
+const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+const DAYS = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+
+function renderCalendar() {
+  const d = state.calDate;
+  const year = d.getFullYear(), month = d.getMonth();
+  document.getElementById('calMonth').textContent = MONTHS[month]+' '+year;
+  const grid = document.getElementById('calGrid');
+  grid.innerHTML = DAYS.map(day=>`<div class="cal-day-name">${day}</div>`).join('');
+  const first = new Date(year,month,1).getDay();
+  const days = new Date(year,month+1,0).getDate();
+  const today = new Date();
+  // prev month padding
+  const prevDays = new Date(year,month,0).getDate();
+  for (let i=first-1;i>=0;i--) {
+    const el=document.createElement('div');
+    el.className='cal-day other-month';
+    el.textContent=prevDays-i;
+    grid.appendChild(el);
+  }
+  const eventDates = new Set(state.events.map(e=>e.date));
+  for (let i=1;i<=days;i++) {
+    const el=document.createElement('div');
+    el.className='cal-day';
+    const dateStr=`${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
+    if (i===today.getDate()&&month===today.getMonth()&&year===today.getFullYear()) el.classList.add('today');
+    if (eventDates.has(dateStr)) el.classList.add('has-event');
+    if (state.selectedDate===dateStr) el.classList.add('selected');
+    el.textContent=i;
+    el.addEventListener('click',()=>{
+      document.querySelectorAll('.cal-day').forEach(d=>d.classList.remove('selected'));
+      el.classList.add('selected');
+      state.selectedDate=dateStr;
+      renderEventList();
+    });
+    grid.appendChild(el);
+  }
+  renderEventList();
+  renderHomeEvents();
+}
+
+function renderEventList() {
+  const evs = state.selectedDate
+    ? state.events.filter(e=>e.date===state.selectedDate)
+    : state.events.sort((a,b)=>a.date.localeCompare(b.date));
+  const el=document.getElementById('eventList');
+  if (!evs.length) { el.innerHTML='<div class="empty-state"><i class="fa fa-calendar-xmark"></i><p>'+(state.selectedDate?'No events on this date':'No events scheduled')+'</p></div>'; return; }
+  el.innerHTML=evs.map(e=>eventCardHTML(e)).join('');
+  document.getElementById('statEvents').textContent=state.events.filter(e=>e.date>=new Date().toISOString().split('T')[0]).length;
+}
+
+function renderHomeEvents() {
+  const today=new Date().toISOString().split('T')[0];
+  const future=state.events.filter(e=>e.date>=today).sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
+  const el=document.getElementById('homeEvents');
+  el.innerHTML=future.length?future.map(e=>eventCardHTML(e)).join(''):'<div class="glass empty-state" style="padding:40px"><i class="fa fa-calendar-xmark"></i><p>No upcoming events. Add some!</p></div>';
+  document.getElementById('statEvents').textContent=future.length;
+}
+
+function eventCardHTML(e) {
+  const [y,m,d]=e.date.split('-');
+  const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1];
+  return `<div class="event-item">
+    <div class="event-date-badge"><div class="d">${d}</div><div class="m">${mon} ${y}</div></div>
+    <div class="event-info">
+      <h4>${e.title}</h4>
+      <p>${e.time||''} ${e.desc||''}</p>
+      <div class="event-tags">
+        <span class="tag ${CAT_COLORS[e.cat]||'tag-green'}">${(e.cat||'event').toUpperCase()}</span>
+        ${e.council&&e.council!=='all'?`<span class="tag tag-blue">${e.council}</span>`:''}
+      </div>
+    </div>
+  </div>`;
+}
+
+document.getElementById('prevMonth').addEventListener('click',()=>{ state.calDate.setMonth(state.calDate.getMonth()-1); renderCalendar(); });
+document.getElementById('nextMonth').addEventListener('click',()=>{ state.calDate.setMonth(state.calDate.getMonth()+1); renderCalendar(); });
+
+// ═══════════════════════════════════════════════
+// ADD EVENT MODAL
+// ═══════════════════════════════════════════════
+function openModal() { document.getElementById('eventModal').classList.remove('hidden'); }
+function closeModal() { document.getElementById('eventModal').classList.add('hidden'); }
+document.getElementById('addEventBtn').addEventListener('click', openModal);
+document.getElementById('addEventBtn2').addEventListener('click', openModal);
+document.getElementById('cancelModal').addEventListener('click', closeModal);
+document.getElementById('eventModal').addEventListener('click', e => { if(e.target===document.getElementById('eventModal')) closeModal(); });
+document.getElementById('saveEvent').addEventListener('click', () => {
+  const title=document.getElementById('evTitle').value.trim();
+  const date=document.getElementById('evDate').value;
+  if (!title||!date) { alert('Title and date are required.'); return; }
+  const ev={
+    id:Date.now(),
+    title,date,
+    time:document.getElementById('evTime').value,
+    cat:document.getElementById('evCat').value,
+    council:document.getElementById('evCouncil').value,
+    desc:document.getElementById('evDesc').value,
+  };
+  state.events.push(ev);
+  saveEvents();
+  closeModal();
+  renderCalendar();
+  renderHomeEvents();
+  document.getElementById('evTitle').value='';
+  document.getElementById('evDate').value='';
+  document.getElementById('evDesc').value='';
+});
+
+// ═══════════════════════════════════════════════
+// TICKER
+// ═══════════════════════════════════════════════
+function updateTicker(data) {
+  const items=[...data.filter(d=>d.Priority==='high'),...state.events.sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5)];
+  const ticker=document.getElementById('ticker');
+  const html=items.map(item=>{
+    if (item.title) return `<div class="ticker-item"><i class="fa fa-calendar-check"></i>EVENT: ${item.title} — ${item.date}</div>`;
+    return `<div class="ticker-item"><i class="fa fa-bullhorn"></i>${item.Title}: ${(item.Body||'').slice(0,80)}…</div>`;
+  }).join('');
+  ticker.innerHTML=html+html; // doubled for seamless loop
+}
+
+// ═══════════════════════════════════════════════
+// PERSIST
+// ═══════════════════════════════════════════════
+function saveEvents() {
+  try { localStorage.setItem('alfa_events',JSON.stringify(state.events)); } catch(e){}
+}
+function loadPersisted() {
+  try {
+    const ev=localStorage.getItem('alfa_events');
+    if (ev) state.events=[...JSON.parse(ev),...state.events.filter(e=>e.id<1000)];
+    const url=localStorage.getItem('alfa_sheet_url');
+    const data=localStorage.getItem('alfa_sheet_data');
+    if (url) document.getElementById('sheetUrl').value=url;
+    if (data) { state.sheetData=JSON.parse(data); renderAnnouncements(state.sheetData); renderCouncilPages(); return true; }
+  } catch(e){}
+  return false;
+}
+
+// ═══════════════════════════════════════════════
+// DATE DISPLAY
+// ═══════════════════════════════════════════════
+function updateDateDisplay() {
+  const n=new Date();
+  document.getElementById('statDate').textContent=n.toLocaleDateString('en-PH',{month:'short',day:'numeric'});
+}
+
+// ═══════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════
+(function init() {
+  updateDateDisplay();
+  const hasData=loadPersisted();
+  if (!hasData) { state.sheetData=DEMO_DATA; renderAnnouncements(DEMO_DATA); renderCouncilPages(); }
+  renderCommanders();
+  renderCalendar();
+  updateTicker(state.sheetData);
+  // Calendar responsive
+  const calLayout=document.querySelector('.cal-layout');
+  if (window.innerWidth<900) calLayout.style.gridTemplateColumns='1fr';
+  window.addEventListener('resize',()=>{ calLayout.style.gridTemplateColumns=window.innerWidth<900?'1fr':'1fr 1fr'; });
+  // Auto-refresh if sheet URL stored
+  const url=localStorage.getItem('alfa_sheet_url');
+  if (url) setTimeout(()=>loadGoogleSheet(url),500);
+})();
+</script>
+</body>
+</html>
