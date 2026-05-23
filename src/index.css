@@ -1036,6 +1036,8 @@ textarea.glass-input {
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
   margin-bottom: 10px;
 }
 
@@ -1051,7 +1053,7 @@ textarea.glass-input {
   font-size: 40px;
 }
 
-.xo-card {
+.xo-card, .sgt-card {
   width: 300px;
 }
 
