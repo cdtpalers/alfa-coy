@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CO = { name:'Cdt Col. [Name]', rank:'CO', role:'Company Commander', icon:'🎖️' };
+const CO = { name:'CDT CPT 1CL DYLAN CLYVE LUCERO CCAFP', rank:'CO', role:'Company Commander', icon:'🎖️' };
 const XO = { name:'Cdt Lt Col. [Name]', rank:'XO', role:'Executive Officer', icon:'⭐' };
 
 const STAFF = [
