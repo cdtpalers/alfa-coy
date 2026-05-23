@@ -1026,6 +1026,45 @@ textarea.glass-input {
 }
 
 /* ── COMMANDERS PAGE ── */
+.hierarchy-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.hierarchy-tier {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.co-card {
+  width: 340px;
+  border-color: var(--g1);
+  box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+}
+
+.co-card .commander-avatar {
+  width: 100px;
+  height: 100px;
+  font-size: 40px;
+}
+
+.xo-card {
+  width: 300px;
+}
+
+.tier-title {
+  text-align: center;
+  margin: 20px 0 10px;
+  color: var(--g1);
+  letter-spacing: 2px;
+  font-size: 14px;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+}
+
 .commanders-grid { 
   display: grid; 
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); 
