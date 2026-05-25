@@ -207,10 +207,16 @@ export default function CouncilPage({ councilId, sheetData, events }) {
                         <th 
                           key={idx} 
                           onClick={() => handleSort(idx)}
-                          style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                          className={sortConfig.key === idx ? 'sorted-col' : ''}
+                          style={{ cursor: 'pointer', whiteSpace: 'nowrap', userSelect: 'none' }}
                         >
-                          {header}
-                          {sortConfig.key === idx ? (sortConfig.direction === 'asc' ? ' 🔼' : ' 🔽') : ''}
+                          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '8px' }}>
+                            <span>{header}</span>
+                            <i 
+                              className={`fa-solid ${sortConfig.key === idx ? (sortConfig.direction === 'asc' ? 'fa-sort-up' : 'fa-sort-down') : 'fa-sort'}`} 
+                              style={{ opacity: sortConfig.key === idx ? 1 : 0.3 }}
+                            ></i>
+                          </div>
                         </th>
                       ))}
                     </tr>
@@ -218,11 +224,20 @@ export default function CouncilPage({ councilId, sheetData, events }) {
                   <tbody>
                     {sortedRosterData.map((r, i) => (
                       <tr key={i}>
-                        {ROSTER_HEADERS.map((_, idx) => (
-                          <td key={idx} style={{ whiteSpace: 'nowrap' }}>
-                            {r[idx] || '—'}
-                          </td>
-                        ))}
+                        {ROSTER_HEADERS.map((_, idx) => {
+                          let val = r[idx] || '—';
+                          let content = val;
+                          if (idx === 6 && val !== '—') content = <span className="tag tag-gold">{val}</span>;
+                          else if (idx === 8 && val !== '—') content = <span className="tag tag-green">{val}</span>;
+                          else if (idx === 10 && val !== '—') content = <span className={`tag ${val.toUpperCase() === 'MALE' ? 'tag-blue' : 'tag-red'}`}>{val}</span>;
+                          else if (idx === 2) content = <strong>{val}</strong>;
+                          
+                          return (
+                            <td key={idx} style={{ whiteSpace: 'nowrap' }}>
+                              {content}
+                            </td>
+                          );
+                        })}
                       </tr>
                     ))}
                     {sortedRosterData.length === 0 && (

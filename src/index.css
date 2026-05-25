@@ -1190,6 +1190,8 @@ textarea.glass-input {
 /* Data table */
 .data-table-wrap { 
   overflow-x: auto; 
+  overflow-y: auto;
+  max-height: 500px;
   padding: 0; 
   border-radius: 16px; 
   border: 1px solid var(--border-strong); 
@@ -1198,23 +1200,46 @@ textarea.glass-input {
 
 .data-table { 
   width: 100%; 
-  border-collapse: collapse; 
+  border-collapse: separate; 
+  border-spacing: 0;
   text-align: left; 
 }
 
 .data-table th {
+  position: sticky;
+  top: 0;
+  z-index: 10;
   padding: 14px 20px; 
   font-size: 11px; 
   font-weight: 700; 
   color: var(--text-dim);
-  background: rgba(26, 48, 30, 0.02); 
+  background: #fdfefd;
   border-bottom: 1px solid var(--border-strong); 
   text-transform: uppercase; 
   letter-spacing: 0.5px;
+  transition: all 0.2s;
 }
 
 [data-theme="dark"] .data-table th { 
-  background: rgba(255, 255, 255, 0.02); 
+  background: #0d140e; 
+}
+
+.data-table th:hover {
+  background: rgba(26, 48, 30, 0.05);
+}
+
+[data-theme="dark"] .data-table th:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.data-table th.sorted-col {
+  background: rgba(26, 48, 30, 0.08);
+  color: var(--accent-base);
+}
+
+[data-theme="dark"] .data-table th.sorted-col {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent-light);
 }
 
 .data-table td { 
@@ -1222,18 +1247,27 @@ textarea.glass-input {
   font-size: 13px; 
   border-bottom: 1px solid var(--border-strong); 
   color: var(--text); 
+  transition: background 0.15s;
 }
 
 .data-table tr:last-child td { 
   border-bottom: none; 
 }
 
+.data-table tr:nth-child(even) td {
+  background: rgba(26, 48, 30, 0.01);
+}
+
+[data-theme="dark"] .data-table tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.015);
+}
+
 .data-table tr:hover td { 
-  background: rgba(26, 48, 30, 0.01); 
+  background: rgba(26, 48, 30, 0.04) !important; 
 }
 
 [data-theme="dark"] .data-table tr:hover td { 
-  background: rgba(255, 255, 255, 0.01); 
+  background: rgba(255, 255, 255, 0.06) !important; 
 }
 
 /* ── SCROLLBAR ── */
