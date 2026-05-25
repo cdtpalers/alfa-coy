@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import AnnCard from '../components/AnnCard';
 
 const COUNCILS_META = {
@@ -20,6 +20,38 @@ export default function CouncilPage({ councilId, sheetData, events }) {
   
   const [rosterData, setRosterData] = useState([]);
   const [loadingRoster, setLoadingRoster] = useState(false);
+  const [sortConfig, setSortConfig] = useState({ key: 8, direction: 'asc' }); // Index 8 is Class
+
+  const ROSTER_HEADERS = [
+    'Seq', 'ID', 'Last Name', 'First Name', 'Middle Name', 'Extension', 'Branch', 'AFPSN', 'Class', 'Company', 
+    'Sex', 'Birthdate', 'Age', 'Height', 'Weight', 'Contact Number', 'Blood Type', 'Religion', 'Tribe', 
+    'Educational Attainment', 'Degree/Course', 'Home Address', 'Region', 'Honors', 'College Name', 
+    'High School Name', 'Special Skills', 'Extracurricular', 'Affiliation', 'Emergency Contact Name', 'Relationship', 
+    'Emergency Address', 'Emergency Contact No', 'Father Name', 'Father Occupation', 'Father Contact', 
+    'Mother Name', 'Mother Occupation', 'Mother Contact', 'Living w/ Parents', 'Sibling in AFP', 'Family Income'
+  ];
+
+  const handleSort = (keyIndex) => {
+    let direction = 'asc';
+    if (sortConfig.key === keyIndex && sortConfig.direction === 'asc') {
+      direction = 'desc';
+    }
+    setSortConfig({ key: keyIndex, direction });
+  };
+
+  const sortedRosterData = useMemo(() => {
+    let sortableItems = [...rosterData];
+    if (sortConfig !== null) {
+      sortableItems.sort((a, b) => {
+        const aVal = a[sortConfig.key] ? a[sortConfig.key].toString().toLowerCase() : '';
+        const bVal = b[sortConfig.key] ? b[sortConfig.key].toString().toLowerCase() : '';
+        if (aVal < bVal) return sortConfig.direction === 'asc' ? -1 : 1;
+        if (aVal > bVal) return sortConfig.direction === 'asc' ? 1 : -1;
+        return 0;
+      });
+    }
+    return sortableItems;
+  }, [rosterData, sortConfig]);
 
   useEffect(() => {
     if (councilId === 's1') {
@@ -171,34 +203,31 @@ export default function CouncilPage({ councilId, sheetData, events }) {
                 <table className="data-table">
                   <thead>
                     <tr>
-                      <th>No.</th>
-                      <th>Last Name</th>
-                      <th>First Name</th>
-                      <th>MI</th>
-                      <th>Branch</th>
-                      <th>AFPSN</th>
-                      <th>Class</th>
-                      <th>Sex</th>
-                      <th>Contact</th>
+                      {ROSTER_HEADERS.map((header, idx) => (
+                        <th 
+                          key={idx} 
+                          onClick={() => handleSort(idx)}
+                          style={{ cursor: 'pointer', whiteSpace: 'nowrap' }}
+                        >
+                          {header}
+                          {sortConfig.key === idx ? (sortConfig.direction === 'asc' ? ' 🔼' : ' 🔽') : ''}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody>
-                    {rosterData.map((r, i) => (
+                    {sortedRosterData.map((r, i) => (
                       <tr key={i}>
-                        <td>{i + 1}</td>
-                        <td style={{fontWeight: 'bold'}}>{r[2]}</td>
-                        <td>{r[3]}</td>
-                        <td>{r[4] ? r[4][0] + '.' : ''}</td>
-                        <td>{r[6]}</td>
-                        <td>{r[7]}</td>
-                        <td>{r[8]}</td>
-                        <td>{r[10]}</td>
-                        <td>{r[15]}</td>
+                        {ROSTER_HEADERS.map((_, idx) => (
+                          <td key={idx} style={{ whiteSpace: 'nowrap' }}>
+                            {r[idx] || '—'}
+                          </td>
+                        ))}
                       </tr>
                     ))}
-                    {rosterData.length === 0 && (
+                    {sortedRosterData.length === 0 && (
                       <tr>
-                        <td colSpan="9" style={{textAlign: 'center', padding: '30px'}}>No roster data found</td>
+                        <td colSpan={ROSTER_HEADERS.length} style={{textAlign: 'center', padding: '30px'}}>No roster data found</td>
                       </tr>
                     )}
                   </tbody>
