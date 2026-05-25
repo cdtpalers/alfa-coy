@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import AnnCard from '../components/AnnCard';
 
 const COUNCILS_META = {
@@ -17,6 +17,38 @@ const COUNCILS_META = {
 
 export default function CouncilPage({ councilId, sheetData, events }) {
   const c = COUNCILS_META[councilId];
+  
+  const [rosterData, setRosterData] = useState([]);
+  const [loadingRoster, setLoadingRoster] = useState(false);
+
+  useEffect(() => {
+    if (councilId === 's1') {
+      setLoadingRoster(true);
+      fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4ihWqX4qKR6lD6RQZRSeammaVhSX6qxqws_NBRbyreBs-8bQAaJcy9Itxvf63r2kvWjR3EBBhz9cw/pub?gid=1563546646&single=true&output=csv')
+        .then(res => res.text())
+        .then(text => {
+          const lines = text.trim().split('\n');
+          const parsed = lines.map(line => {
+            const vals = [];
+            let cur='', inQ=false;
+            for (let ch of line) {
+              if (ch==='"' ) { inQ=!inQ; }
+              else if (ch===',' && !inQ) { vals.push(cur.trim()); cur=''; }
+              else cur+=ch;
+            }
+            vals.push(cur.trim());
+            return vals;
+          }).filter(row => row.length > 10);
+          setRosterData(parsed);
+          setLoadingRoster(false);
+        })
+        .catch(err => {
+          console.error('Failed to load roster:', err);
+          setLoadingRoster(false);
+        });
+    }
+  }, [councilId]);
+
   if (!c) return null;
 
   const items = sheetData.filter(d => d.Council && (d.Council.toLowerCase() === councilId || d.Council.toLowerCase() === 'all'));
@@ -116,6 +148,63 @@ export default function CouncilPage({ councilId, sheetData, events }) {
                 </tbody>
               </table>
             </div>
+          </div>
+        </>
+      )}
+
+      {councilId === 's1' && (
+        <>
+          <div className="section-header" style={{marginTop: '40px'}}>
+            <div className="section-title">
+              <div className="section-icon">👥</div>
+              <div><h2>ALFA COMPANY ROSTER</h2><p>LIVE CADET DATASHEET</p></div>
+            </div>
+          </div>
+          <div className="glass" style={{padding: 0, overflow: 'auto', maxHeight: '500px'}}>
+            {loadingRoster ? (
+              <div style={{padding: '40px', textAlign: 'center'}}>
+                <i className="fa fa-spinner fa-spin" style={{marginRight: '10px'}}></i>
+                Loading Roster Data...
+              </div>
+            ) : (
+              <div className="data-table-wrap">
+                <table className="data-table">
+                  <thead>
+                    <tr>
+                      <th>No.</th>
+                      <th>Last Name</th>
+                      <th>First Name</th>
+                      <th>MI</th>
+                      <th>Branch</th>
+                      <th>AFPSN</th>
+                      <th>Class</th>
+                      <th>Sex</th>
+                      <th>Contact</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {rosterData.map((r, i) => (
+                      <tr key={i}>
+                        <td>{i + 1}</td>
+                        <td style={{fontWeight: 'bold'}}>{r[2]}</td>
+                        <td>{r[3]}</td>
+                        <td>{r[4] ? r[4][0] + '.' : ''}</td>
+                        <td>{r[6]}</td>
+                        <td>{r[7]}</td>
+                        <td>{r[8]}</td>
+                        <td>{r[10]}</td>
+                        <td>{r[15]}</td>
+                      </tr>
+                    ))}
+                    {rosterData.length === 0 && (
+                      <tr>
+                        <td colSpan="9" style={{textAlign: 'center', padding: '30px'}}>No roster data found</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            )}
           </div>
         </>
       )}
