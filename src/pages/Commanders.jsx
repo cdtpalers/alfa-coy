@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CO = { name: "CDT CPT 1CL DYLAN CLYVE E LUCERO C-27143 'A' CO CCAFP", rank: 'CO', role: 'Company Commander', icon: <i className="fa-solid fa-medal" style={{color: '#FFD700'}}></i> };
+const CO = { name: "CDT CPT 1CL DYLAN CLYVE E LUCERO C-27143 'A' CO CCAFP", rank: 'CO', role: 'Company Commander', image: '/lucero.jpg', icon: <i className="fa-solid fa-medal" style={{color: '#FFD700'}}></i> };
 const XO = { name: "CDT LT 1CL JOHN REYMAR L ADTOON C-27002 'A' CO CCAFP", rank: 'EX-O', role: 'Executive Officer', icon: <i className="fa-solid fa-star" style={{color: '#FFD700'}}></i> };
 const SGT = { name: "CDT F/SGT 2CL JIAN DALE V ALIVEN C-28018 'A' CO CCAFP", rank: '1SGT', role: 'First Sergeant', icon: <i className="fa-solid fa-shield-halved" style={{color: '#4CAF50'}}></i> };
 
@@ -49,7 +49,11 @@ const HONOR_COMM = [
 const CommanderCard = ({ c, className = '' }) => (
   <div className={`glass commander-card ${className}`}>
     <div className="commander-avatar">
-      {c.icon}
+      {c.image ? (
+        <img src={c.image} alt={c.name} className="commander-img" />
+      ) : (
+        c.icon
+      )}
       <div className="commander-rank">{c.rank}</div>
     </div>
     <h4>{c.name}</h4>

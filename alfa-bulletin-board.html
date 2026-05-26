@@ -587,6 +587,9 @@
     box-shadow:var(--glow);
     position:relative;
   }
+  .commander-avatar img {
+    width:100%; height:100%; border-radius:50%; object-fit:cover;
+  }
   .commander-rank {
     position:absolute; bottom:-4px; right:-4px;
     background:var(--g3); border:1px solid var(--g1);
@@ -964,7 +967,7 @@ const COUNCILS = {
 };
 
 const COMMANDERS = [
-  { name:'Cdt Col. [Name]', rank:'CO', role:'Company Commander', icon:'🎖️' },
+  { name:"CDT CPT 1CL DYLAN CLYVE E LUCERO C-27143 'A' CO CCAFP", rank:'CO', role:'Company Commander', image:'lucero.jpg', icon:'🎖️' },
   { name:'Cdt Lt Col. [Name]', rank:'XO', role:'Executive Officer', icon:'⭐' },
   { name:'Cdt Maj. [Name]', rank:'S1-O', role:'Personnel Officer', icon:'👤' },
   { name:'Cdt Maj. [Name]', rank:'S2-O', role:'Intelligence Officer', icon:'🔍' },
@@ -1190,7 +1193,10 @@ function renderCommanders() {
   const grid = document.getElementById('commandersGrid');
   grid.innerHTML = COMMANDERS.map(c => `
     <div class="glass commander-card">
-      <div class="commander-avatar">${c.icon}<div class="commander-rank">${c.rank}</div></div>
+      <div class="commander-avatar">
+        ${c.image ? `<img src="${c.image}" alt="${c.name}" />` : c.icon}
+        <div class="commander-rank">${c.rank}</div>
+      </div>
       <h4>${c.name}</h4>
       <p>${c.role}</p>
       <div class="role"><span class="tag tag-green">${c.rank}</span></div>

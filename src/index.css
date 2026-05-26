@@ -1091,6 +1091,14 @@ textarea.glass-input {
   font-size: 32px; 
   position: relative; 
   box-shadow: var(--shadow);
+  overflow: visible; /* to allow absolute elements like rank to pop out, but image should be rounded */
+}
+
+.commander-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .commander-rank {
