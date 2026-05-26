@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import SideBar from './components/SideBar';
 import Ticker from './components/Ticker';
 import EventModal from './components/EventModal';
