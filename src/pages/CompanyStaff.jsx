@@ -62,13 +62,13 @@ const CommanderCard = ({ c, className = '' }) => (
   </div>
 );
 
-export default function Commanders() {
+export default function CompanyStaff() {
   return (
     <div className="page active" id="page-commanders">
       <div className="section-header">
         <div className="section-title">
           <div className="section-icon">⭐</div>
-          <div><h2>COMPANY COMMANDERS</h2><p>ALFA COMPANY CHAIN OF COMMAND</p></div>
+          <div><h2>COMPANY STAFF</h2><p>ALFA COMPANY STAFF & PLATOON LEADERS</p></div>
         </div>
       </div>
       

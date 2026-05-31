@@ -57,7 +57,7 @@ export default function SideBar({
               onClick={() => setCurrentPage('commanders')}
             >
               <i className="fa fa-star"></i>
-              <span>Commanders</span>
+              <span>Company Staff</span>
             </button>
             <button 
               className={`sidebar-menu-item ${currentPage === 'calendar' ? 'active' : ''}`} 

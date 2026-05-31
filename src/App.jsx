@@ -5,7 +5,7 @@ import EventModal from './components/EventModal';
 import AnnouncementModal from './components/AnnouncementModal';
 import Home from './pages/Home';
 import CouncilPage from './pages/CouncilPage';
-import Commanders from './pages/Commanders';
+import CompanyStaff from './pages/CompanyStaff';
 import Calendar from './pages/Calendar';
 import RosterPage from './pages/RosterPage';
 import LoginModal from './components/LoginModal';
@@ -170,7 +170,7 @@ export default function App() {
       );
     }
     if (currentPage === 'commanders') {
-      return <Commanders />;
+      return <CompanyStaff />;
     }
     if (currentPage === 'calendar') {
       return <Calendar events={events} openEventModal={() => setIsEventModalOpen(true)} isAdmin={isAdmin} />;

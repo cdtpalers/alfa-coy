@@ -54,7 +54,7 @@ export default function TopBar({
               className={`nav-tab ${currentPage === 'commanders' ? 'active' : ''}`} 
               onClick={() => setCurrentPage('commanders')}
             >
-              ⭐ COMMANDERS
+              ⭐ COMPANY STAFF
             </button>
             <button 
               className={`nav-tab ${currentPage === 'calendar' ? 'active' : ''}`} 
