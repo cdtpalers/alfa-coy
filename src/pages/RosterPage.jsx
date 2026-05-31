@@ -80,7 +80,7 @@ export default function RosterPage() {
         </div>
       </div>
 
-      <div className="glass" style={{padding: 0, overflow: 'auto', maxHeight: '700px'}}>
+      <div className="glass" style={{padding: 0, overflow: 'auto', height: 'calc(100vh - 260px)'}}>
         {loadingRoster ? (
           <div style={{padding: '40px', textAlign: 'center'}}>
             <i className="fa fa-spinner fa-spin" style={{marginRight: '10px'}}></i>
