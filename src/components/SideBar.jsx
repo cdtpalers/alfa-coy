@@ -66,6 +66,13 @@ export default function SideBar({
               <i className="fa fa-calendar-days"></i>
               <span>Event Calendar</span>
             </button>
+            <button 
+              className={`sidebar-menu-item ${currentPage === 'roster' ? 'active' : ''}`} 
+              onClick={() => setCurrentPage('roster')}
+            >
+              <i className="fa fa-address-book"></i>
+              <span>Company Roster</span>
+            </button>
           </nav>
         </div>
 

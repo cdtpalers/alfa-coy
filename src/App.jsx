@@ -7,6 +7,7 @@ import Home from './pages/Home';
 import CouncilPage from './pages/CouncilPage';
 import Commanders from './pages/Commanders';
 import Calendar from './pages/Calendar';
+import RosterPage from './pages/RosterPage';
 import LoginModal from './components/LoginModal';
 
 const DEMO_DATA = [
@@ -173,6 +174,9 @@ export default function App() {
     }
     if (currentPage === 'calendar') {
       return <Calendar events={events} openEventModal={() => setIsEventModalOpen(true)} isAdmin={isAdmin} />;
+    }
+    if (currentPage === 'roster') {
+      return <RosterPage />;
     }
     return <CouncilPage councilId={currentPage} sheetData={combinedData} events={events} />;
   };
