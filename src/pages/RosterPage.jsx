@@ -80,14 +80,14 @@ export default function RosterPage() {
         </div>
       </div>
 
-      <div className="glass" style={{padding: 0, overflow: 'auto', height: 'calc(100vh - 260px)'}}>
+      <div className="glass" style={{padding: 0, overflow: 'hidden', height: 'calc(100vh - 260px)', display: 'flex', flexDirection: 'column'}}>
         {loadingRoster ? (
           <div style={{padding: '40px', textAlign: 'center'}}>
             <i className="fa fa-spinner fa-spin" style={{marginRight: '10px'}}></i>
             Loading Roster Data...
           </div>
         ) : (
-          <div className="data-table-wrap">
+          <div className="data-table-wrap" style={{ flex: 1, maxHeight: 'none', borderRadius: 0, border: 'none' }}>
             <table className="data-table">
               <thead>
                 <tr>
