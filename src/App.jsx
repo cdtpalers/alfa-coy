@@ -41,7 +41,7 @@ function parseCSV(text) {
 }
 
 export default function App() {
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState('light');
   const [currentPage, setCurrentPage] = useState('home');
   const [sheetData, setSheetData] = useState(DEMO_DATA);
   const [events, setEvents] = useState(INITIAL_EVENTS);
