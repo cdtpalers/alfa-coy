@@ -56,7 +56,7 @@ export default function CouncilPage({ councilId, sheetData, events }) {
   useEffect(() => {
     if (councilId === 's1') {
       setLoadingRoster(true);
-      fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQ4ihWqX4qKR6lD6RQZRSeammaVhSX6qxqws_NBRbyreBs-8bQAaJcy9Itxvf63r2kvWjR3EBBhz9cw/pub?gid=1563546646&single=true&output=csv')
+      fetch('/roster.csv')
         .then(res => res.text())
         .then(text => {
           const lines = text.trim().split('\n');
@@ -228,7 +228,16 @@ export default function CouncilPage({ councilId, sheetData, events }) {
                           let val = r[idx] || '—';
                           let content = val;
                           if (idx === 6 && val !== '—') content = <span className="tag tag-gold">{val}</span>;
-                          else if (idx === 8 && val !== '—') content = <span className="tag tag-green">{val}</span>;
+                          else if (idx === 8 && val !== '—') {
+                            let classColor = 'tag-green';
+                            if (val === '2024') classColor = 'tag-gold';
+                            else if (val === '2025') classColor = 'tag-blue';
+                            else if (val === '2026') classColor = 'tag-green';
+                            else if (val === '2027') classColor = 'tag-red';
+                            else if (val === '2028') classColor = 'tag-purple';
+                            else if (val === '2029') classColor = 'tag-orange';
+                            content = <span className={`tag ${classColor}`}>{val}</span>;
+                          }
                           else if (idx === 10 && val !== '—') content = <span className={`tag ${val.toUpperCase() === 'MALE' ? 'tag-blue' : 'tag-red'}`}>{val}</span>;
                           else if (idx === 2) content = <strong>{val}</strong>;
                           

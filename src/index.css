@@ -719,11 +719,15 @@ body {
 .tag-green { background: #eef7f0; color: #1e6c38; border: 1px solid #d4ebda; }
 .tag-gold { background: #fdfae7; color: #b18b02; border: 1px solid #f6ecb9; }
 .tag-red { background: #fdf2f2; color: #b92525; border: 1px solid #f6dbdb; }
+.tag-purple { background: #f7efff; color: #7632a8; border: 1px solid #eed6ff; }
+.tag-orange { background: #fff4eb; color: #d66b11; border: 1px solid #ffdec2; }
 
 [data-theme="dark"] .tag-blue { background: rgba(255,255,255,0.05); color: var(--accent-light); border-color: rgba(255,255,255,0.1); }
 [data-theme="dark"] .tag-green { background: rgba(30,108,56,0.15); color: #5ad37b; border-color: rgba(30,108,56,0.3); }
 [data-theme="dark"] .tag-gold { background: rgba(177,139,2,0.15); color: #fad154; border-color: rgba(177,139,2,0.3); }
 [data-theme="dark"] .tag-red { background: rgba(185,37,37,0.15); color: #fa7b7b; border-color: rgba(185,37,37,0.3); }
+[data-theme="dark"] .tag-purple { background: rgba(118,50,168,0.15); color: #d094f0; border-color: rgba(118,50,168,0.3); }
+[data-theme="dark"] .tag-orange { background: rgba(214,107,17,0.15); color: #faa15a; border-color: rgba(214,107,17,0.3); }
 
 .ann-date { 
   font-size: 11px; 
