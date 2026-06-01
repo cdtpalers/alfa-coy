@@ -5,7 +5,7 @@ const XO = { name: "CDT LT 1CL JOHN REYMAR L ADTOON C-27002 'A' CO CCAFP", rank:
 const SGT = { name: "CDT F/SGT 2CL JIAN DALE V ALIVEN C-28018 'A' CO CCAFP", rank: '1SGT', role: 'First Sergeant', icon: <i className="fa-solid fa-shield-halved" style={{color: '#4CAF50'}}></i> };
 
 const STAFF = [
-  { name: "CDT LT 1CL MA. LYN L BERTE C-26056 'A' CO CCAFP", rank: 'S1', role: 'Personnel Officer', icon: <i className="fa-solid fa-user"></i> },
+  { name: "CDT LT 1CL MA. LYN L BERTE C-26056 'A' CO CCAFP", rank: 'S1', role: 'Personnel Officer', image: '/berte.jpg', icon: <i className="fa-solid fa-user"></i> },
   { name: "CDT LT 1CL CARLOS JOSE H REONAL C-27207 'A' CO CCAFP", rank: 'S2', role: 'Intelligence Officer', icon: <i className="fa-solid fa-magnifying-glass"></i> },
   { name: "CDT LT 1CL JOHN RAILEY C COCOY C-27056 'A' CO CCAFP", rank: 'S3', role: 'Operations Officer', icon: <i className="fa-solid fa-gear"></i> },
   { name: "CDT LT 1CL LIAM CARLOS M TORRES C-26332 'A' CO CCAFP", rank: 'S4', role: 'Logistics Officer', icon: <i className="fa-solid fa-box"></i> },
