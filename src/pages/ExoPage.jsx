@@ -122,7 +122,13 @@ export default function ExoPage() {
               </tr>
             </thead>
             <tbody>
-              {punishments.map((p, idx) => (
+              {punishments.map((p, idx) => {
+                const total = parseFloat(p.totalHours) || 0;
+                const rem = parseFloat(p.remainingHours) || 0;
+                const served = total - rem;
+                const progress = total > 0 ? Math.max(0, Math.min(100, (served / total) * 100)) : 0;
+                
+                return (
                 <tr key={idx} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }}>
                   <td style={{ padding: '12px 8px' }}>{p.no}</td>
                   <td style={{ padding: '12px 8px' }}>
@@ -147,13 +153,25 @@ export default function ExoPage() {
                     )}
                   </td>
                   <td style={{ padding: '12px 8px' }}>
-                    {p.remainingHours} / {p.totalHours} hr
+                    {total > 0 ? (
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', width: '100px' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--text-muted)' }}>
+                          <span>{rem}h rem</span>
+                          <span>{total}h</span>
+                        </div>
+                        <div style={{ height: '6px', background: 'var(--border-strong)', borderRadius: '3px', overflow: 'hidden' }}>
+                          <div style={{ height: '100%', width: `${progress}%`, background: progress === 100 ? 'var(--success)' : 'var(--accent-base)', borderRadius: '3px', transition: 'width 0.3s' }}></div>
+                        </div>
+                      </div>
+                    ) : (
+                      <span style={{ color: 'var(--text-dim)' }}>-</span>
+                    )}
                   </td>
                   <td style={{ padding: '12px 8px', fontSize: '12px' }}>
                     {p.remarks}
                   </td>
                 </tr>
-              ))}
+              )})}
             </tbody>
           </table>
         )}
