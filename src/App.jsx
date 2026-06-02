@@ -180,19 +180,8 @@ export default function App() {
     if (currentPage === 'calendar') {
       return <Calendar events={events} openEventModal={() => setIsEventModalOpen(true)} isAdmin={isAdmin} />;
     }
-    if (currentPage === 'rack1cl') {
-      return <SmartphoneRack 
-        csvUrl="https://docs.google.com/spreadsheets/d/e/2PACX-1vQysEcov38gZR35RvnqLAGnVSNLLOYk_gnXHP9pkHOb5D5Fk-eUaOujsSrPzpdUA8IlQ5Vx6K5V0qdD/pub?gid=0&single=true&output=csv"
-        title="1CL Smartphone Rack"
-        classYear="1CL"
-      />;
-    }
-    if (currentPage === 'rack2cl') {
-      return <SmartphoneRack 
-        csvUrl="https://docs.google.com/spreadsheets/d/e/2PACX-1vQysEcov38gZR35RvnqLAGnVSNLLOYk_gnXHP9pkHOb5D5Fk-eUaOujsSrPzpdUA8IlQ5Vx6K5V0qdD/pub?gid=1510726778&single=true&output=csv"
-        title="2CL Smartphone Rack"
-        classYear="2CL"
-      />;
+    if (currentPage === 'rack') {
+      return <SmartphoneRack />;
     }
     if (currentPage === 'roster') {
       return <RosterPage />;

@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './SmartphoneRack.css';
 
-export default function SmartphoneRack({ 
-  csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQysEcov38gZR35RvnqLAGnVSNLLOYk_gnXHP9pkHOb5D5Fk-eUaOujsSrPzpdUA8IlQ5Vx6K5V0qdD/pub?gid=0&single=true&output=csv',
-  title = 'Simulated Smartphone Rack',
-  classYear = '1CL'
-}) {
+const URL_1CL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQysEcov38gZR35RvnqLAGnVSNLLOYk_gnXHP9pkHOb5D5Fk-eUaOujsSrPzpdUA8IlQ5Vx6K5V0qdD/pub?gid=0&single=true&output=csv';
+const URL_2CL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQysEcov38gZR35RvnqLAGnVSNLLOYk_gnXHP9pkHOb5D5Fk-eUaOujsSrPzpdUA8IlQ5Vx6K5V0qdD/pub?gid=1510726778&single=true&output=csv';
+
+export default function SmartphoneRack() {
+  const [activeTab, setActiveTab] = useState('1CL');
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -15,14 +15,16 @@ export default function SmartphoneRack({
     // Refresh data every 30 seconds
     const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
-  }, [csvUrl]);
+  }, [activeTab]);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
+      const csvUrl = activeTab === '1CL' ? URL_1CL : URL_2CL;
       const res = await fetch(csvUrl);
       if (!res.ok) throw new Error('Failed to fetch data');
       const text = await res.text();
-      const parsedSlots = parseSmartphoneCSV(text);
+      const parsedSlots = parseSmartphoneCSV(text, activeTab);
       setSlots(parsedSlots);
       setError(null);
     } catch (err) {
@@ -33,7 +35,7 @@ export default function SmartphoneRack({
     }
   };
 
-  const parseSmartphoneCSV = (text) => {
+  const parseSmartphoneCSV = (text, classYear) => {
     const lines = text.trim().split('\n');
     if (lines.length < 2) return [];
 
@@ -130,8 +132,23 @@ export default function SmartphoneRack({
   return (
     <div className="smartphone-rack-container fade-in">
       <div className="rack-header">
-        <h2>{title}</h2>
+        <h2>Simulated Smartphone Rack</h2>
         <p>Live status of cadet smartphones. Updates automatically every 30 seconds.</p>
+        
+        <div className="rack-tabs" style={{ display: 'flex', gap: '10px', marginTop: '16px', marginBottom: '16px' }}>
+          <button 
+            className={`btn ${activeTab === '1CL' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setActiveTab('1CL')}
+          >
+            1CL Cadets
+          </button>
+          <button 
+            className={`btn ${activeTab === '2CL' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setActiveTab('2CL')}
+          >
+            2CL Cadets
+          </button>
+        </div>
         
         <div className="rack-stats">
           <div className="stat-pill">
