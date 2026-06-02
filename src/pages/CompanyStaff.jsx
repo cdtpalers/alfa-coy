@@ -105,7 +105,7 @@ export default function CompanyStaff() {
 
         <div className="tree-line"></div>
 
-        <h3 className="tier-title" style={{ width: '100%', marginTop: 0 }}>CADET CORPS POLICE BULLETIN (CCPB)</h3>
+        <h3 className="tier-title" style={{ width: '100%', marginTop: 0 }}>CADET CONDUCT POLICY BOARD (CCPB)</h3>
         <div className="commanders-grid" style={{ width: '100%' }}>
           {CCPB.map((c, i) => (
             <CommanderCard c={c} key={i} />
