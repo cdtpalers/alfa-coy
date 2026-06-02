@@ -160,7 +160,7 @@ export default function ExoPage() {
                           <span>{total}h</span>
                         </div>
                         <div style={{ height: '6px', background: 'var(--border-strong)', borderRadius: '3px', overflow: 'hidden' }}>
-                          <div style={{ height: '100%', width: `${progress}%`, background: progress === 100 ? 'var(--success)' : 'var(--accent-base)', borderRadius: '3px', transition: 'width 0.3s' }}></div>
+                          <div style={{ height: '100%', width: `${progress}%`, background: 'linear-gradient(90deg, #81FBB8 0%, #28C76F 100%)', borderRadius: '3px', transition: 'width 0.3s' }}></div>
                         </div>
                       </div>
                     ) : (
