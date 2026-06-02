@@ -47,18 +47,23 @@ const HONOR_COMM = [
 ];
 
 const CommanderCard = ({ c, className = '' }) => (
-  <div className={`glass commander-card ${className}`}>
-    <div className="commander-avatar">
-      {c.image ? (
-        <img src={c.image} alt={c.name} className="commander-img" />
-      ) : (
-        c.icon
-      )}
-      <div className="commander-rank">{c.rank}</div>
+  <div className={`glass commander-card ${className} ${c.image ? 'has-bg-image' : ''}`}>
+    {c.image ? (
+      <>
+        <img src={c.image} alt={c.name} className="commander-bg-img" />
+        <div className="commander-gradient"></div>
+      </>
+    ) : (
+      <div className="commander-avatar">
+        {c.icon}
+        <div className="commander-rank">{c.rank}</div>
+      </div>
+    )}
+    <div className="commander-content">
+      <h4>{c.name}</h4>
+      <p>{c.role}</p>
+      <div className="role"><span className="tag tag-green">{c.rank}</span></div>
     </div>
-    <h4>{c.name}</h4>
-    <p>{c.role}</p>
-    <div className="role"><span className="tag tag-green">{c.rank}</span></div>
   </div>
 );
 
