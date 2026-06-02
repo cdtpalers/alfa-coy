@@ -10,6 +10,7 @@ import Calendar from './pages/Calendar';
 import RosterPage from './pages/RosterPage';
 import ExoPage from './pages/ExoPage';
 import LoginModal from './components/LoginModal';
+import SmartphoneRack from './pages/SmartphoneRack';
 
 const DEMO_DATA = [
   { Title:'Welcome to ALFA Co. Bulletin Board', Body:'This is the official digital bulletin board of ALFA Company, CCAFP. All cadets are reminded to check this board regularly for updates, announcements, and schedules.', Date:'2025-04-26', Tag:'info', Council:'all', Priority:'high' },
@@ -178,6 +179,9 @@ export default function App() {
     }
     if (currentPage === 'calendar') {
       return <Calendar events={events} openEventModal={() => setIsEventModalOpen(true)} isAdmin={isAdmin} />;
+    }
+    if (currentPage === 'rack') {
+      return <SmartphoneRack />;
     }
     if (currentPage === 'roster') {
       return <RosterPage />;

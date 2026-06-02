@@ -1,0 +1,160 @@
+.smartphone-rack-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.rack-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.rack-header h2 {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  color: var(--text-color);
+}
+
+.rack-header p {
+  color: var(--text-color-muted);
+}
+
+.rack-stats {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 16px;
+}
+
+.stat-pill {
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+.stat-pill.success i {
+  color: #10b981;
+}
+
+.stat-pill.danger i {
+  color: #ef4444;
+}
+
+.rack-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.rack-slot {
+  background: var(--surface-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.rack-slot:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  border-color: var(--accent-color);
+}
+
+.rack-slot.status-in {
+  background: rgba(16, 185, 129, 0.05);
+  border-color: rgba(16, 185, 129, 0.3);
+}
+
+.rack-slot.status-out {
+  background: rgba(239, 68, 68, 0.05);
+  border-color: rgba(239, 68, 68, 0.3);
+}
+
+.slot-number {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-color-muted);
+  background: var(--border-color);
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.slot-icon {
+  font-size: 2rem;
+  margin: 16px 0 12px;
+  color: var(--text-color-muted);
+  transition: color 0.3s ease;
+}
+
+.rack-slot.status-in .slot-icon {
+  color: #10b981;
+}
+
+.rack-slot.status-out .slot-icon {
+  color: #ef4444;
+}
+
+.slot-info h4 {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.slot-info p {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-color-muted);
+}
+
+.slot-status-badge {
+  margin-top: 12px;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.rack-slot.status-in .slot-status-badge {
+  background: rgba(16, 185, 129, 0.1);
+  color: #10b981;
+}
+
+.rack-slot.status-out .slot-status-badge {
+  background: rgba(239, 68, 68, 0.1);
+  color: #ef4444;
+}
+
+/* Loading/Error states */
+.rack-loading, .rack-error {
+  text-align: center;
+  padding: 48px;
+  color: var(--text-color-muted);
+}
+
+.rack-error {
+  color: #ef4444;
+}
+
+.rack-error i {
+  font-size: 3rem;
+  margin-bottom: 16px;
+}
