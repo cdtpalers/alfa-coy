@@ -8,6 +8,7 @@ import CouncilPage from './pages/CouncilPage';
 import CompanyStaff from './pages/CompanyStaff';
 import Calendar from './pages/Calendar';
 import RosterPage from './pages/RosterPage';
+import ExoPage from './pages/ExoPage';
 import LoginModal from './components/LoginModal';
 
 const DEMO_DATA = [
@@ -171,6 +172,9 @@ export default function App() {
     }
     if (currentPage === 'commanders') {
       return <CompanyStaff />;
+    }
+    if (currentPage === 'exo') {
+      return <ExoPage />;
     }
     if (currentPage === 'calendar') {
       return <Calendar events={events} openEventModal={() => setIsEventModalOpen(true)} isAdmin={isAdmin} />;

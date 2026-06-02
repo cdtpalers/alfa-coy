@@ -73,6 +73,13 @@ export default function SideBar({
               <i className="fa fa-address-book"></i>
               <span>Company Roster</span>
             </button>
+            <button 
+              className={`sidebar-menu-item ${currentPage === 'exo' ? 'active' : ''}`} 
+              onClick={() => setCurrentPage('exo')}
+            >
+              <i className="fa fa-clipboard-list"></i>
+              <span>EXO Punishment List</span>
+            </button>
           </nav>
         </div>
 
