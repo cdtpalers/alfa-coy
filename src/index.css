@@ -1034,15 +1034,53 @@ textarea.glass-input {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  align-items: center; /* Center everything */
+}
+
+/* ── ORG CHART LINES ── */
+.tree-line {
+  width: 2px;
+  height: 30px;
+  background: var(--border-strong);
+  margin: 0 auto;
+  position: relative;
+  z-index: 0;
+}
+
+.tree-horizontal-branch {
+  width: 320px; /* distance between XO and 1SGT centers */
+  height: 2px;
+  background: var(--border-strong);
+  margin: 0 auto;
+  position: relative;
+}
+
+.tree-horizontal-branch::before,
+.tree-horizontal-branch::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  width: 2px;
+  height: 20px;
+  background: var(--border-strong);
+}
+
+.tree-horizontal-branch::before {
+  left: 0;
+}
+
+.tree-horizontal-branch::after {
+  right: 0;
 }
 
 .hierarchy-tier {
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: flex-start;
   gap: 20px;
   flex-wrap: wrap;
   margin-bottom: 10px;
+  width: 100%;
 }
 
 .co-card {

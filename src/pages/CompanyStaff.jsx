@@ -9,8 +9,8 @@ const STAFF = [
   { name: "CDT LT 1CL CARLOS JOSE H REONAL C-27207 'A' CO CCAFP", rank: 'S2', role: 'Intelligence Officer', image: '/reonal.jpg', icon: <i className="fa-solid fa-magnifying-glass"></i> },
   { name: "CDT LT 1CL JOHN RAILEY C COCOY C-27056 'A' CO CCAFP", rank: 'S3', role: 'Operations Officer', image: '/cocoy.jpg', icon: <i className="fa-solid fa-gear"></i> },
   { name: "CDT LT 1CL LIAM CARLOS M TORRES C-26332 'A' CO CCAFP", rank: 'S4', role: 'Logistics Officer', image: '/torres.jpg', icon: <i className="fa-solid fa-box"></i> },
-  { name: "CDT LT 1CL ROCELLE N DE MESA C-27075 'A' CO CCAFP", rank: 'S5', role: 'Plans & Programs Officer', icon: <i className="fa-solid fa-chart-column"></i> },
-  { name: "CDT LT 1CL REGINA T ATIWEN C-26027 'A' CO CCAFP", rank: 'S6', role: 'Signal Officer', icon: <i className="fa-solid fa-satellite-dish"></i> },
+  { name: "CDT LT 1CL ROCELLE N DE MESA C-27075 'A' CO CCAFP", rank: 'S5', role: 'Plans & Programs Officer', image: '/demesa.jpg', icon: <i className="fa-solid fa-chart-column"></i> },
+  { name: "CDT LT 1CL REGINA T ATIWEN C-26027 'A' CO CCAFP", rank: 'S6', role: 'Signal Officer', image: '/atiwen.jpg', icon: <i className="fa-solid fa-satellite-dish"></i> },
   { name: "CDT LT 1CL JEANN AVERY KURT M GUPAAL C-27121 'A' CO CCAFP", rank: 'S7', role: 'Civil-Military Officer', icon: <i className="fa-solid fa-handshake"></i> },
   { name: "CDT LT 1CL BARON JOSEPH A. CASTRO C-27048 'A' CO CCAFP", rank: 'S8', role: 'Education & Training Officer', icon: <i className="fa-solid fa-graduation-cap"></i> },
   { name: "CDT LT 1CL ANGELICA D BACCAY C-27019 'A' CO CCAFP", rank: 'S10', role: 'Finance Officer', icon: <i className="fa-solid fa-coins"></i> },
@@ -73,38 +73,49 @@ export default function CompanyStaff() {
       </div>
       
       <div className="hierarchy-container">
-        <div className="hierarchy-tier">
+        <div className="hierarchy-tier" style={{ marginBottom: 0 }}>
           <CommanderCard c={CO} className="co-card glow-anim" />
         </div>
         
-        <div className="hierarchy-tier">
+        <div className="tree-line"></div>
+        <div className="tree-horizontal-branch"></div>
+        
+        <div className="hierarchy-tier" style={{ marginTop: '20px' }}>
           <CommanderCard c={XO} className="xo-card" />
           <CommanderCard c={SGT} className="sgt-card" />
         </div>
         
-        <h3 className="tier-title">COMPANY STAFF OFFICERS</h3>
-        <div className="commanders-grid">
+        <div className="tree-line"></div>
+        
+        <h3 className="tier-title" style={{ width: '100%', marginTop: 0 }}>COMPANY STAFF OFFICERS</h3>
+        <div className="commanders-grid" style={{ width: '100%' }}>
           {STAFF.map((c, i) => (
             <CommanderCard c={c} key={i} />
           ))}
         </div>
         
-        <h3 className="tier-title">PLATOON LEADERS</h3>
-        <div className="commanders-grid">
+        <div className="tree-line"></div>
+        
+        <h3 className="tier-title" style={{ width: '100%', marginTop: 0 }}>PLATOON LEADERS</h3>
+        <div className="commanders-grid" style={{ width: '100%' }}>
           {PLATOONS.map((c, i) => (
             <CommanderCard c={c} key={i} />
           ))}
         </div>
 
-        <h3 className="tier-title">CADET CORPS POLICE BULLETIN (CCPB)</h3>
-        <div className="commanders-grid">
+        <div className="tree-line"></div>
+
+        <h3 className="tier-title" style={{ width: '100%', marginTop: 0 }}>CADET CORPS POLICE BULLETIN (CCPB)</h3>
+        <div className="commanders-grid" style={{ width: '100%' }}>
           {CCPB.map((c, i) => (
             <CommanderCard c={c} key={i} />
           ))}
         </div>
 
-        <h3 className="tier-title">HONOR COMMITTEE</h3>
-        <div className="commanders-grid">
+        <div className="tree-line"></div>
+
+        <h3 className="tier-title" style={{ width: '100%', marginTop: 0 }}>HONOR COMMITTEE</h3>
+        <div className="commanders-grid" style={{ width: '100%' }}>
           {HONOR_COMM.map((c, i) => (
             <CommanderCard c={c} key={i} />
           ))}
