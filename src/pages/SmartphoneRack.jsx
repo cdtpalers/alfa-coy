@@ -76,7 +76,7 @@ export default function SmartphoneRack() {
       const models = (cols[6] || '').split(',').map(s => s.trim());
       const colors = (cols[8] || '').split(',').map(s => s.trim());
       const rackNumbers = (cols[10] || '').split('/').map(s => s.trim());
-      const status = (cols[13] || '').toUpperCase() === 'IN';
+      const status = (cols[13] || '').toUpperCase().includes('IN');
 
       // Handle multiple phones per cadet
       rackNumbers.forEach((rackNum, index) => {
