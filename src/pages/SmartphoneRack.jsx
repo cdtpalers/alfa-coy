@@ -76,6 +76,7 @@ export default function SmartphoneRack() {
       const models = (cols[6] || '').split(',').map(s => s.trim());
       const colors = (cols[8] || '').split(',').map(s => s.trim());
       const rackNumbers = (cols[10] || '').split('/').map(s => s.trim());
+      const remarks = cols[12] || '';
       const status = (cols[13] || '').toUpperCase().includes('IN');
 
       // Handle multiple phones per cadet
@@ -88,6 +89,7 @@ export default function SmartphoneRack() {
           brand: brands[index] || brands[0] || 'Unknown',
           model: models[index] || models[0] || 'Unknown',
           color: colors[index] || colors[0] || '',
+          remarks: remarks,
           status: status
         });
       });
@@ -156,6 +158,7 @@ export default function SmartphoneRack() {
             <div className="slot-info">
               <h4>{slot.name}</h4>
               <p>{slot.brand} {slot.model}</p>
+              {slot.remarks && <p style={{ fontSize: '11px', fontStyle: 'italic', marginTop: '6px', color: 'var(--accent-base)', fontWeight: 'bold' }}>{slot.remarks}</p>}
             </div>
             <div className="slot-status-badge">
               {slot.status ? 'IN (SURRENDERED)' : 'NOT IN'}
