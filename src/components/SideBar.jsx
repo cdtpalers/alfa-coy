@@ -67,11 +67,18 @@ export default function SideBar({
               <span>Event Calendar</span>
             </button>
             <button 
-              className={`sidebar-menu-item ${currentPage === 'rack' ? 'active' : ''}`} 
-              onClick={() => setCurrentPage('rack')}
+              className={`sidebar-menu-item ${(currentPage === 'rack' || currentPage === 'rack1cl') ? 'active' : ''}`} 
+              onClick={() => setCurrentPage('rack1cl')}
             >
               <i className="fa fa-mobile-screen"></i>
-              <span>Smartphone Rack</span>
+              <span>1CL Smartphone Rack</span>
+            </button>
+            <button 
+              className={`sidebar-menu-item ${currentPage === 'rack2cl' ? 'active' : ''}`} 
+              onClick={() => setCurrentPage('rack2cl')}
+            >
+              <i className="fa fa-mobile-screen"></i>
+              <span>2CL Smartphone Rack</span>
             </button>
             <button 
               className={`sidebar-menu-item ${currentPage === 'roster' ? 'active' : ''}`} 

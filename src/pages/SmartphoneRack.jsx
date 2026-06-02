@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './SmartphoneRack.css';
 
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQysEcov38gZR35RvnqLAGnVSNLLOYk_gnXHP9pkHOb5D5Fk-eUaOujsSrPzpdUA8IlQ5Vx6K5V0qdD/pub?gid=0&single=true&output=csv';
-
-export default function SmartphoneRack() {
+export default function SmartphoneRack({ 
+  csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQysEcov38gZR35RvnqLAGnVSNLLOYk_gnXHP9pkHOb5D5Fk-eUaOujsSrPzpdUA8IlQ5Vx6K5V0qdD/pub?gid=0&single=true&output=csv',
+  title = 'Simulated Smartphone Rack',
+  classYear = '1CL'
+}) {
   const [slots, setSlots] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -13,11 +15,11 @@ export default function SmartphoneRack() {
     // Refresh data every 30 seconds
     const interval = setInterval(fetchData, 30000);
     return () => clearInterval(interval);
-  }, []);
+  }, [csvUrl]);
 
   const fetchData = async () => {
     try {
-      const res = await fetch(CSV_URL);
+      const res = await fetch(csvUrl);
       if (!res.ok) throw new Error('Failed to fetch data');
       const text = await res.text();
       const parsedSlots = parseSmartphoneCSV(text);
@@ -42,7 +44,7 @@ export default function SmartphoneRack() {
     // Line 3+: Data
     
     let dataStartIndex = 1;
-    if (lines[0].includes('1CL')) {
+    if (lines[0].includes(classYear) || lines[0].includes('CL')) {
       dataStartIndex = 2; // Data starts at index 2
     }
 
@@ -128,7 +130,7 @@ export default function SmartphoneRack() {
   return (
     <div className="smartphone-rack-container fade-in">
       <div className="rack-header">
-        <h2>Simulated Smartphone Rack</h2>
+        <h2>{title}</h2>
         <p>Live status of cadet smartphones. Updates automatically every 30 seconds.</p>
         
         <div className="rack-stats">
