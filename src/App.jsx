@@ -213,11 +213,9 @@ export default function App() {
           </div>
           <div className="panel-header-right">
             <div className="status-pill"><span className="status-dot"></span>LIVE FEED</div>
-            <button className="btn-icon" title="Refresh feeds" onClick={handleRefresh}>
-              <i className="fa fa-rotate"></i>
-            </button>
-            <button className="btn-icon" title="Toggle theme" onClick={toggleTheme}>
-              <i className={theme === 'dark' ? 'fa fa-circle-half-stroke' : 'fa fa-sun'}></i>
+            <button className="btn" title="Toggle theme" onClick={toggleTheme} style={{ padding: '8px 16px', fontWeight: 'bold' }}>
+              <i className={theme === 'dark' ? 'fa fa-circle-half-stroke' : 'fa fa-sun'} style={{ marginRight: '6px' }}></i>
+              {theme === 'dark' ? 'LIGHT MODE' : 'DARK MODE'}
             </button>
             {isAdmin && (
               <>

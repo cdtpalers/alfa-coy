@@ -115,11 +115,9 @@ export default function SideBar({
           <span>SYSTEM LIVE</span>
         </div>
         <div className="sidebar-actions">
-          <button className="sidebar-action-btn" title="Refresh data" onClick={onRefresh}>
-            <i className="fa fa-rotate"></i>
-          </button>
-          <button className="sidebar-action-btn" title="Toggle theme" onClick={toggleTheme}>
+          <button className="sidebar-action-btn" title="Toggle theme" onClick={toggleTheme} style={{ flex: 2, fontWeight: 'bold' }}>
             <i className={theme === 'dark' ? 'fa fa-circle-half-stroke' : 'fa fa-sun'}></i>
+            <span style={{ marginLeft: '6px' }}>{theme === 'dark' ? 'LIGHT MODE' : 'DARK MODE'}</span>
           </button>
           {isAdmin ? (
             <>
