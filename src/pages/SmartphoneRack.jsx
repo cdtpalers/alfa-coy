@@ -39,16 +39,34 @@ export default function SmartphoneRack() {
     const lines = text.trim().split('\n');
     if (lines.length < 2) return [];
 
-    // The data starts after the 1CL header (usually row 2 in standard CSV, row 3 if row 1 is 1CL)
-    // Looking at the fetched CSV:
-    // Line 1: 1CL,,,,,,,,,,,,,
-    // Line 2: NAME ,,BRAND,,SERIAL NUMBER,,MODEL,,COLOR,,RACK #,QUANTITY,REMARKS,STATUS
-    // Line 3+: Data
-    
     let dataStartIndex = 1;
     if (lines[0].includes(classYear) || lines[0].includes('CL')) {
       dataStartIndex = 2; // Data starts at index 2
     }
+
+    // Parse header to find column indices dynamically
+    const headerLine = lines[dataStartIndex - 1];
+    const headers = [];
+    let curH = '', inQH = false;
+    for (let ch of headerLine) {
+      if (ch === '"') { inQH = !inQH; }
+      else if (ch === ',' && !inQH) { headers.push(curH.trim().toUpperCase()); curH = ''; }
+      else curH += ch;
+    }
+    headers.push(curH.trim().toUpperCase());
+
+    const getIdx = (keyword, fallback) => {
+      const idx = headers.findIndex(h => h.includes(keyword));
+      return idx >= 0 ? idx : fallback;
+    };
+    
+    const iName = getIdx('NAME', 0);
+    const iBrand = getIdx('BRAND', 2);
+    const iModel = getIdx('MODEL', 6);
+    const iColor = getIdx('COLOR', 8);
+    const iRack = getIdx('RACK', 10);
+    const iRemarks = getIdx('REMARK', 11);
+    const iStatus = getIdx('STATUS', 12);
 
     const parsedData = [];
 
@@ -65,23 +83,15 @@ export default function SmartphoneRack() {
       }
       cols.push(cur.trim());
 
-      // We know from the structure that:
-      // cols[0] = NAME
-      // cols[2] = BRAND
-      // cols[6] = MODEL
-      // cols[8] = COLOR
-      // cols[10] = RACK #
-      // cols[13] = STATUS
-
-      const name = cols[0] || '';
+      const name = cols[iName] || '';
       if (!name) continue; // Skip empty rows
 
-      const brands = (cols[2] || '').split('/').map(s => s.trim());
-      const models = (cols[6] || '').split(',').map(s => s.trim());
-      const colors = (cols[8] || '').split(',').map(s => s.trim());
-      const rackNumbers = (cols[10] || '').split('/').map(s => s.trim());
-      const remarks = cols[12] || '';
-      const status = (cols[13] || '').toUpperCase().includes('IN');
+      const brands = (cols[iBrand] || '').split('/').map(s => s.trim());
+      const models = (cols[iModel] || '').split(',').map(s => s.trim());
+      const colors = (cols[iColor] || '').split(',').map(s => s.trim());
+      const rackNumbers = (cols[iRack] || '').split('/').map(s => s.trim());
+      const remarks = cols[iRemarks] || '';
+      const status = (cols[iStatus] || '').trim().toUpperCase() === 'IN';
 
       // Handle multiple phones per cadet
       rackNumbers.forEach((rackNum, index) => {
