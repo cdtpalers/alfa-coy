@@ -22,7 +22,7 @@ const STAFF = [
   { name: "CDT LT 1CL ANGELICA D BACCAY C-27019 'A' CO CCAFP", rank: 'SPIRITUAL', role: 'Spiritual Development Officer', image: '/baccay.jpg', icon: <i className="fa-solid fa-hands-praying"></i> },
   { name: "CDT LT 1CL JERICHO B DECIERDO C-27078 'A' CO CCAFP", rank: 'SAFETY-O', role: 'Safety Officer', image: '/decierdo.jpg', icon: <i className="fa-solid fa-triangle-exclamation"></i> },
   { name: "CDT LT 1CL CARLOS JOSE H REONAL C-27207 'A' CO CCAFP", rank: 'ACAD-O', role: 'Academic Officer', icon: <i className="fa-solid fa-book"></i> },
-  { name: "CDT LT 1CL REGINA T ATIWEN C-26027 'A' CO CCAFP", rank: 'GAD-O', role: 'Gender & Development Officer', icon: <i className="fa-solid fa-scale-balanced"></i> },
+  { name: "CDT LT 1CL REGINA T ATIWEN C-26027 'A' CO CCAFP", rank: 'GAD-O', role: 'Gender & Development Officer', image: '/atiwen.jpg', icon: <i className="fa-solid fa-scale-balanced"></i> },
   { name: "CDT LT 1CL JETHRO ZEUS R AMANGAN C-25020 'A' CO CCAFP", rank: 'VESO', role: 'VESO Officer', icon: <i className="fa-solid fa-star-of-life"></i> },
 ];
 
@@ -36,7 +36,7 @@ const PLATOONS = [
 const CCPB = [
   { name: "CDT LT 1CL BARON JOSEPH A. CASTRO C-27048 'A' CO CCAFP", rank: 'CCPB', role: 'CCPB Representative', icon: <i className="fa-solid fa-user-shield"></i> },
   { name: "CDT LT 1CL JAY BRUCE D IDULSA C-27123 'A' CO CCAFP", rank: 'CCPB', role: 'CCPB Representative', image: '/idulsa.jpg', icon: <i className="fa-solid fa-user-shield"></i> },
-  { name: "CDT LT 1CL REGINA T ATIWEN C-26027 'A' CO CCAFP", rank: 'CCPB', role: 'CCPB Representative', icon: <i className="fa-solid fa-user-shield"></i> },
+  { name: "CDT LT 1CL REGINA T ATIWEN C-26027 'A' CO CCAFP", rank: 'CCPB', role: 'CCPB Representative', image: '/atiwen.jpg', icon: <i className="fa-solid fa-user-shield"></i> },
 ];
 
 const HONOR_COMM = [
