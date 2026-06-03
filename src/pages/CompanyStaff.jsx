@@ -18,7 +18,7 @@ const STAFF = [
   { name: "CDT LT 1CL JACKION A ENDINO C-27091 'A' CO CCAFP", rank: 'MESS-O', role: 'Mess Officer', image: '/endino.jpg', icon: <i className="fa-solid fa-utensils"></i> },
   { name: "CDT LT 1CL MARK ANGELO TRUMATA C-27246 'A' CO CCAFP", rank: 'ACQUISITION', role: 'Acquisition Officer', image: '/trumata.jpg', icon: <i className="fa-solid fa-chart-line"></i> },
   { name: "CDT LT 1CL JAY BRUCE D IDULSA C-27123 'A' CO CCAFP", rank: 'ATHLETIC-O', role: 'Athletic Officer', image: '/idulsa.jpg', icon: <i className="fa-solid fa-person-running"></i> },
-  { name: "CDT LT 1CL JOHN ISAIAH E MIGUEL C-27162 'A' CO CCAFP", rank: 'MTO', role: 'Military Training Officer', icon: <i className="fa-solid fa-person-military-rifle"></i> },
+  { name: "CDT LT 1CL JOHN ISAIAH E MIGUEL C-27162 'A' CO CCAFP", rank: 'MTO', role: 'Military Training Officer', image: '/miguel.jpg', icon: <i className="fa-solid fa-person-military-rifle"></i> },
   { name: "CDT LT 1CL ANGELICA D BACCAY C-27019 'A' CO CCAFP", rank: 'SPIRITUAL', role: 'Spiritual Development Officer', image: '/baccay.jpg', icon: <i className="fa-solid fa-hands-praying"></i> },
   { name: "CDT LT 1CL JERICHO B DECIERDO C-27078 'A' CO CCAFP", rank: 'SAFETY-O', role: 'Safety Officer', icon: <i className="fa-solid fa-triangle-exclamation"></i> },
   { name: "CDT LT 1CL CARLOS JOSE H REONAL C-27207 'A' CO CCAFP", rank: 'ACAD-O', role: 'Academic Officer', icon: <i className="fa-solid fa-book"></i> },
@@ -28,7 +28,7 @@ const STAFF = [
 
 const PLATOONS = [
   { name: "CDT LT 1CL JACKION A ENDINO C-27091 'A' CO CCAFP", rank: 'PL1', role: '1st Platoon Leader', image: '/endino.jpg', icon: <i className="fa-solid fa-shield"></i> },
-  { name: "CDT LT 1CL JOHN ISAIAH E MIGUEL C-27162 'A' CO CCAFP", rank: 'PL2', role: '2nd Platoon Leader', icon: <i className="fa-solid fa-shield"></i> },
+  { name: "CDT LT 1CL JOHN ISAIAH E MIGUEL C-27162 'A' CO CCAFP", rank: 'PL2', role: '2nd Platoon Leader', image: '/miguel.jpg', icon: <i className="fa-solid fa-shield"></i> },
   { name: "CDT LT 1CL JAY BRUCE D IDULSA C-27123 'A' CO CCAFP", rank: 'PL3', role: '3rd Platoon Leader', image: '/idulsa.jpg', icon: <i className="fa-solid fa-shield"></i> },
   { name: "CDT LT 1CL JERICHO B DECIERDO C-27078 'A' CO CCAFP", rank: 'PL4', role: '4th Platoon Leader', icon: <i className="fa-solid fa-shield"></i> },
 ];
