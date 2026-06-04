@@ -24,10 +24,17 @@ export default function SideBar({
   openAnnouncementModal,
   isAdmin,
   openLoginModal,
-  handleLogout
+  handleLogout,
+  isOpen,
+  onClose
 }) {
+  const handleNavClick = (page) => {
+    setCurrentPage(page);
+    if (onClose) onClose();
+  };
+
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isOpen ? 'mobile-open' : ''}`}>
       {/* Brand Header */}
       <div className="sidebar-brand">
         <div className="sidebar-coa" style={{ overflow: 'hidden', padding: 0 }}>
@@ -37,6 +44,7 @@ export default function SideBar({
           <h1>ALFA CO.</h1>
           <p>CCAFP • BULLETIN BOARD</p>
         </div>
+        <button className="mobile-close-btn" onClick={onClose}><i className="fa fa-xmark"></i></button>
       </div>
 
       {/* Navigation Groups */}
@@ -47,42 +55,42 @@ export default function SideBar({
           <nav className="sidebar-menu">
             <button 
               className={`sidebar-menu-item ${currentPage === 'home' ? 'active' : ''}`} 
-              onClick={() => setCurrentPage('home')}
+              onClick={() => handleNavClick('home')}
             >
               <i className="fa fa-house"></i>
               <span>Home Overview</span>
             </button>
             <button 
               className={`sidebar-menu-item ${currentPage === 'commanders' ? 'active' : ''}`} 
-              onClick={() => setCurrentPage('commanders')}
+              onClick={() => handleNavClick('commanders')}
             >
               <i className="fa fa-star"></i>
               <span>Company Staff</span>
             </button>
             <button 
               className={`sidebar-menu-item ${currentPage === 'calendar' ? 'active' : ''}`} 
-              onClick={() => setCurrentPage('calendar')}
+              onClick={() => handleNavClick('calendar')}
             >
               <i className="fa fa-calendar-days"></i>
               <span>Event Calendar</span>
             </button>
             <button 
               className={`sidebar-menu-item ${currentPage === 'rack' ? 'active' : ''}`} 
-              onClick={() => setCurrentPage('rack')}
+              onClick={() => handleNavClick('rack')}
             >
               <i className="fa fa-mobile-screen"></i>
               <span>Smartphone Rack</span>
             </button>
             <button 
               className={`sidebar-menu-item ${currentPage === 'roster' ? 'active' : ''}`} 
-              onClick={() => setCurrentPage('roster')}
+              onClick={() => handleNavClick('roster')}
             >
               <i className="fa fa-address-book"></i>
               <span>Company Roster</span>
             </button>
             <button 
               className={`sidebar-menu-item ${currentPage === 'exo' ? 'active' : ''}`} 
-              onClick={() => setCurrentPage('exo')}
+              onClick={() => handleNavClick('exo')}
             >
               <i className="fa fa-clipboard-list"></i>
               <span>EXO Punishment List</span>
@@ -98,7 +106,7 @@ export default function SideBar({
               <button 
                 key={c.id}
                 className={`sidebar-menu-item ${currentPage === c.id ? 'active' : ''}`} 
-                onClick={() => setCurrentPage(c.id)}
+                onClick={() => handleNavClick(c.id)}
               >
                 <i className={`fa ${c.icon}`}></i>
                 <span>{c.label}</span>

@@ -53,6 +53,7 @@ export default function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [feedStatus, setFeedStatus] = useState(null);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -191,6 +192,7 @@ export default function App() {
 
   return (
     <div className="dashboard-layout">
+      {isMobileMenuOpen && <div className="mobile-overlay" onClick={() => setIsMobileMenuOpen(false)}></div>}
       <SideBar 
         currentPage={currentPage} 
         setCurrentPage={setCurrentPage}
@@ -202,13 +204,18 @@ export default function App() {
         isAdmin={isAdmin}
         openLoginModal={() => setIsLoginModalOpen(true)}
         handleLogout={handleLogout}
+        isOpen={isMobileMenuOpen}
+        onClose={() => setIsMobileMenuOpen(false)}
       />
       
       <div className="main-panel">
         <header className="panel-header">
           <div className="panel-header-left">
+            <button className="mobile-menu-btn" onClick={() => setIsMobileMenuOpen(true)}>
+              <i className="fa fa-bars"></i>
+            </button>
             <span className="panel-breadcrumb">
-              ALFA CO. BULLETIN BOARD / <strong>{currentPage.toUpperCase()}</strong>
+              ALFA CO. BULLETIN BOARD <span className="breadcrumb-divider">/</span> <strong>{currentPage.toUpperCase()}</strong>
             </span>
           </div>
           <div className="panel-header-right">
