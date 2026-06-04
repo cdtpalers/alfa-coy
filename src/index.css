@@ -436,6 +436,31 @@ body {
   border: none !important;
   position: relative;
   box-shadow: 0 12px 48px rgba(26, 48, 30, 0.15) !important;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  top: -20%;
+  right: -5%;
+  width: 60%;
+  height: 140%;
+  background-image: url('/logo-graphic.png');
+  background-size: contain;
+  background-position: right center;
+  background-repeat: no-repeat;
+  opacity: 0.25;
+  mix-blend-mode: normal;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 50%);
+  mask-image: linear-gradient(to right, transparent 0%, black 50%);
+}
+
+.hero-content {
+  position: relative;
+  z-index: 1;
 }
 
 [data-theme="dark"] .hero {
