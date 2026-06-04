@@ -31,7 +31,7 @@ export default function SideBar({
       {/* Brand Header */}
       <div className="sidebar-brand">
         <div className="sidebar-coa" style={{ overflow: 'hidden', padding: 0 }}>
-          <img src="/logo.jpg" alt="ALFA CO. Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          <img src="/logo.webp" alt="ALFA CO. Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
         </div>
         <div className="sidebar-brand-text">
           <h1>ALFA CO.</h1>
