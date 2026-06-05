@@ -132,8 +132,16 @@ export default function ExoPage() {
                 <tr key={idx} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s' }}>
                   <td style={{ padding: '12px 8px' }}>{p.no}</td>
                   <td style={{ padding: '12px 8px' }}>
-                    <div style={{ fontWeight: '600', color: 'var(--text-main)' }}>{p.rank} {p.lastName}</div>
-                    <div style={{ fontSize: '12px', color: 'var(--text-muted)', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }} title={p.offense}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '4px' }}>
+                      <span className={`tag ${
+                        p.rank.toUpperCase().includes('1CL') ? 'tag-blue' : 
+                        p.rank.toUpperCase().includes('2CL') ? 'tag-red' : 
+                        p.rank.toUpperCase().includes('3CL') ? 'tag-gold' : 
+                        p.rank.toUpperCase().includes('4CL') ? 'tag-green' : 'tag-orange'
+                      }`} style={{ fontSize: '10px', padding: '2px 8px' }}>{p.rank}</span>
+                      <span style={{ fontWeight: '600', color: 'var(--text-main)' }}>{p.lastName}</span>
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
                       {p.offense}
                     </div>
                   </td>
@@ -147,7 +155,10 @@ export default function ExoPage() {
                   </td>
                   <td style={{ padding: '12px 8px' }}>
                     {p.confined.toLowerCase() === 'yes' ? (
-                      <span className="tag tag-red">YES</span>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-start' }}>
+                        <span className="tag tag-red">YES</span>
+                        {p.end && <span style={{ fontSize: '11px', color: 'var(--text-dim)', whiteSpace: 'nowrap' }}>Until: {p.end}</span>}
+                      </div>
                     ) : (
                       <span className="tag" style={{ background: 'var(--border)' }}>NO</span>
                     )}
