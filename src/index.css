@@ -1120,8 +1120,16 @@ textarea.glass-input {
   font-size: 40px;
 }
 
-.xo-card, .sgt-card {
+.xo-card {
   width: 300px;
+}
+
+.sgt-card {
+  width: 250px;
+}
+
+.commander-card.sgt-card.has-bg-image {
+  min-height: 240px;
 }
 
 .tier-title {
