@@ -791,6 +791,18 @@ body {
 }
 
 /* ── CALENDAR ── */
+.cal-layout {
+  display: grid;
+  grid-template-columns: 1.8fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .cal-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 .cal-wrap { 
   padding: 32px; 
 }
@@ -831,6 +843,7 @@ body {
 
 .cal-day {
   aspect-ratio: 1; 
+  min-height: 80px;
   border-radius: 12px; 
   border: 1px solid var(--border-strong);
   display: flex; 
@@ -838,17 +851,24 @@ body {
   align-items: center; 
   justify-content: center;
   cursor: pointer; 
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); 
-  font-size: 14px; 
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+  font-size: 16px; 
   font-weight: 600;
   background: var(--card-bg); 
   color: var(--text);
+  position: relative;
 }
 
 .cal-day:hover { 
   border-color: var(--accent-base); 
-  transform: scale(1.05); 
-  box-shadow: var(--shadow); 
+  transform: translateY(-4px) scale(1.02); 
+  box-shadow: 0 12px 28px rgba(0,0,0,0.12); 
+  z-index: 10;
+}
+
+[data-theme="dark"] .cal-day:hover {
+  border-color: var(--accent-light);
+  box-shadow: 0 12px 28px rgba(255,255,255,0.08);
 }
 
 .cal-day.today { 

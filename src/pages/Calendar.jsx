@@ -97,7 +97,7 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
           </button>
         )}
       </div>
-      <div className="cal-layout" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '16px', alignItems: 'start'}}>
+      <div className="cal-layout">
         <div className="glass cal-wrap">
           <div className="cal-header">
             <h3>{MONTHS[month]} {year}</h3>
