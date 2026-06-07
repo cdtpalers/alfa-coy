@@ -14,15 +14,6 @@ import AdminDashboard from './pages/AdminDashboard';
 import SmartphoneRack from './pages/SmartphoneRack';
 import { supabase } from './lib/supabase';
 
-const DEMO_DATA = [
-  { Title:'Welcome to ALFA Co. Bulletin Board', Body:'This is the official digital bulletin board of ALFA Company, CCAFP. All cadets are reminded to check this board regularly for updates, announcements, and schedules.', Date:'2025-04-26', Tag:'info', Council:'all', Priority:'high' },
-  { Title:'S3: Drill and Ceremony Practice', Body:'All cadets are required to attend D&C practice this Saturday at 0700H at the parade grounds. Full BDU uniform required. Attendance is mandatory.', Date:'2025-04-25', Tag:'training', Council:'s3', Priority:'high' },
-  { Title:'S1: Roster Update Deadline', Body:'All cadets must submit updated personal information forms to S1 personnel no later than April 30. Forms available at the S1 office.', Date:'2025-04-24', Tag:'important', Council:'s1', Priority:'normal' },
-  { Title:'Academic: Study Hall Schedule', Body:'Weekly study hall sessions will be held every Monday and Wednesday from 1800-2000H at the study area. Academic council officers will be on duty to assist.', Date:'2025-04-23', Tag:'info', Council:'academic', Priority:'normal' },
-  { Title:'S4: Equipment Accountability', Body:'Quarterly equipment inspection will be conducted on May 3. All cadets must ensure issued equipment is in serviceable condition and accounted for.', Date:'2025-04-22', Tag:'urgent', Council:'s4', Priority:'high' },
-  { Title:'Athletic: Intramurals Sign-Up', Body:'Sign-up sheets for the company intramurals are now available. Available sports: basketball, volleyball, badminton, and track events. Deadline to sign up is May 1.', Date:'2025-04-21', Tag:'activity', Council:'athletic', Priority:'normal' },
-];
-
 const INITIAL_EVENTS = [];
 
 function parseCSV(text) {
@@ -47,7 +38,7 @@ function parseCSV(text) {
 export default function App() {
   const [theme, setTheme] = useState('light');
   const [currentPage, setCurrentPage] = useState('home');
-  const [sheetData, setSheetData] = useState(DEMO_DATA);
+  const [sheetData, setSheetData] = useState([]);
   const [events, setEvents] = useState(INITIAL_EVENTS);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
@@ -226,10 +217,10 @@ export default function App() {
   };
 
   const handleClearSheet = () => {
-    setSheetData(DEMO_DATA);
+    setSheetData([]);
     localStorage.removeItem('alfa_sheet_url');
     localStorage.removeItem('alfa_sheet_data');
-    setFeedStatus({msg: 'Cleared. Showing demo data.', type: ''});
+    setFeedStatus({msg: 'Cleared connected sheet.', type: ''});
   };
 
   const handleRefresh = () => {
