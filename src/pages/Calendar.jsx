@@ -8,6 +8,9 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
   const [calDate, setCalDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [birthdays, setBirthdays] = useState([]);
+  
+  const allFilters = ['training', 'formation', 'academic', 'athletic', 'ceremony', 'activity', 'other', 'birthdays'];
+  const [filters, setFilters] = useState(new Set(allFilters));
 
   useEffect(() => {
     fetch('/roster.csv')
@@ -86,19 +89,47 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
 
   return (
     <div className="page active" id="page-calendar">
-      <div className="section-header">
-        <div className="section-title">
-          <div className="section-icon">📅</div>
-          <div><h2>EVENT CALENDAR</h2><p>ALFA COMPANY SCHEDULE</p></div>
+      <div className="cal-topbar">
+        <div className="cal-topbar-left">
+          <h2>Calendar</h2>
         </div>
-        {isAdmin && (
-          <button className="btn btn-primary" onClick={openEventModal}>
-            <i className="fa fa-plus"></i> ADD EVENT
-          </button>
-        )}
+        <div className="cal-topbar-center">
+          <div className="cal-tab">Day</div>
+          <div className="cal-tab">Week</div>
+          <div className="cal-tab active">Month</div>
+        </div>
+        <div className="cal-topbar-right">
+          {isAdmin && (
+            <button className="btn-add" onClick={openEventModal}>
+              <i className="fa fa-plus"></i> Add Event
+            </button>
+          )}
+        </div>
       </div>
+      
       <div className="cal-layout">
-        <div className="glass cal-wrap">
+        <div className="cal-sidebar">
+          <div className="cal-filters">
+            <h4>Filters</h4>
+            {allFilters.map(f => (
+              <label key={f} className="filter-label">
+                <input 
+                  type="checkbox" 
+                  checked={filters.has(f)} 
+                  onChange={() => {
+                    const nf = new Set(filters);
+                    nf.has(f) ? nf.delete(f) : nf.add(f);
+                    setFilters(nf);
+                  }} 
+                />
+                <div className={`filter-icon ${f === 'birthdays' ? 'pill-bday-1cl' : `pill-${CAT_COLORS[f]?.split('-')[1] || 'green'}`}`} style={{width: 12, height: 12, borderRadius: 3, borderLeft: 'none'}}></div>
+                <span style={{textTransform: 'capitalize'}}>{f}</span>
+              </label>
+            ))}
+          </div>
+        </div>
+        
+        <div className="cal-wrap">
           <div className="cal-header">
             <h3>{MONTHS[month]} {year}</h3>
             <div className="cal-nav">
@@ -106,82 +137,43 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
               <button className="btn-icon" onClick={handleNextMonth}><i className="fa fa-chevron-right"></i></button>
             </div>
           </div>
+          
           <div className="cal-grid">
             {DAYS.map(day => <div className="cal-day-name" key={day}>{day}</div>)}
             {daysGrid.map((d, i) => {
-              const bdayNames = d.birthdays && d.birthdays.length > 0 
-                ? d.birthdays.map(b => b.name).join(', ') 
-                : '';
+              const dayEvents = events.filter(e => e.date === d.dateStr && filters.has(e.cat || 'other'));
               return (
               <div 
                 key={i} 
-                className={`cal-day ${d.isOtherMonth ? 'other-month' : ''} ${d.isToday ? 'today' : ''} ${d.hasEvent ? 'has-event' : ''} ${selectedDate === d.dateStr ? 'selected' : ''}`}
+                className={`cal-day ${d.isOtherMonth ? 'other-month' : ''} ${d.isToday ? 'today' : ''} ${selectedDate === d.dateStr ? 'selected' : ''}`}
                 onClick={() => { if(!d.isOtherMonth) setSelectedDate(d.dateStr); }}
-                title={bdayNames ? `Birthdays: ${bdayNames}` : undefined}
-                style={{ position: 'relative' }}
               >
-                <div className="cal-day-num" style={{ zIndex: 1, position: 'relative', top: (d.birthdays && d.birthdays.length > 0 && !d.isOtherMonth) ? '-8px' : '0' }}>{d.day}</div>
-                {d.birthdays && d.birthdays.length > 0 && !d.isOtherMonth && (
-                  <div className="cal-day-bday" style={{
-                    position: 'absolute', 
-                    bottom: '4px', 
-                    left: '0', 
-                    width: '100%', 
-                    display: 'flex', 
-                    flexDirection: 'column', 
-                    alignItems: 'center',
-                    color: 'var(--text-muted)',
-                    zIndex: 2
-                  }}>
-                    <i className="fa-solid fa-cake-candles" style={{color: '#ff9800', fontSize: '12px', marginBottom: '1px'}}></i>
-                    <div className="bday-names" style={{fontSize: '9px', lineHeight: 1.1, textAlign: 'center', width: '90%', fontWeight: 700}}>
-                      {d.birthdays.map((b, idx) => {
-                        const classKey = (b.cadetClass || '').toLowerCase();
-                        let classColor = 'bday-other';
-                        if (classKey.includes('1cl')) classColor = 'bday-1cl';
-                        else if (classKey.includes('2cl')) classColor = 'bday-2cl';
-                        else if (classKey.includes('3cl')) classColor = 'bday-3cl';
-                        else if (classKey.includes('4cl')) classColor = 'bday-4cl';
-                        return (
-                          <div key={idx} className={classColor} style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
-                            {b.shortName}
-                          </div>
-                        );
-                      })}
+                <div className="cal-day-num">{d.day}</div>
+                
+                {!d.isOtherMonth && dayEvents.map((e, idx) => {
+                  let pillClass = `pill-${CAT_COLORS[e.cat]?.split('-')[1] || 'green'}`;
+                  return (
+                    <div key={'e'+idx} className={`cal-pill ${pillClass}`} title={e.title}>
+                      <i className="fa fa-calendar-check"></i> {e.title}
                     </div>
-                  </div>
-                )}
+                  );
+                })}
+                
+                {!d.isOtherMonth && filters.has('birthdays') && d.birthdays && d.birthdays.map((b, idx) => {
+                  const classKey = (b.cadetClass || '').toLowerCase();
+                  let pillClass = 'pill-bday-other';
+                  if (classKey.includes('1cl')) pillClass = 'pill-bday-1cl';
+                  else if (classKey.includes('2cl')) pillClass = 'pill-bday-2cl';
+                  else if (classKey.includes('3cl')) pillClass = 'pill-bday-3cl';
+                  else if (classKey.includes('4cl')) pillClass = 'pill-bday-4cl';
+                  return (
+                    <div key={'b'+idx} className={`cal-pill ${pillClass}`} title={`Birthday: ${b.name}`}>
+                      <i className="fa-solid fa-cake-candles"></i> {b.shortName}
+                    </div>
+                  );
+                })}
               </div>
             )})}
-          </div>
-        </div>
-        <div className="glass" style={{padding: '20px'}}>
-          <h3 style={{fontFamily: "'Rajdhani', sans-serif", fontSize: '18px', fontWeight: 700, letterSpacing: '1px', color: 'var(--g1)', marginBottom: '14px'}}>
-            <i className="fa fa-list"></i> {selectedDate ? `EVENTS ON ${selectedDate}` : 'ALL EVENTS'}
-          </h3>
-          <div className="event-list">
-            {displayEvents.length ? displayEvents.map((e, i) => {
-              const [y,m,d] = e.date.split('-');
-              const mon = MONTHS[+m-1].substring(0,3);
-              return (
-                <div className="event-item" key={i}>
-                  <div className="event-date-badge"><div className="d">{d}</div><div className="m">{mon} {y}</div></div>
-                  <div className="event-info">
-                    <h4>{e.title}</h4>
-                    <p>{e.time||''} {e.desc||''}</p>
-                    <div className="event-tags">
-                      <span className={`tag ${CAT_COLORS[e.cat]||'tag-green'}`}>{(e.cat||'event').toUpperCase()}</span>
-                      {e.council && e.council !== 'all' && <span className="tag tag-blue">{e.council}</span>}
-                    </div>
-                  </div>
-                </div>
-              );
-            }) : (
-              <div className="empty-state">
-                <i className="fa fa-calendar-xmark"></i>
-                <p>{selectedDate ? 'No events on this date' : 'No events scheduled'}</p>
-              </div>
-            )}
           </div>
         </div>
       </div>

@@ -790,21 +790,132 @@ body {
   border-top: 1px solid var(--border-strong); 
 }
 
-/* ── CALENDAR ── */
+/* ── CALENDAR REDESIGN ── */
+.cal-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+  background: var(--card-bg);
+  padding: 16px 24px;
+  border-radius: 16px;
+  border: 1px solid var(--border-strong);
+  box-shadow: var(--shadow);
+}
+
+.cal-topbar-left h2 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0;
+}
+
+.cal-topbar-center {
+  display: flex;
+  background: var(--app-bg);
+  border-radius: 8px;
+  padding: 4px;
+  border: 1px solid var(--border);
+}
+
+.cal-tab {
+  padding: 6px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.cal-tab.active {
+  background: #000000;
+  color: #ffffff;
+}
+
+[data-theme="dark"] .cal-tab.active {
+  background: var(--accent-light);
+  color: #000000;
+}
+
+.cal-topbar-right .btn-add {
+  background: #ff7f6b; /* Coral from mockup */
+  color: #ffffff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+
+.cal-topbar-right .btn-add:hover {
+  background: #f06a55;
+  transform: translateY(-1px);
+}
+
 .cal-layout {
   display: grid;
-  grid-template-columns: 1.8fr 1fr;
+  grid-template-columns: 240px 1fr;
   gap: 24px;
   align-items: start;
 }
+
 @media (max-width: 900px) {
   .cal-layout {
     grid-template-columns: 1fr;
   }
 }
 
+.cal-sidebar {
+  background: var(--card-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  padding: 24px;
+  min-height: 400px;
+}
+
+.cal-filters h4 {
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.filter-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+  cursor: pointer;
+}
+
+.filter-label input {
+  cursor: pointer;
+  accent-color: var(--accent-base);
+}
+
+.filter-icon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .cal-wrap { 
-  padding: 32px; 
+  background: var(--card-bg);
+  border: 1px solid var(--border-strong);
+  border-radius: 16px;
+  padding: 24px; 
 }
 
 .cal-header { 
@@ -825,10 +936,17 @@ body {
   gap: 8px; 
 }
 
+.cal-nav .btn-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+}
+
 .cal-grid { 
   display: grid; 
   grid-template-columns: repeat(7, 1fr); 
-  gap: 8px; 
+  border-top: 1px solid var(--border);
+  border-left: 1px solid var(--border);
 }
 
 .cal-day-name { 
@@ -836,168 +954,115 @@ body {
   font-size: 11px; 
   font-weight: 700; 
   color: var(--text-dim); 
-  padding: 8px 0; 
+  padding: 12px 0; 
   text-transform: uppercase; 
-  letter-spacing: 0.5px; 
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
 }
 
 .cal-day {
-  aspect-ratio: 1; 
-  min-height: 80px;
-  border-radius: 12px; 
-  border: 1px solid var(--border-strong);
+  min-height: 110px;
+  border-bottom: 1px solid var(--border);
+  border-right: 1px solid var(--border);
+  padding: 6px;
   display: flex; 
   flex-direction: column; 
-  align-items: center; 
-  justify-content: center;
-  cursor: pointer; 
-  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-  font-size: 16px; 
-  font-weight: 600;
+  align-items: stretch;
+  justify-content: flex-start;
+  transition: background 0.2s; 
   background: var(--card-bg); 
-  color: var(--text);
   position: relative;
+  gap: 4px;
 }
 
 .cal-day:hover { 
-  border-color: var(--accent-base); 
-  transform: translateY(-4px) scale(1.02); 
-  box-shadow: 0 12px 28px rgba(0,0,0,0.12); 
-  z-index: 10;
+  background: var(--app-bg);
 }
 
-[data-theme="dark"] .cal-day:hover {
-  border-color: var(--accent-light);
-  box-shadow: 0 12px 28px rgba(255,255,255,0.08);
+.cal-day-num {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+  margin-left: 4px;
 }
 
-.cal-day.today { 
-  border-color: var(--accent-base); 
-  color: var(--accent-base); 
-  font-weight: 700; 
-  background: var(--accent-light); 
+.cal-day.today .cal-day-num { 
+  width: 24px;
+  height: 24px;
+  background: #000000;
+  color: #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -2px;
+  margin-left: 0;
 }
 
-[data-theme="dark"] .cal-day.today {
-  color: var(--accent-light);
-  background: rgba(255, 255, 255, 0.05);
-}
-
-.cal-day.has-event::after { 
-  content: ''; 
-  width: 5px; 
-  height: 5px; 
-  border-radius: 50%; 
-  background: var(--accent-base); 
-  margin-top: 4px; 
-}
-
-[data-theme="dark"] .cal-day.has-event::after {
+[data-theme="dark"] .cal-day.today .cal-day-num {
   background: var(--accent-light);
+  color: #000000;
 }
 
 .cal-day.other-month { 
-  opacity: 0.25; 
+  opacity: 0.4; 
+  background: var(--app-bg);
 }
 
-.cal-day.selected { 
-  background: var(--accent-base) !important; 
-  color: #ffffff !important; 
-  border-color: var(--accent-base) !important; 
-}
-
-[data-theme="dark"] .cal-day.selected {
-  background: var(--accent-light) !important;
-  color: #080d09 !important;
-  border-color: var(--accent-light) !important;
-}
-
-.cal-day.selected.has-event::after { 
-  background: #ffffff !important; 
-}
-
-
-/* Birthday styling in calendar */
-.bday-names div {
-  font-weight: 700;
-}
-.bday-1cl { color: #1e3a8a; }
-.bday-2cl { color: #b91c1c; }
-.bday-3cl { color: #b45309; }
-.bday-4cl { color: #15803d; }
-.bday-other { color: var(--accent-base); }
-
-[data-theme="dark"] .bday-1cl { color: #60a5fa; }
-[data-theme="dark"] .bday-2cl { color: #f87171; }
-[data-theme="dark"] .bday-3cl { color: #fbbf24; }
-[data-theme="dark"] .bday-4cl { color: #4ade80; }
-[data-theme="dark"] .bday-other { color: var(--accent-light); }
-
-/* Selected state overrides to ensure contrast */
-.cal-day.selected .bday-names div {
-  color: rgba(255, 255, 255, 0.95) !important;
-}
-[data-theme="dark"] .cal-day.selected .bday-names div {
-  color: #080d09 !important;
-}
-
-.event-list { 
-  margin-top: 16px; 
-  display: flex; 
-  flex-direction: column; 
-  gap: 12px; 
-}
-
-.event-item {
-  padding: 16px; 
-  border-radius: 14px; 
-  border: 1px solid var(--border-strong);
-  background: var(--card-bg); 
-  display: flex; 
-  gap: 16px; 
+/* Event Pills inside Day Cell */
+.cal-pill {
+  border-radius: 4px;
+  padding: 4px 6px;
+  font-size: 9px;
+  font-weight: 600;
+  display: flex;
   align-items: center;
-  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1); 
+  gap: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   cursor: pointer;
+  transition: filter 0.2s;
 }
 
-.event-item:hover { 
-  border-color: var(--accent-base); 
-  transform: translateX(4px); 
-  box-shadow: var(--shadow); 
+.cal-pill:hover {
+  filter: brightness(0.9);
 }
 
-.event-date-badge {
-  min-width: 56px; 
-  text-align: center; 
-  background: var(--accent-light);
-  border-radius: 12px; 
-  padding: 10px 8px; 
-  color: var(--accent-base);
+.cal-pill i {
+  font-size: 10px;
+  opacity: 0.7;
 }
 
-[data-theme="dark"] .event-date-badge {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text);
-}
+/* Base Tag Colors adapted for Pills */
+.pill-blue { background: #e0f2fe; color: #0369a1; border-left: 2px solid #0284c7; }
+.pill-green { background: #dcfce7; color: #15803d; border-left: 2px solid #16a34a; }
+.pill-gold { background: #fef3c7; color: #b45309; border-left: 2px solid #d97706; }
+.pill-red { background: #fee2e2; color: #b91c1c; border-left: 2px solid #dc2626; }
+.pill-purple { background: #f3e8ff; color: #7e22ce; border-left: 2px solid #9333ea; }
+.pill-orange { background: #ffedd5; color: #c2410c; border-left: 2px solid #ea580c; }
 
-.event-date-badge .d { 
-  font-size: 20px; 
-  font-weight: 700; 
-  line-height: 1; 
-}
+[data-theme="dark"] .pill-blue { background: rgba(2, 132, 199, 0.2); color: #7dd3fc; border-color: #38bdf8; }
+[data-theme="dark"] .pill-green { background: rgba(22, 163, 74, 0.2); color: #86efac; border-color: #4ade80; }
+[data-theme="dark"] .pill-gold { background: rgba(217, 119, 6, 0.2); color: #fde047; border-color: #facc15; }
+[data-theme="dark"] .pill-red { background: rgba(220, 38, 38, 0.2); color: #fca5a5; border-color: #f87171; }
+[data-theme="dark"] .pill-purple { background: rgba(147, 51, 234, 0.2); color: #d8b4fe; border-color: #c084fc; }
+[data-theme="dark"] .pill-orange { background: rgba(234, 88, 12, 0.2); color: #fdba74; border-color: #fb923c; }
 
-.event-date-badge .m { 
-  font-size: 10px; 
-  font-weight: 700; 
-  text-transform: uppercase; 
-  margin-top: 2px; 
-}
+/* Birthday Pill Styles */
+.pill-bday-1cl { background: #e0e7ff; color: #3730a3; border-left: 2px solid #4f46e5; }
+.pill-bday-2cl { background: #ffe4e6; color: #9f1239; border-left: 2px solid #e11d48; }
+.pill-bday-3cl { background: #fef08a; color: #854d0e; border-left: 2px solid #ca8a04; }
+.pill-bday-4cl { background: #dcfce7; color: #166534; border-left: 2px solid #15803d; }
+.pill-bday-other { background: #f3f4f6; color: #1f2937; border-left: 2px solid #4b5563; }
 
-.event-info { 
-  flex: 1; 
-}
-
-.event-info h4 { 
+[data-theme="dark"] .pill-bday-1cl { background: rgba(79, 70, 229, 0.2); color: #a5b4fc; border-color: #818cf8; }
+[data-theme="dark"] .pill-bday-2cl { background: rgba(225, 29, 72, 0.2); color: #fda4af; border-color: #fb7185; }
+[data-theme="dark"] .pill-bday-3cl { background: rgba(202, 138, 4, 0.2); color: #fde047; border-color: #facc15; }
+[data-theme="dark"] .pill-bday-4cl { background: rgba(21, 128, 61, 0.2); color: #86efac; border-color: #4ade80; }
+[data-theme="dark"] .pill-bday-other { background: rgba(75, 85, 99, 0.2); color: #d1d5db; border-color: #9ca3af; } 
   font-size: 16px; 
   font-weight: 700;
   margin-bottom: 4px; 
