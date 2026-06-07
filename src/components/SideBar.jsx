@@ -114,6 +114,22 @@ export default function SideBar({
             ))}
           </nav>
         </div>
+        
+        {/* Admin Section */}
+        {isAdmin && (
+          <div className="sidebar-nav-group">
+            <span className="sidebar-group-title">ADMINISTRATION</span>
+            <nav className="sidebar-menu">
+              <button 
+                className={`sidebar-menu-item ${currentPage === 'admin-dashboard' ? 'active' : ''}`} 
+                onClick={() => handleNavClick('admin-dashboard')}
+              >
+                <i className="fa fa-database"></i>
+                <span>Content Management</span>
+              </button>
+            </nav>
+          </div>
+        )}
       </div>
 
       {/* Sidebar Footer Controls */}

@@ -1,12 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function EventModal({ isOpen, onClose, onSave }) {
+export default function EventModal({ isOpen, onClose, onSave, initialData = null }) {
   const [title, setTitle] = useState('');
   const [cat, setCat] = useState('training');
   const [date, setDate] = useState('');
   const [time, setTime] = useState('');
   const [council, setCouncil] = useState('all');
   const [desc, setDesc] = useState('');
+
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        setTitle(initialData.title || '');
+        setCat(initialData.cat || 'training');
+        setDate(initialData.date || '');
+        setTime(initialData.time || '');
+        setCouncil(initialData.council || 'all');
+        setDesc(initialData.desc || '');
+      } else {
+        setTitle('');
+        setCat('training');
+        setDate('');
+        setTime('');
+        setCouncil('all');
+        setDesc('');
+      }
+    }
+  }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 
@@ -16,7 +36,7 @@ export default function EventModal({ isOpen, onClose, onSave }) {
       return;
     }
     const newEvent = {
-      id: Date.now(),
+      ...(initialData ? { id: initialData.id } : {}),
       title: title.trim(),
       date,
       time,
@@ -25,13 +45,6 @@ export default function EventModal({ isOpen, onClose, onSave }) {
       desc
     };
     onSave(newEvent);
-    // Reset form
-    setTitle('');
-    setCat('training');
-    setDate('');
-    setTime('');
-    setCouncil('all');
-    setDesc('');
   };
 
   return (
@@ -39,7 +52,7 @@ export default function EventModal({ isOpen, onClose, onSave }) {
       if (e.target.className === 'modal-overlay') onClose();
     }}>
       <div className="modal glass">
-        <h3><i className="fa fa-calendar-plus"></i> ADD COMPANY EVENT</h3>
+        <h3><i className="fa fa-calendar-plus"></i> {initialData ? 'EDIT' : 'ADD'} COMPANY EVENT</h3>
         <div className="form-row">
           <div className="form-group" style={{flex: 1}}>
             <label>Event Title *</label>

@@ -175,6 +175,66 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
           </div>
         </div>
       </div>
+      
+      {selectedDate && (() => {
+        const [sYear, sMonth, sDay] = selectedDate.split('-');
+        const selMonth = parseInt(sMonth, 10) - 1;
+        const selDay = parseInt(sDay, 10);
+        const dayEvents = events.filter(e => e.date === selectedDate);
+        const dayBirthdays = birthdays.filter(b => b.month === selMonth && b.day === selDay);
+        
+        const dateObj = new Date(parseInt(sYear), selMonth, selDay);
+        const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        
+        return (
+          <div className="modal-overlay" onClick={() => setSelectedDate(null)}>
+            <div className="modal glass" onClick={e => e.stopPropagation()} style={{maxWidth: '500px'}}>
+              <h3><i className="fa fa-calendar-day"></i> {formattedDate}</h3>
+              
+              {dayEvents.length === 0 && dayBirthdays.length === 0 && (
+                <p style={{color: 'var(--text-muted)'}}>No events or birthdays on this day.</p>
+              )}
+              
+              {dayEvents.length > 0 && (
+                <div style={{marginBottom: 20}}>
+                  <h4 style={{marginBottom: 10, color: 'var(--text-muted)', fontSize: 12, textTransform: 'uppercase'}}>Events</h4>
+                  {dayEvents.map((e, idx) => (
+                    <div key={idx} style={{padding: '12px', background: 'var(--app-bg)', borderRadius: '8px', marginBottom: '8px', border: '1px solid var(--border)'}}>
+                      <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 4}}>
+                        <strong>{e.title}</strong>
+                        <span className={`cal-pill pill-${CAT_COLORS[e.cat]?.split('-')[1] || 'green'}`} style={{margin: 0}}>{e.cat}</span>
+                      </div>
+                      <div style={{fontSize: 13, color: 'var(--text-muted)', marginBottom: 8}}>
+                        <i className="fa fa-clock"></i> {e.time || 'All Day'} &nbsp;|&nbsp; <i className="fa fa-users"></i> {e.council}
+                      </div>
+                      {e.desc && <div style={{fontSize: 14}}>{e.desc}</div>}
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {dayBirthdays.length > 0 && (
+                <div>
+                  <h4 style={{marginBottom: 10, color: 'var(--text-muted)', fontSize: 12, textTransform: 'uppercase'}}>Birthdays</h4>
+                  {dayBirthdays.map((b, idx) => (
+                    <div key={idx} style={{padding: '10px 12px', background: 'var(--app-bg)', borderRadius: '8px', marginBottom: '8px', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', gap: 10}}>
+                      <i className="fa-solid fa-cake-candles" style={{color: '#ff9800'}}></i>
+                      <div>
+                        <strong>{b.name}</strong>
+                        <div style={{fontSize: 12, color: 'var(--text-muted)'}}>{b.cadetClass}</div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              <div className="modal-actions" style={{marginTop: 20}}>
+                <button className="btn" onClick={() => setSelectedDate(null)}>CLOSE</button>
+              </div>
+            </div>
+          </div>
+        );
+      })()}
     </div>
   );
 }

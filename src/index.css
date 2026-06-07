@@ -984,6 +984,10 @@ body {
   background: var(--app-bg);
 }
 
+.cal-day:not(.other-month) {
+  cursor: pointer;
+}
+
 .cal-day-num {
   font-size: 12px;
   font-weight: 600;

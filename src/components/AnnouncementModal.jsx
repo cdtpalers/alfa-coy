@@ -1,12 +1,32 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-export default function AnnouncementModal({ isOpen, onClose, onSave }) {
+export default function AnnouncementModal({ isOpen, onClose, onSave, initialData = null }) {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [date, setDate] = useState('');
   const [council, setCouncil] = useState('all');
   const [tag, setTag] = useState('info');
   const [priority, setPriority] = useState('normal');
+
+  useEffect(() => {
+    if (isOpen) {
+      if (initialData) {
+        setTitle(initialData.Title || '');
+        setBody(initialData.Body || '');
+        setDate(initialData.Date || '');
+        setCouncil(initialData.Council || 'all');
+        setTag(initialData.Tag || 'info');
+        setPriority(initialData.Priority || 'normal');
+      } else {
+        setTitle('');
+        setBody('');
+        setDate('');
+        setCouncil('all');
+        setTag('info');
+        setPriority('normal');
+      }
+    }
+  }, [isOpen, initialData]);
 
   if (!isOpen) return null;
 
@@ -16,6 +36,7 @@ export default function AnnouncementModal({ isOpen, onClose, onSave }) {
       return;
     }
     const newAnnouncement = {
+      ...(initialData ? { id: initialData.id } : {}),
       Title: title.trim(),
       Body: body.trim(),
       Date: date,
@@ -24,13 +45,6 @@ export default function AnnouncementModal({ isOpen, onClose, onSave }) {
       Priority: priority
     };
     onSave(newAnnouncement);
-    // Reset form
-    setTitle('');
-    setBody('');
-    setDate('');
-    setCouncil('all');
-    setTag('info');
-    setPriority('normal');
   };
 
   return (
@@ -38,7 +52,7 @@ export default function AnnouncementModal({ isOpen, onClose, onSave }) {
       if (e.target.className === 'modal-overlay') onClose();
     }}>
       <div className="modal glass">
-        <h3><i className="fa fa-bullhorn"></i> ADD ANNOUNCEMENT</h3>
+        <h3><i className="fa fa-bullhorn"></i> {initialData ? 'EDIT' : 'ADD'} ANNOUNCEMENT</h3>
         <div className="form-row">
           <div className="form-group" style={{flex: 1}}>
             <label>Title *</label>
