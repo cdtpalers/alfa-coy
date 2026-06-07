@@ -298,7 +298,10 @@ export default function ExoPage() {
                   {merits.map((m, idx) => {
                     const demerits = parseFloat(m.totalDemerits) || 0;
                     const remaining = parseFloat(m.remainingMerits) || 0;
-                    const maxMerits = demerits + remaining;
+                    let maxMerits = demerits + remaining;
+                    if (m.classType === '1CL') maxMerits = 88.2;
+                    else if (m.classType === '2CL') maxMerits = 102.9;
+                    else if (m.classType === '3CL') maxMerits = 117.6;
                     const progress = maxMerits > 0 ? Math.max(0, Math.min(100, (remaining / maxMerits) * 100)) : 0;
 
                     // Gradient changes color if it's very low
