@@ -1,5 +1,6 @@
 import React from 'react';
 import AnnCard from '../components/AnnCard';
+import FinanceDashboard from '../components/FinanceDashboard';
 
 const COUNCILS_META = {
   s1: { name:'S1 COUNCIL', sub:'Personnel & Administration', icon:'👤', color:'#39ff6e', mission:'Responsible for personnel records, administrative matters, cadet welfare, and human resource management of ALFA Company.', cols:['Name','Rank','Position','Status'] },
@@ -55,6 +56,18 @@ export default function CouncilPage({ councilId, sheetData, events }) {
             No bulletins from {c.name}. Connect a Google Sheet to populate.
           </p>
         </div>
+      )}
+
+      {councilId === 's10' && (
+        <>
+          <div className="section-header">
+            <div className="section-title">
+              <div className="section-icon">📈</div>
+              <div><h2>FINANCE DASHBOARD</h2><p>LIVE TRACKING & USAGE</p></div>
+            </div>
+          </div>
+          <FinanceDashboard />
+        </>
       )}
 
       <div className="section-header">

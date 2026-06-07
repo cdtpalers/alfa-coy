@@ -1504,6 +1504,51 @@ textarea.glass-input {
   background: rgba(255, 255, 255, 0.06) !important; 
 }
 
+/* ── FINANCE DASHBOARD ── */
+.finance-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.finance-metric-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.finance-metric-card h4 {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.finance-metric-card p {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text);
+  font-family: 'Share Tech Mono', monospace;
+}
+
+.finance-chart-container {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  height: 350px;
+}
+
 /* ── SCROLLBAR ── */
 ::-webkit-scrollbar { 
   width: 6px; 
