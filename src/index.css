@@ -562,6 +562,10 @@ body {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+.modal .glass-input {
+  min-width: 0;
+}
+
 .glass-input:focus {
   border-color: var(--accent-base);
   box-shadow: 0 0 0 3px rgba(26, 48, 30, 0.08);
