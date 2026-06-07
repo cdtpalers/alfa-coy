@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
@@ -186,7 +187,7 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
         const dateObj = new Date(parseInt(sYear), selMonth, selDay);
         const formattedDate = dateObj.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
         
-        return (
+        return createPortal(
           <div className="modal-overlay" onClick={() => setSelectedDate(null)}>
             <div className="modal glass" onClick={e => e.stopPropagation()} style={{maxWidth: '500px'}}>
               <h3><i className="fa fa-calendar-day"></i> {formattedDate}</h3>
@@ -232,7 +233,8 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
                 <button className="btn" onClick={() => setSelectedDate(null)}>CLOSE</button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         );
       })()}
     </div>
