@@ -94,8 +94,6 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
           <h2>Calendar</h2>
         </div>
         <div className="cal-topbar-center">
-          <div className="cal-tab">Day</div>
-          <div className="cal-tab">Week</div>
           <div className="cal-tab active">Month</div>
         </div>
         <div className="cal-topbar-right">
