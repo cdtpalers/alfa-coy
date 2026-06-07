@@ -7,6 +7,48 @@ const CAT_COLORS = { training:'tag-green', formation:'tag-gold', academic:'tag-b
 export default function Calendar({ events, openEventModal, isAdmin }) {
   const [calDate, setCalDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
+  const [birthdays, setBirthdays] = useState([]);
+
+  useEffect(() => {
+    fetch('/roster.csv')
+      .then(res => res.text())
+      .then(text => {
+        const lines = text.trim().split('\n');
+        const bdays = [];
+        for (let i = 1; i < lines.length; i++) {
+          const line = lines[i];
+          const vals = [];
+          let cur='', inQ=false;
+          for (let ch of line) {
+            if (ch==='"' ) { inQ=!inQ; }
+            else if (ch===',' && !inQ) { vals.push(cur.trim()); cur=''; }
+            else cur+=ch;
+          }
+          vals.push(cur.trim());
+          if (vals.length > 11) {
+            const lastName = vals[2] || '';
+            const firstName = vals[3] || '';
+            const cadetClass = vals[8] || '';
+            const shortName = `${cadetClass} ${lastName}`.trim();
+            let dobStr = vals[11];
+            if (dobStr && dobStr !== 'N/A' && dobStr.trim() !== '') {
+              dobStr = dobStr.replace(/[-/]/g, ' ').replace(/,/g, '');
+              const d = new Date(dobStr);
+              if (!isNaN(d.getTime())) {
+                bdays.push({ 
+                  name: `${firstName} ${lastName}`.trim(), 
+                  shortName,
+                  month: d.getMonth(), 
+                  day: d.getDate() 
+                });
+              }
+            }
+          }
+        }
+        setBirthdays(bdays);
+      })
+      .catch(console.error);
+  }, []);
 
   const year = calDate.getFullYear();
   const month = calDate.getMonth();
@@ -30,7 +72,8 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
     const dateStr = `${year}-${String(month+1).padStart(2,'0')}-${String(i).padStart(2,'0')}`;
     const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear();
     const hasEvent = eventDates.has(dateStr);
-    daysGrid.push({ day: i, isOtherMonth: false, dateStr, isToday, hasEvent });
+    const dayBirthdays = birthdays.filter(b => b.month === month && b.day === i);
+    daysGrid.push({ day: i, isOtherMonth: false, dateStr, isToday, hasEvent, birthdays: dayBirthdays });
   }
 
   const handlePrevMonth = () => setCalDate(new Date(year, month - 1, 1));
@@ -64,15 +107,43 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
           </div>
           <div className="cal-grid">
             {DAYS.map(day => <div className="cal-day-name" key={day}>{day}</div>)}
-            {daysGrid.map((d, i) => (
+            {daysGrid.map((d, i) => {
+              const bdayNames = d.birthdays && d.birthdays.length > 0 
+                ? d.birthdays.map(b => b.name).join(', ') 
+                : '';
+              return (
               <div 
                 key={i} 
                 className={`cal-day ${d.isOtherMonth ? 'other-month' : ''} ${d.isToday ? 'today' : ''} ${d.hasEvent ? 'has-event' : ''} ${selectedDate === d.dateStr ? 'selected' : ''}`}
                 onClick={() => { if(!d.isOtherMonth) setSelectedDate(d.dateStr); }}
+                title={bdayNames ? `Birthdays: ${bdayNames}` : undefined}
+                style={{ position: 'relative' }}
               >
-                {d.day}
+                <div className="cal-day-num" style={{ zIndex: 1, position: 'relative', top: (d.birthdays && d.birthdays.length > 0 && !d.isOtherMonth) ? '-8px' : '0' }}>{d.day}</div>
+                {d.birthdays && d.birthdays.length > 0 && !d.isOtherMonth && (
+                  <div className="cal-day-bday" style={{
+                    position: 'absolute', 
+                    bottom: '4px', 
+                    left: '0', 
+                    width: '100%', 
+                    display: 'flex', 
+                    flexDirection: 'column', 
+                    alignItems: 'center',
+                    color: 'var(--text-muted)',
+                    zIndex: 2
+                  }}>
+                    <i className="fa-solid fa-cake-candles" style={{color: '#ff9800', fontSize: '12px', marginBottom: '1px'}}></i>
+                    <div className="bday-names" style={{fontSize: '9px', lineHeight: 1.1, textAlign: 'center', width: '90%', fontWeight: 700}}>
+                      {d.birthdays.map((b, idx) => (
+                        <div key={idx} style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--accent-base)'}}>
+                          {b.shortName}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            ))}
+            )})}
           </div>
         </div>
         <div className="glass" style={{padding: '20px'}}>
