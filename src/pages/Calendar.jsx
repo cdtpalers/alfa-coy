@@ -38,6 +38,7 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
                 bdays.push({ 
                   name: `${firstName} ${lastName}`.trim(), 
                   shortName,
+                  cadetClass,
                   month: d.getMonth(), 
                   day: d.getDate() 
                 });
@@ -134,11 +135,19 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
                   }}>
                     <i className="fa-solid fa-cake-candles" style={{color: '#ff9800', fontSize: '12px', marginBottom: '1px'}}></i>
                     <div className="bday-names" style={{fontSize: '9px', lineHeight: 1.1, textAlign: 'center', width: '90%', fontWeight: 700}}>
-                      {d.birthdays.map((b, idx) => (
-                        <div key={idx} style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--accent-base)'}}>
-                          {b.shortName}
-                        </div>
-                      ))}
+                      {d.birthdays.map((b, idx) => {
+                        const classKey = (b.cadetClass || '').toLowerCase();
+                        let classColor = 'bday-other';
+                        if (classKey.includes('1cl')) classColor = 'bday-1cl';
+                        else if (classKey.includes('2cl')) classColor = 'bday-2cl';
+                        else if (classKey.includes('3cl')) classColor = 'bday-3cl';
+                        else if (classKey.includes('4cl')) classColor = 'bday-4cl';
+                        return (
+                          <div key={idx} className={classColor} style={{whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis'}}>
+                            {b.shortName}
+                          </div>
+                        );
+                      })}
                     </div>
                   </div>
                 )}
