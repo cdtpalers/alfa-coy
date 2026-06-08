@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 
 export default function PrivilegeLeaveForm() {
   const [date, setDate] = useState('');
-  const [cadetClass, setCadetClass] = useState('');
+  const [cadetClass, setCadetClass] = useState('1CL');
   const [lastName, setLastName] = useState('');
   const [status, setStatus] = useState('Full Duty');
   const [requests, setRequests] = useState([]);
@@ -36,7 +36,7 @@ export default function PrivilegeLeaveForm() {
     localStorage.setItem('s1_leave_requests', JSON.stringify(updated));
     
     setDate('');
-    setCadetClass('');
+    setCadetClass('1CL');
     setLastName('');
     setStatus('Full Duty');
     
@@ -74,13 +74,15 @@ export default function PrivilegeLeaveForm() {
           
           <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>CADET CLASS</label>
-            <input 
-              type="text" 
-              placeholder="e.g. 2024"
+            <select 
               value={cadetClass} 
               onChange={(e) => setCadetClass(e.target.value)}
-              style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
-            />
+              style={{ padding: '10px', background: 'var(--glass-bg)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
+            >
+              <option value="1CL">1CL</option>
+              <option value="2CL">2CL</option>
+              <option value="3CL">3CL</option>
+            </select>
           </div>
           
           <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
