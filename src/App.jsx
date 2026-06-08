@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 import SideBar from './components/SideBar';
 import Ticker from './components/Ticker';
 import EventModal from './components/EventModal';
@@ -350,6 +351,7 @@ export default function App() {
         onClose={() => setIsLoginModalOpen(false)}
         onLogin={handleLoginSuccess}
       />
+      <Analytics />
     </div>
   );
 }
