@@ -10,6 +10,7 @@ const COUNCILS = [
   { id: 's7', label: 'S7 Civil-Military', icon: 'fa-handshake-angle' },
   { id: 's8', label: 'S8 Education & Training', icon: 'fa-book-open' },
   { id: 's10', label: 'S10 Finance', icon: 'fa-coins' },
+  { id: 'rso', label: 'RSO Council', icon: 'fa-boxes-stacked' },
   { id: 'athletic', label: 'Athletic Council', icon: 'fa-person-running' },
   { id: 'academic', label: 'Academic Council', icon: 'fa-graduation-cap' },
 ];
