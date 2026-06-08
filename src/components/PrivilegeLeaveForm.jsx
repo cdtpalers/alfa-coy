@@ -80,16 +80,51 @@ export default function PrivilegeLeaveForm({ isAdmin }) {
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div className="form-group">
                 <label>DATE OF PRIVILEGE / LEAVE</label>
-                <select 
-                  className="glass-input"
-                  style={{ width: '100%' }}
-                  value={date} 
-                  onChange={(e) => setDate(e.target.value)}
-                >
-                  {privilegeDates.map(d => (
-                    <option key={d} value={d}>{d}</option>
-                  ))}
-                </select>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
+                  {privilegeDates.map(d => {
+                    const [yearStr, monthStr, dayStr] = d.split('-');
+                    const months = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+                    const month = months[parseInt(monthStr, 10) - 1];
+                    const day = parseInt(dayStr, 10);
+                    const isSelected = date === d;
+
+                    return (
+                      <div 
+                        key={d} 
+                        onClick={() => setDate(d)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '20px',
+                          padding: '16px',
+                          border: isSelected ? '2px solid var(--accent-base)' : '1px solid var(--border)',
+                          borderRadius: '16px',
+                          background: isSelected ? 'rgba(26, 48, 30, 0.04)' : 'var(--card-bg)',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
+                          boxShadow: isSelected ? '0 4px 12px rgba(26, 48, 30, 0.08)' : 'none'
+                        }}
+                      >
+                        <div className="event-date-badge" style={{ background: 'transparent', borderColor: isSelected ? 'var(--accent-base)' : 'var(--border)' }}>
+                          <span className="d">{day}</span>
+                          <span className="m">{month} {yearStr}</span>
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <h4 style={{ margin: '0 0 4px 0', fontSize: '18px', fontWeight: '700', color: 'var(--text)' }}>
+                            Upperclass Privilege
+                          </h4>
+                          <p style={{ margin: '0 0 10px 0', fontSize: '14px', color: 'var(--text-muted)' }}>
+                            10:00 FDS cadets only
+                          </p>
+                          <div style={{ display: 'flex', gap: '8px' }}>
+                            <span className="tag tag-green">ACTIVITY</span>
+                            <span className="tag tag-green">S1</span>
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
                     <div className="form-group">
                 <label>CADET CLASS</label>
