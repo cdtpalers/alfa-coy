@@ -17,7 +17,7 @@ const COUNCILS_META = {
   academic: { name:'ACADEMIC COUNCIL', sub:'Scholastic Affairs', icon:'🎓', color:'#88aaff', mission:'Oversees academic performance, study programs, tutorial sessions, and scholastic standards of company cadets.', cols:['Subject','Schedule','Tutor','Venue'] },
 };
 
-export default function CouncilPage({ councilId, sheetData, events }) {
+export default function CouncilPage({ councilId, sheetData, events, isAdmin }) {
   const c = COUNCILS_META[councilId];
 
   if (!c) return null;
@@ -72,7 +72,7 @@ export default function CouncilPage({ councilId, sheetData, events }) {
       )}
 
       {councilId === 's1' && (
-        <PrivilegeLeaveForm />
+        <PrivilegeLeaveForm isAdmin={isAdmin} />
       )}
 
       <div className="section-header">

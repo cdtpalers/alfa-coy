@@ -274,7 +274,7 @@ export default function App() {
         />
       );
     }
-    return <CouncilPage councilId={currentPage} sheetData={combinedData} events={events} />;
+    return <CouncilPage councilId={currentPage} sheetData={combinedData} events={events} isAdmin={isAdmin} />;
   };
 
   return (

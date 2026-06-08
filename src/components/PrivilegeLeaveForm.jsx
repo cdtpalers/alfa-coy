@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function PrivilegeLeaveForm() {
+export default function PrivilegeLeaveForm({ isAdmin }) {
   const [privilegeDates, setPrivilegeDates] = useState([]);
   const [date, setDate] = useState('');
   const [cadetClass, setCadetClass] = useState('1CL');
@@ -145,7 +145,7 @@ export default function PrivilegeLeaveForm() {
                   <th>CLASS</th>
                   <th>LAST NAME</th>
                   <th>STATUS</th>
-                  <th>ACTION</th>
+                  {isAdmin && <th>ACTION</th>}
                 </tr>
               </thead>
               <tbody>
@@ -159,11 +159,13 @@ export default function PrivilegeLeaveForm() {
                         {r.status.toUpperCase()}
                       </span>
                     </td>
-                    <td>
-                      <button onClick={() => handleDelete(r.id)} style={{ background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer' }}>
-                        <i className="fa fa-trash"></i>
-                      </button>
-                    </td>
+                    {isAdmin && (
+                      <td>
+                        <button onClick={() => handleDelete(r.id)} style={{ background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer' }}>
+                          <i className="fa fa-trash"></i>
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
               </tbody>
