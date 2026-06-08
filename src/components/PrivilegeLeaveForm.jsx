@@ -77,57 +77,60 @@ export default function PrivilegeLeaveForm({ isAdmin }) {
         ) : (
           <>
             {successMsg && <div style={{ color: '#39ff6e', marginBottom: '15px', fontWeight: 'bold' }}>{successMsg}</div>}
-            <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '15px' }}>
-              <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-                <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>DATE OF PRIVILEGE / LEAVE</label>
+            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+              <div className="form-group">
+                <label>DATE OF PRIVILEGE / LEAVE</label>
                 <select 
+                  className="glass-input"
+                  style={{ width: '100%' }}
                   value={date} 
                   onChange={(e) => setDate(e.target.value)}
-                  style={{ padding: '10px', background: 'var(--glass-bg)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
                 >
                   {privilegeDates.map(d => (
                     <option key={d} value={d}>{d}</option>
                   ))}
                 </select>
               </div>
+                    <div className="form-group">
+                <label>CADET CLASS</label>
+                <select 
+                  className="glass-input"
+                  style={{ width: '100%' }}
+                  value={cadetClass} 
+                  onChange={(e) => setCadetClass(e.target.value)}
+                >
+                  <option value="1CL">1CL</option>
+                  <option value="2CL">2CL</option>
+                  <option value="3CL">3CL</option>
+                </select>
+              </div>
+              
+              <div className="form-group">
+                <label>LAST NAME</label>
+                <input 
+                  type="text" 
+                  className="glass-input"
+                  style={{ width: '100%' }}
+                  placeholder="Last Name"
+                  value={lastName} 
+                  onChange={(e) => setLastName(e.target.value)}
+                />
+              </div>
+              
+              <div className="form-group">
+                <label>STATUS</label>
+                <select 
+                  className="glass-input"
+                  style={{ width: '100%' }}
+                  value={status} 
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="Full Duty">Full Duty</option>
+                  <option value="Not Full Duty">Not Full Duty</option>
+                </select>
+              </div>
           
-          <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-            <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>CADET CLASS</label>
-            <select 
-              value={cadetClass} 
-              onChange={(e) => setCadetClass(e.target.value)}
-              style={{ padding: '10px', background: 'var(--glass-bg)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
-            >
-              <option value="1CL">1CL</option>
-              <option value="2CL">2CL</option>
-              <option value="3CL">3CL</option>
-            </select>
-          </div>
-          
-          <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-            <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>LAST NAME</label>
-            <input 
-              type="text" 
-              placeholder="Last Name"
-              value={lastName} 
-              onChange={(e) => setLastName(e.target.value)}
-              style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
-            />
-          </div>
-          
-          <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-            <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>STATUS</label>
-            <select 
-              value={status} 
-              onChange={(e) => setStatus(e.target.value)}
-              style={{ padding: '10px', background: 'var(--glass-bg)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
-            >
-              <option value="Full Duty">Full Duty</option>
-              <option value="Not Full Duty">Not Full Duty</option>
-            </select>
-          </div>
-          
-              <button type="submit" className="btn btn-primary" style={{ padding: '12px', marginTop: '10px', fontWeight: 'bold' }}>
+              <button type="submit" className="btn btn-primary" style={{ width: '100%', justifyContent: 'center', marginTop: '10px' }}>
                 SUBMIT SIGNIFICATION
               </button>
             </form>
