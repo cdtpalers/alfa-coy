@@ -113,9 +113,9 @@ export default function EventModal({ isOpen, onClose, onSave, initialData = null
               onChange={(e) => setCouncil(e.target.value)}
             >
               <option value="all">All Company</option>
-              <option>S1</option><option>S2</option><option>S3</option><option>S4</option>
-              <option>S5</option><option>S6</option><option>S7</option><option>S8</option>
-              <option>S10</option><option>RSO</option><option>Athletic</option><option>Academic</option>
+              <option value="s1">S1</option><option value="s2">S2</option><option value="s3">S3</option><option value="s4">S4</option>
+              <option value="s5">S5</option><option value="s6">S6</option><option value="s7">S7</option><option value="s8">S8</option>
+              <option value="s10">S10</option><option value="rso">RSO Council</option><option value="athletic">Athletic Council</option><option value="academic">Academic Council</option>
             </select>
           </div>
         </div>
