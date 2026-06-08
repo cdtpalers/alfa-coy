@@ -1,0 +1,153 @@
+import React, { useState, useEffect } from 'react';
+
+export default function PrivilegeLeaveForm() {
+  const [date, setDate] = useState('');
+  const [cadetClass, setCadetClass] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [status, setStatus] = useState('Full Duty');
+  const [requests, setRequests] = useState([]);
+  const [successMsg, setSuccessMsg] = useState('');
+
+  useEffect(() => {
+    const stored = localStorage.getItem('s1_leave_requests');
+    if (stored) {
+      setRequests(JSON.parse(stored));
+    }
+  }, []);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!date || !cadetClass || !lastName) {
+      alert('Please fill out all fields.');
+      return;
+    }
+
+    const newRequest = {
+      id: Date.now(),
+      date,
+      cadetClass,
+      lastName,
+      status,
+      timestamp: new Date().toLocaleString()
+    };
+
+    const updated = [newRequest, ...requests];
+    setRequests(updated);
+    localStorage.setItem('s1_leave_requests', JSON.stringify(updated));
+    
+    setDate('');
+    setCadetClass('');
+    setLastName('');
+    setStatus('Full Duty');
+    
+    setSuccessMsg('Request submitted successfully!');
+    setTimeout(() => setSuccessMsg(''), 3000);
+  };
+
+  const handleDelete = (id) => {
+    const updated = requests.filter(r => r.id !== id);
+    setRequests(updated);
+    localStorage.setItem('s1_leave_requests', JSON.stringify(updated));
+  };
+
+  return (
+    <div className="section-container" style={{ marginTop: '20px' }}>
+      <div className="section-header">
+        <div className="section-title">
+          <div className="section-icon">📝</div>
+          <div><h2>PRIVILEGE & LEAVE DUTY SIGN-UP</h2><p>SIGNIFY FOR S1 APPROVAL</p></div>
+        </div>
+      </div>
+      
+      <div className="glass" style={{ padding: '20px', marginBottom: '20px' }}>
+        {successMsg && <div style={{ color: '#39ff6e', marginBottom: '15px', fontWeight: 'bold' }}>{successMsg}</div>}
+        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '15px' }}>
+          <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>DATE OF PRIVILEGE / LEAVE</label>
+            <input 
+              type="date" 
+              value={date} 
+              onChange={(e) => setDate(e.target.value)}
+              style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
+            />
+          </div>
+          
+          <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>CADET CLASS</label>
+            <input 
+              type="text" 
+              placeholder="e.g. 2024"
+              value={cadetClass} 
+              onChange={(e) => setCadetClass(e.target.value)}
+              style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
+            />
+          </div>
+          
+          <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>LAST NAME</label>
+            <input 
+              type="text" 
+              placeholder="Last Name"
+              value={lastName} 
+              onChange={(e) => setLastName(e.target.value)}
+              style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
+            />
+          </div>
+          
+          <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+            <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>STATUS</label>
+            <select 
+              value={status} 
+              onChange={(e) => setStatus(e.target.value)}
+              style={{ padding: '10px', background: 'var(--glass-bg)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
+            >
+              <option value="Full Duty">Full Duty</option>
+              <option value="Not Full Duty">Not Full Duty</option>
+            </select>
+          </div>
+          
+          <button type="submit" className="btn btn-primary" style={{ padding: '12px', marginTop: '10px', fontWeight: 'bold' }}>
+            SUBMIT SIGNIFICATION
+          </button>
+        </form>
+      </div>
+
+      {requests.length > 0 && (
+        <div className="glass" style={{ padding: 0, overflow: 'hidden' }}>
+          <div className="data-table-wrap">
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>DATE</th>
+                  <th>CLASS</th>
+                  <th>LAST NAME</th>
+                  <th>STATUS</th>
+                  <th>ACTION</th>
+                </tr>
+              </thead>
+              <tbody>
+                {requests.map(r => (
+                  <tr key={r.id}>
+                    <td>{r.date}</td>
+                    <td>{r.cadetClass}</td>
+                    <td>{r.lastName}</td>
+                    <td>
+                      <span className={`tag ${r.status === 'Full Duty' ? 'tag-green' : 'tag-gold'}`}>
+                        {r.status.toUpperCase()}
+                      </span>
+                    </td>
+                    <td>
+                      <button onClick={() => handleDelete(r.id)} style={{ background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer' }}>
+                        <i className="fa fa-trash"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

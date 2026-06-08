@@ -1,6 +1,7 @@
 import React from 'react';
 import AnnCard from '../components/AnnCard';
 import FinanceDashboard from '../components/FinanceDashboard';
+import PrivilegeLeaveForm from '../components/PrivilegeLeaveForm';
 
 const COUNCILS_META = {
   s1: { name:'S1 COUNCIL', sub:'Personnel & Administration', icon:'👤', color:'#39ff6e', mission:'Responsible for personnel records, administrative matters, cadet welfare, and human resource management of ALFA Company.', cols:['Name','Rank','Position','Status'] },
@@ -68,6 +69,10 @@ export default function CouncilPage({ councilId, sheetData, events }) {
           </div>
           <FinanceDashboard />
         </>
+      )}
+
+      {councilId === 's1' && (
+        <PrivilegeLeaveForm />
       )}
 
       <div className="section-header">
