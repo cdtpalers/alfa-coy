@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 export default function PrivilegeLeaveForm() {
+  const [privilegeDates, setPrivilegeDates] = useState([]);
   const [date, setDate] = useState('');
   const [cadetClass, setCadetClass] = useState('1CL');
   const [lastName, setLastName] = useState('');
@@ -9,9 +10,17 @@ export default function PrivilegeLeaveForm() {
   const [successMsg, setSuccessMsg] = useState('');
 
   useEffect(() => {
-    const stored = localStorage.getItem('s1_leave_requests');
-    if (stored) {
-      setRequests(JSON.parse(stored));
+    const storedRequests = localStorage.getItem('s1_leave_requests');
+    if (storedRequests) {
+      setRequests(JSON.parse(storedRequests));
+    }
+    const storedDates = localStorage.getItem('s1_privilege_dates');
+    if (storedDates) {
+      const dates = JSON.parse(storedDates);
+      setPrivilegeDates(dates);
+      if (dates.length > 0) {
+        setDate(dates[0]); // Default to first available date
+      }
     }
   }, []);
 
@@ -60,17 +69,27 @@ export default function PrivilegeLeaveForm() {
       </div>
       
       <div className="glass" style={{ padding: '20px', marginBottom: '20px' }}>
-        {successMsg && <div style={{ color: '#39ff6e', marginBottom: '15px', fontWeight: 'bold' }}>{successMsg}</div>}
-        <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '15px' }}>
-          <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
-            <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>DATE OF PRIVILEGE / LEAVE</label>
-            <input 
-              type="date" 
-              value={date} 
-              onChange={(e) => setDate(e.target.value)}
-              style={{ padding: '10px', background: 'rgba(0,0,0,0.2)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
-            />
+        {privilegeDates.length === 0 ? (
+          <div style={{ textAlign: 'center', color: 'var(--text-dim)', padding: '20px' }}>
+            <i className="fa fa-calendar-xmark" style={{ fontSize: '30px', opacity: 0.5, marginBottom: '10px' }}></i>
+            <p>No privileges have been announced at this time.</p>
           </div>
+        ) : (
+          <>
+            {successMsg && <div style={{ color: '#39ff6e', marginBottom: '15px', fontWeight: 'bold' }}>{successMsg}</div>}
+            <form onSubmit={handleSubmit} style={{ display: 'grid', gap: '15px' }}>
+              <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>DATE OF PRIVILEGE / LEAVE</label>
+                <select 
+                  value={date} 
+                  onChange={(e) => setDate(e.target.value)}
+                  style={{ padding: '10px', background: 'var(--glass-bg)', border: '1px solid var(--border-color)', color: 'var(--text-color)', borderRadius: '4px' }}
+                >
+                  {privilegeDates.map(d => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+              </div>
           
           <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
             <label style={{ fontSize: '12px', color: 'var(--text-dim)', fontWeight: 'bold' }}>CADET CLASS</label>
@@ -108,10 +127,12 @@ export default function PrivilegeLeaveForm() {
             </select>
           </div>
           
-          <button type="submit" className="btn btn-primary" style={{ padding: '12px', marginTop: '10px', fontWeight: 'bold' }}>
-            SUBMIT SIGNIFICATION
-          </button>
-        </form>
+              <button type="submit" className="btn btn-primary" style={{ padding: '12px', marginTop: '10px', fontWeight: 'bold' }}>
+                SUBMIT SIGNIFICATION
+              </button>
+            </form>
+          </>
+        )}
       </div>
 
       {requests.length > 0 && (

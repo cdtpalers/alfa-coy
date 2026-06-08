@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function AdminDashboard({ 
   events, 
@@ -9,6 +9,34 @@ export default function AdminDashboard({
   onDeleteAnnouncement 
 }) {
   const [activeTab, setActiveTab] = useState('events');
+  const [privilegeDates, setPrivilegeDates] = useState([]);
+  const [newPrivilegeDate, setNewPrivilegeDate] = useState('');
+
+  useEffect(() => {
+    const stored = localStorage.getItem('s1_privilege_dates');
+    if (stored) {
+      setPrivilegeDates(JSON.parse(stored));
+    }
+  }, []);
+
+  const handleAddPrivilege = () => {
+    if (!newPrivilegeDate) return;
+    if (privilegeDates.includes(newPrivilegeDate)) {
+      alert('This date is already announced.');
+      return;
+    }
+    const updated = [...privilegeDates, newPrivilegeDate].sort();
+    setPrivilegeDates(updated);
+    localStorage.setItem('s1_privilege_dates', JSON.stringify(updated));
+    setNewPrivilegeDate('');
+  };
+
+  const handleDeletePrivilege = (date) => {
+    const updated = privilegeDates.filter(d => d !== date);
+    setPrivilegeDates(updated);
+    localStorage.setItem('s1_privilege_dates', JSON.stringify(updated));
+  };
+
 
   return (
     <div className="page active" id="page-admin-dashboard">
@@ -22,6 +50,9 @@ export default function AdminDashboard({
           </div>
           <div className={`cal-tab ${activeTab === 'announcements' ? 'active' : ''}`} onClick={() => setActiveTab('announcements')} style={{cursor: 'pointer'}}>
             Announcements ({announcements.length})
+          </div>
+          <div className={`cal-tab ${activeTab === 'privileges' ? 'active' : ''}`} onClick={() => setActiveTab('privileges')} style={{cursor: 'pointer'}}>
+            S1 Privileges ({privilegeDates.length})
           </div>
         </div>
       </div>
@@ -93,6 +124,45 @@ export default function AdminDashboard({
               ))}
             </tbody>
           </table>
+        )}
+
+        {activeTab === 'privileges' && (
+          <div>
+            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+              <input 
+                type="date" 
+                className="glass-input" 
+                value={newPrivilegeDate}
+                onChange={(e) => setNewPrivilegeDate(e.target.value)}
+              />
+              <button className="btn btn-primary" onClick={handleAddPrivilege}>
+                <i className="fa fa-plus"></i> Announce Privilege Date
+              </button>
+            </div>
+            
+            <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+              <thead>
+                <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
+                  <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase' }}>Announced Date</th>
+                  <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {privilegeDates.length === 0 ? (
+                  <tr><td colSpan="2" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>No privileges announced.</td></tr>
+                ) : privilegeDates.map(date => (
+                  <tr key={date} style={{ borderBottom: '1px solid var(--border)' }}>
+                    <td style={{ padding: '12px' }}><strong>{date}</strong></td>
+                    <td style={{ padding: '12px', textAlign: 'right' }}>
+                      <button className="btn btn-sm" onClick={() => { if(window.confirm('Delete this announced privilege date?')) handleDeletePrivilege(date); }} style={{ padding: '6px 12px', color: '#ff4d4d', borderColor: '#ff4d4d' }}>
+                        <i className="fa fa-trash"></i> Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </div>
     </div>
