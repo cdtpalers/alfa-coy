@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import { supabase } from '../lib/supabase';
 
 const TAG_COLORS = {
   urgent: 'tag-red',
@@ -22,21 +23,49 @@ export default function AnnCard({ item }) {
   const itemKey = item.id ? `id_${item.id}` : `title_${item.Title?.replace(/\s+/g, '_')}`;
 
   useEffect(() => {
-    // Load local reactions
-    const storedReactions = localStorage.getItem(`alfa_reactions_${itemKey}`);
+    // Load local user reaction
     const storedUserReaction = localStorage.getItem(`alfa_user_reaction_${itemKey}`);
-    if (storedReactions) {
-      try { setReactions(JSON.parse(storedReactions)); } catch (e) {}
-    }
     if (storedUserReaction) {
       setUserReaction(storedUserReaction);
     }
+
+    // Fallback to local storage for immediate UI rendering
+    const storedReactions = localStorage.getItem(`alfa_reactions_${itemKey}`);
+    if (storedReactions) {
+      try { setReactions(JSON.parse(storedReactions)); } catch (e) {}
+    }
+
+    // Fetch global reactions from Supabase
+    async function fetchReactions() {
+      try {
+        const { data, error } = await supabase
+          .from('reactions')
+          .select('like_count, heart_count, clap_count, salute_count')
+          .eq('item_key', itemKey)
+          .single();
+          
+        if (data && !error) {
+          const fetchedReactions = {
+            like: data.like_count || 0,
+            heart: data.heart_count || 0,
+            clap: data.clap_count || 0,
+            salute: data.salute_count || 0
+          };
+          setReactions(fetchedReactions);
+          localStorage.setItem(`alfa_reactions_${itemKey}`, JSON.stringify(fetchedReactions));
+        }
+      } catch (err) {
+        console.error("Error fetching reactions:", err);
+      }
+    }
+    fetchReactions();
   }, [itemKey]);
 
-  const handleReaction = (e, type) => {
+  const handleReaction = async (e, type) => {
     e.stopPropagation();
     let newReactions = { ...reactions };
     let newUserReaction = userReaction;
+    const oldReaction = userReaction;
 
     if (userReaction === type) {
       // Toggle off
@@ -52,13 +81,26 @@ export default function AnnCard({ item }) {
       newUserReaction = type;
     }
 
+    // Optimistic UI Update
     setReactions(newReactions);
     setUserReaction(newUserReaction);
     localStorage.setItem(`alfa_reactions_${itemKey}`, JSON.stringify(newReactions));
+    
     if (newUserReaction) {
       localStorage.setItem(`alfa_user_reaction_${itemKey}`, newUserReaction);
     } else {
       localStorage.removeItem(`alfa_user_reaction_${itemKey}`);
+    }
+
+    // Update in Supabase
+    try {
+      await supabase.rpc('toggle_reaction', {
+        p_item_key: itemKey,
+        p_reaction_type: newUserReaction,
+        p_old_reaction_type: oldReaction
+      });
+    } catch (err) {
+      console.error("Error updating reaction:", err);
     }
   };
 
