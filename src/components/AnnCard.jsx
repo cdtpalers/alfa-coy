@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 
 const TAG_COLORS = {
@@ -16,6 +16,53 @@ function tagClass(tag) {
 
 export default function AnnCard({ item }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [reactions, setReactions] = useState({ like: 0, heart: 0, clap: 0 });
+  const [userReaction, setUserReaction] = useState(null);
+
+  const itemKey = item.id ? `id_${item.id}` : `title_${item.Title?.replace(/\s+/g, '_')}`;
+
+  useEffect(() => {
+    // Load local reactions
+    const storedReactions = localStorage.getItem(`alfa_reactions_${itemKey}`);
+    const storedUserReaction = localStorage.getItem(`alfa_user_reaction_${itemKey}`);
+    if (storedReactions) {
+      try { setReactions(JSON.parse(storedReactions)); } catch (e) {}
+    }
+    if (storedUserReaction) {
+      setUserReaction(storedUserReaction);
+    }
+  }, [itemKey]);
+
+  const handleReaction = (e, type) => {
+    e.stopPropagation();
+    let newReactions = { ...reactions };
+    let newUserReaction = userReaction;
+
+    if (userReaction === type) {
+      // Toggle off
+      newReactions[type] = Math.max(0, newReactions[type] - 1);
+      newUserReaction = null;
+    } else {
+      // Remove old reaction if exists
+      if (userReaction) {
+        newReactions[userReaction] = Math.max(0, newReactions[userReaction] - 1);
+      }
+      // Add new reaction
+      newReactions[type] = (newReactions[type] || 0) + 1;
+      newUserReaction = type;
+    }
+
+    setReactions(newReactions);
+    setUserReaction(newUserReaction);
+    localStorage.setItem(`alfa_reactions_${itemKey}`, JSON.stringify(newReactions));
+    if (newUserReaction) {
+      localStorage.setItem(`alfa_user_reaction_${itemKey}`, newUserReaction);
+    } else {
+      localStorage.removeItem(`alfa_user_reaction_${itemKey}`);
+    }
+  };
+
+  const totalReactions = Object.values(reactions).reduce((a, b) => a + b, 0);
 
   return (
     <>
@@ -31,9 +78,19 @@ export default function AnnCard({ item }) {
         </div>
         <div className="ann-title">{item.Title || 'Untitled'}</div>
         <div className="ann-body">{item.Body || ''}</div>
-        <div className="ann-source">
-          <i className="fa-brands fa-google"></i>
-          {item.Council ? item.Council.toUpperCase() + ' COUNCIL' : 'ALFA CO.'}
+        
+        <div className="ann-card-footer" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px'}}>
+          <div className="ann-source" style={{margin: 0}}>
+            <i className="fa-brands fa-google"></i>
+            {item.Council ? item.Council.toUpperCase() + ' COUNCIL' : 'ALFA CO.'}
+          </div>
+          {totalReactions > 0 && (
+            <div className="ann-reactions-summary" style={{fontSize: '12px', color: 'var(--text-dim)', display: 'flex', gap: '4px'}}>
+              {reactions.like > 0 && <span>👍 {reactions.like}</span>}
+              {reactions.heart > 0 && <span>❤️ {reactions.heart}</span>}
+              {reactions.clap > 0 && <span>👏 {reactions.clap}</span>}
+            </div>
+          )}
         </div>
       </div>
 
@@ -59,6 +116,31 @@ export default function AnnCard({ item }) {
             <div style={{color: 'var(--text-muted)', lineHeight: '1.6', whiteSpace: 'pre-wrap', marginBottom: '24px', fontSize: '14px'}}>
               {item.Body || ''}
             </div>
+
+            <div className="reactions-container" style={{display: 'flex', gap: '8px', marginBottom: '16px'}}>
+              <button 
+                onClick={(e) => handleReaction(e, 'like')} 
+                className="btn" 
+                style={{padding: '4px 10px', fontSize: '14px', background: userReaction === 'like' ? 'var(--bg-glass-strong)' : 'transparent', border: '1px solid var(--border-strong)', borderRadius: '20px'}}
+              >
+                👍 {reactions.like || ''}
+              </button>
+              <button 
+                onClick={(e) => handleReaction(e, 'heart')} 
+                className="btn" 
+                style={{padding: '4px 10px', fontSize: '14px', background: userReaction === 'heart' ? 'var(--bg-glass-strong)' : 'transparent', border: '1px solid var(--border-strong)', borderRadius: '20px'}}
+              >
+                ❤️ {reactions.heart || ''}
+              </button>
+              <button 
+                onClick={(e) => handleReaction(e, 'clap')} 
+                className="btn" 
+                style={{padding: '4px 10px', fontSize: '14px', background: userReaction === 'clap' ? 'var(--bg-glass-strong)' : 'transparent', border: '1px solid var(--border-strong)', borderRadius: '20px'}}
+              >
+                👏 {reactions.clap || ''}
+              </button>
+            </div>
+
             <div className="ann-source" style={{paddingTop: '16px', borderTop: '1px solid var(--border-strong)', color: 'var(--text-dim)', fontSize: '12px'}}>
               <i className="fa-brands fa-google" style={{marginRight: '6px'}}></i> 
               Posted by {item.Council ? item.Council.toUpperCase() + ' COUNCIL' : 'ALFA CO.'}
