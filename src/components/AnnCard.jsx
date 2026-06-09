@@ -16,7 +16,7 @@ function tagClass(tag) {
 
 export default function AnnCard({ item }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [reactions, setReactions] = useState({ like: 0, heart: 0, clap: 0 });
+  const [reactions, setReactions] = useState({ like: 0, heart: 0, clap: 0, salute: 0 });
   const [userReaction, setUserReaction] = useState(null);
 
   const itemKey = item.id ? `id_${item.id}` : `title_${item.Title?.replace(/\s+/g, '_')}`;
@@ -89,6 +89,7 @@ export default function AnnCard({ item }) {
               {reactions.like > 0 && <span>👍 {reactions.like}</span>}
               {reactions.heart > 0 && <span>❤️ {reactions.heart}</span>}
               {reactions.clap > 0 && <span>👏 {reactions.clap}</span>}
+              {reactions.salute > 0 && <span>🫡 {reactions.salute}</span>}
             </div>
           )}
         </div>
@@ -138,6 +139,13 @@ export default function AnnCard({ item }) {
                 style={{padding: '4px 10px', fontSize: '14px', background: userReaction === 'clap' ? 'var(--bg-glass-strong)' : 'transparent', border: '1px solid var(--border-strong)', borderRadius: '20px'}}
               >
                 👏 {reactions.clap || ''}
+              </button>
+              <button 
+                onClick={(e) => handleReaction(e, 'salute')} 
+                className="btn" 
+                style={{padding: '4px 10px', fontSize: '14px', background: userReaction === 'salute' ? 'var(--bg-glass-strong)' : 'transparent', border: '1px solid var(--border-strong)', borderRadius: '20px'}}
+              >
+                🫡 {reactions.salute || ''}
               </button>
             </div>
 
