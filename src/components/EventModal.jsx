@@ -80,6 +80,7 @@ export default function EventModal({ isOpen, onClose, onSave, initialData = null
               <option value="ceremony">Ceremony</option>
               <option value="activity">Activity</option>
               <option value="other">Other</option>
+              <option value="bessang pass">Bessang Pass</option>
             </select>
           </div>
         </div>

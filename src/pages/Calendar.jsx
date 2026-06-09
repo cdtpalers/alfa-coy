@@ -3,14 +3,14 @@ import { createPortal } from 'react-dom';
 
 const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
 const DAYS = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
-const CAT_COLORS = { training:'tag-green', formation:'tag-gold', academic:'tag-blue', athletic:'tag-green', ceremony:'tag-gold', activity:'tag-blue', other:'tag-green' };
+const CAT_COLORS = { training:'tag-green', formation:'tag-gold', academic:'tag-blue', athletic:'tag-green', ceremony:'tag-gold', activity:'tag-blue', other:'tag-green', 'bessang pass':'tag-orange' };
 
 export default function Calendar({ events, openEventModal, isAdmin }) {
   const [calDate, setCalDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [birthdays, setBirthdays] = useState([]);
   
-  const allFilters = ['training', 'formation', 'academic', 'athletic', 'ceremony', 'activity', 'other', 'birthdays'];
+  const allFilters = ['training', 'formation', 'academic', 'athletic', 'ceremony', 'activity', 'other', 'bessang pass', 'birthdays'];
   const [filters, setFilters] = useState(new Set(allFilters));
 
   useEffect(() => {
