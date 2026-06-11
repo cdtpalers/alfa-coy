@@ -16,6 +16,7 @@ const COUNCILS_META = {
   rso: { name:'RSO COUNCIL', sub:'Responsible Supply Officer', icon:'📦', color:'#ffb84d', mission:'Manages company supplies, ensures accountability of equipment, and handles the distribution of logistical resources.', cols:['Item','Quantity','Status','Remarks'] },
   athletic: { name:'ATHLETIC COUNCIL', sub:'Sports & Physical Fitness', icon:'🏃', color:'#44ff88', mission:'Develops and manages sports programs, physical fitness training, athletic competitions, and wellness initiatives.', cols:['Sport','Schedule','Venue','Coach'] },
   academic: { name:'ACADEMIC COUNCIL', sub:'Scholastic Affairs', icon:'🎓', color:'#88aaff', mission:'Oversees academic performance, study programs, tutorial sessions, and scholastic standards of company cadets.', cols:['Subject','Schedule','Tutor','Venue'] },
+  mto: { name:'MTO COUNCIL', sub:'Military Training Officer', icon:'⚔️', color:'#ff4444', mission:'Oversees military training, disciplinary actions, and standard operating procedures for the company.', cols:['Activity','Date','Status','Remarks'] },
 };
 
 export default function CouncilPage({ councilId, sheetData, events, isAdmin }) {
@@ -26,8 +27,11 @@ export default function CouncilPage({ councilId, sheetData, events, isAdmin }) {
   const items = sheetData.filter(d => d.Council && (d.Council.toLowerCase() === councilId || d.Council.toLowerCase() === 'all'));
   const tableData = items.slice(0, 10);
   
-  const councilEvents = (events || []).filter(e => e.council && (e.council.toLowerCase() === councilId || e.council.toLowerCase() === 'all'))
-    .sort((a, b) => a.date.localeCompare(b.date));
+  const councilEvents = (events || []).filter(e => {
+    const isBessangPass = e.cat && e.cat.toLowerCase() === 'bessang pass';
+    if (isBessangPass) return councilId === 'mto';
+    return e.council && (e.council.toLowerCase() === councilId || e.council.toLowerCase() === 'all');
+  }).sort((a, b) => a.date.localeCompare(b.date));
 
   return (
     <div className="page active" id={`page-${councilId}`}>

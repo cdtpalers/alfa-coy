@@ -13,6 +13,7 @@ const COUNCILS = [
   { id: 'rso', label: 'RSO Council', icon: 'fa-boxes-stacked' },
   { id: 'athletic', label: 'Athletic Council', icon: 'fa-person-running' },
   { id: 'academic', label: 'Academic Council', icon: 'fa-graduation-cap' },
+  { id: 'mto', label: 'MTO Council', icon: 'fa-person-military-pointing' },
 ];
 
 export default function SideBar({ 
