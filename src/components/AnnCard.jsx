@@ -1,6 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { supabase } from '../lib/supabase';
+import { marked } from 'marked';
+
+// Configure marked for safe rendering
+marked.setOptions({
+  breaks: true,
+  gfm: true,
+});
 
 const TAG_COLORS = {
   urgent: 'tag-red',
@@ -15,12 +22,29 @@ function tagClass(tag) {
   return TAG_COLORS[tag?.toLowerCase()] || 'tag-green';
 }
 
+function stripHtml(html) {
+  const tmp = document.createElement('div');
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || '';
+}
+
 export default function AnnCard({ item }) {
   const [isOpen, setIsOpen] = useState(false);
   const [reactions, setReactions] = useState({ like: 0, heart: 0, clap: 0, salute: 0 });
   const [userReaction, setUserReaction] = useState(null);
 
   const itemKey = item.id ? `id_${item.id}` : `title_${item.Title?.replace(/\s+/g, '_')}`;
+
+  // Parse markdown body once
+  const bodyHtml = useMemo(() => {
+    if (!item.Body) return '';
+    return marked.parse(item.Body);
+  }, [item.Body]);
+
+  // Plain text preview for card (stripped of markdown/html)
+  const bodyPreview = useMemo(() => {
+    return stripHtml(bodyHtml);
+  }, [bodyHtml]);
 
   useEffect(() => {
     // Load local user reaction
@@ -119,7 +143,7 @@ export default function AnnCard({ item }) {
           <span className="ann-date" style={{marginLeft: 'auto'}}>{item.Date || ''}</span>
         </div>
         <div className="ann-title">{item.Title || 'Untitled'}</div>
-        <div className="ann-body">{item.Body || ''}</div>
+        <div className="ann-body">{bodyPreview}</div>
         
         <div className="ann-card-footer" style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '12px'}}>
           <div className="ann-source" style={{margin: 0}}>
@@ -141,8 +165,8 @@ export default function AnnCard({ item }) {
         <div className="modal-overlay" onClick={(e) => {
           if (e.target.className === 'modal-overlay') setIsOpen(false);
         }}>
-          <div className="modal glass" style={{maxWidth: '600px'}}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px'}}>
+          <div className="modal glass ann-modal" style={{maxWidth: '600px'}}>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px', flexShrink: 0}}>
               <div className="ann-meta" style={{display: 'flex', gap: '8px', alignItems: 'center'}}>
                 <span className={`tag ${tagClass(item.Tag)}`}>
                   {(item.Tag || 'INFO').toUpperCase()}
@@ -152,15 +176,18 @@ export default function AnnCard({ item }) {
                 )}
                 <span className="ann-date">{item.Date || ''}</span>
               </div>
-              <button className="btn-icon" onClick={() => setIsOpen(false)} style={{border: 'none', background: 'transparent'}}><i className="fa fa-xmark"></i></button>
+              <button className="btn-icon" onClick={() => setIsOpen(false)} style={{border: 'none', background: 'transparent', flexShrink: 0}}><i className="fa fa-xmark"></i></button>
             </div>
             
-            <h3 style={{marginBottom: '16px', fontSize: '22px', lineHeight: '1.3'}}>{item.Title || 'Untitled'}</h3>
-            <div style={{color: 'var(--text-muted)', lineHeight: '1.6', whiteSpace: 'pre-wrap', marginBottom: '24px', fontSize: '14px'}}>
-              {item.Body || ''}
+            <div className="ann-modal-scroll">
+              <h3 style={{marginBottom: '16px', fontSize: '22px', lineHeight: '1.3'}}>{item.Title || 'Untitled'}</h3>
+              <div 
+                className="ann-modal-body"
+                dangerouslySetInnerHTML={{ __html: bodyHtml }}
+              />
             </div>
 
-            <div className="reactions-container" style={{display: 'flex', gap: '8px', marginBottom: '16px'}}>
+            <div className="reactions-container" style={{display: 'flex', gap: '8px', marginBottom: '16px', flexShrink: 0}}>
               <button 
                 onClick={(e) => handleReaction(e, 'like')} 
                 className="btn" 
@@ -191,7 +218,7 @@ export default function AnnCard({ item }) {
               </button>
             </div>
 
-            <div className="ann-source" style={{paddingTop: '16px', borderTop: '1px solid var(--border-strong)', color: 'var(--text-dim)', fontSize: '12px'}}>
+            <div className="ann-source" style={{paddingTop: '16px', borderTop: '1px solid var(--border-strong)', color: 'var(--text-dim)', fontSize: '12px', flexShrink: 0}}>
               <i className="fa-brands fa-google" style={{marginRight: '6px'}}></i> 
               Posted by {item.Council ? item.Council.toUpperCase() + ' COUNCIL' : 'ALFA CO.'}
             </div>
