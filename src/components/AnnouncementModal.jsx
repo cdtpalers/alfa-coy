@@ -129,6 +129,7 @@ export default function AnnouncementModal({ isOpen, onClose, onSave, initialData
             onChange={setBody}
             options={{
               uploadImage: true,
+              toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "upload-image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"],
               imageUploadFunction: async (file, onSuccess, onError) => {
                 try {
                   const fileExt = file.name.split('.').pop();
