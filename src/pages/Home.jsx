@@ -23,15 +23,15 @@ function useCountUp(target, duration = 800) {
   return count;
 }
 
-const COUNCIL_FILTERS = ['All', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S10'];
+const COUNCIL_FILTERS = ['All', 'S1', 'S2', 'S3', 'S4', 'S5', 'S6', 'S7', 'S8', 'S10', 'EXO'];
 const TAG_FILTERS = ['All', 'Urgent', 'Important', 'Info', 'Training', 'Activity'];
 
-export default function Home({ sheetData, events, onSheetConnect, onSheetClear, feedStatus, isAdmin, loading }) {
+export default function Home({ announcements, events, isAdmin, loading }) {
   const [search, setSearch] = useState('');
   const [councilFilter, setCouncilFilter] = useState('All');
   const [tagFilter, setTagFilter] = useState('All');
   
-  const filteredData = sheetData.filter(r => {
+  const filteredData = announcements.filter(r => {
     // Search filter
     if (search && !JSON.stringify(r).toLowerCase().includes(search.toLowerCase())) return false;
     // Council filter
@@ -50,7 +50,7 @@ export default function Home({ sheetData, events, onSheetConnect, onSheetClear, 
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 5);
 
-  const [sheetUrl, setSheetUrl] = useState(localStorage.getItem('alfa_sheet_url') || '');
+    .slice(0, 5);
 
   // Animated stat counters
   const annCount = useCountUp(allAnn.length);
@@ -87,34 +87,7 @@ export default function Home({ sheetData, events, onSheetConnect, onSheetClear, 
         </div>
       </div>
 
-      {isAdmin && (
-        <div className="glass sheets-config">
-          <h3><i className="fa-brands fa-google" style={{color: '#4CAF50'}}></i> GOOGLE SHEETS INTEGRATION</h3>
-          <div className="input-row">
-            <input 
-              type="text" 
-              className="glass-input" 
-              placeholder="Paste Google Sheets CSV publish URL (File → Share → Publish to web → CSV)…" 
-              value={sheetUrl}
-              onChange={e => setSheetUrl(e.target.value)}
-            />
-            <button className="btn btn-primary" onClick={() => onSheetConnect(sheetUrl)}>
-              <i className="fa fa-link"></i> CONNECT
-            </button>
-            <button className="btn" onClick={() => { setSheetUrl(''); onSheetClear(); }}>
-              <i className="fa fa-xmark"></i> CLEAR
-            </button>
-          </div>
-          {feedStatus && (
-            <div className={`feed-status ${feedStatus.type}`}>
-              <i className={feedStatus.type === 'ok' ? 'fa fa-circle-check' : feedStatus.type === 'err' ? 'fa fa-circle-xmark' : 'fa fa-circle-info'}></i> {feedStatus.msg}
-            </div>
-          )}
-          <div style={{marginTop: '10px', fontSize: '11px', color: 'var(--text-dim)', fontFamily: "'Share Tech Mono', monospace"}}>
-            ⓘ Sheet must have columns: <strong style={{color: 'var(--g1)'}}>Title | Body | Date | Tag | Council | Priority</strong> — Changes reflect after page refresh or manual reload.
-          </div>
-        </div>
-      )}
+
 
       {/* Priority Bulletins */}
       <div className="section-header">
@@ -182,9 +155,8 @@ export default function Home({ sheetData, events, onSheetConnect, onSheetClear, 
         ))}
       </div>
 
-      {/* Result Count */}
       <div className="filter-result-count">
-        Showing {allAnn.length} of {sheetData.length} announcements
+        Showing {allAnn.length} of {announcements.length} announcements
       </div>
 
       {loading ? (

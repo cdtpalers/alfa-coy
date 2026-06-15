@@ -18,14 +18,15 @@ const COUNCILS_META = {
   athletic: { name:'ATHLETIC COUNCIL', sub:'Sports & Physical Fitness', icon:'🏃', color:'#44ff88', mission:'Develops and manages sports programs, physical fitness training, athletic competitions, and wellness initiatives.', cols:['Sport','Schedule','Venue','Coach'] },
   academic: { name:'ACADEMIC COUNCIL', sub:'Scholastic Affairs', icon:'🎓', color:'#88aaff', mission:'Oversees academic performance, study programs, tutorial sessions, and scholastic standards of company cadets.', cols:['Subject','Schedule','Tutor','Venue'] },
   mto: { name:'MTO COUNCIL', sub:'Military Training Officer', icon:'⚔️', color:'#ff4444', mission:'Oversees military training, disciplinary actions, and standard operating procedures for the company.', cols:['Activity','Date','Status','Remarks'] },
+  'exo-council': { name:'EXO COUNCIL', sub:'Executive Officer', icon:'📋', color:'#44ccff', mission:'Handles executive functions, company administration, and oversees the implementation of policies.', cols:['Task','Status','Date','Remarks'] },
 };
 
-export default function CouncilPage({ councilId, sheetData, events, isAdmin, loading }) {
+export default function CouncilPage({ councilId, announcements, events, isAdmin, loading }) {
   const c = COUNCILS_META[councilId];
 
   if (!c) return null;
 
-  const items = sheetData.filter(d => d.Council && (d.Council.toLowerCase() === councilId || d.Council.toLowerCase() === 'all'));
+  const items = announcements.filter(d => d.Council && (d.Council.toLowerCase() === councilId || d.Council.toLowerCase() === 'all'));
   const tableData = items.slice(0, 10);
   
   const councilEvents = (events || []).filter(e => {
@@ -62,7 +63,7 @@ export default function CouncilPage({ councilId, sheetData, events, isAdmin, loa
         <div className="glass empty-state" style={{gridColumn: '1/-1'}}>
           <i className="fa fa-bullhorn"></i>
           <p>
-            No bulletins from {c.name}. Connect a Google Sheet to populate.
+            No bulletins from {c.name}.
           </p>
         </div>
       )}
@@ -122,38 +123,6 @@ export default function CouncilPage({ councilId, sheetData, events, isAdmin, loa
         </div>
       )}
 
-      {items.length > 0 && (
-        <>
-          <div className="section-header">
-            <div className="section-title">
-              <div className="section-icon">📊</div>
-              <div><h2>SHEET DATA</h2><p>FROM CONNECTED GOOGLE SHEET</p></div>
-            </div>
-          </div>
-          <div className="glass" style={{padding: 0, overflow: 'hidden'}}>
-            <div className="data-table-wrap">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    {c.cols.map((col, i) => <th key={i}>{col}</th>)}
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableData.length ? tableData.map((r, i) => (
-                    <tr key={i}>
-                      {c.cols.map((col, j) => <td key={j}>{r[col] || '—'}</td>)}
-                    </tr>
-                  )) : (
-                    <tr>
-                      <td colSpan={c.cols.length} style={{textAlign: 'center', padding: '30px'}}>No data</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </>
-      )}
     </div>
   );
 }

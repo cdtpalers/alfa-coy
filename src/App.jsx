@@ -17,37 +17,18 @@ import { supabase } from './lib/supabase';
 
 const INITIAL_EVENTS = [];
 
-function parseCSV(text) {
-  const lines = text.trim().split('\n');
-  if (lines.length < 2) return [];
-  const headers = lines[0].split(',').map(h => h.replace(/"/g,'').trim());
-  return lines.slice(1).map(line => {
-    const vals = [];
-    let cur='', inQ=false;
-    for (let ch of line) {
-      if (ch==='"' ) { inQ=!inQ; }
-      else if (ch===',' && !inQ) { vals.push(cur.trim()); cur=''; }
-      else cur+=ch;
-    }
-    vals.push(cur.trim());
-    const obj={};
-    headers.forEach((h,i)=>{ obj[h]=vals[i]||''; });
-    return obj;
-  });
-}
+// CSV parsing removed, relying only on Supabase
 
 function AppContent() {
   const toast = useToast();
   const [theme, setTheme] = useState('light');
   const [currentPage, setCurrentPage] = useState('home');
-  const [sheetData, setSheetData] = useState([]);
   const [events, setEvents] = useState(INITIAL_EVENTS);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
   const [isAnnouncementModalOpen, setIsAnnouncementModalOpen] = useState(false);
   const [localAnnouncements, setLocalAnnouncements] = useState([]);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [feedStatus, setFeedStatus] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [editEventData, setEditEventData] = useState(null);
@@ -110,14 +91,6 @@ function AppContent() {
     try {
       fetchSupabaseData().finally(() => setLoading(false));
 
-      const storedData = localStorage.getItem('alfa_sheet_data');
-      if (storedData) {
-        setSheetData(JSON.parse(storedData));
-      }
-      const url = localStorage.getItem('alfa_sheet_url');
-      if (url) {
-        loadGoogleSheet(url);
-      }
       if (localStorage.getItem('alfa_is_admin') === 'true') {
         setIsAdmin(true);
       }
@@ -242,60 +215,18 @@ function AppContent() {
     setLocalAnnouncements(localAnnouncements.filter(a => a.id !== id));
   };
 
-  async function loadGoogleSheet(url) {
-    if (!url) { 
-      setFeedStatus({msg: 'Please enter a valid Google Sheets CSV URL.', type: 'err'}); 
-      return; 
-    }
-    let csvUrl = url;
-    if (url.includes('/edit') || url.includes('/d/')) {
-      const match = url.match(/\/d\/([a-zA-Z0-9-_]+)/);
-      if (match) csvUrl = `https://docs.google.com/spreadsheets/d/${match[1]}/export?format=csv`;
-    }
-    setFeedStatus({msg: 'Connecting to Google Sheets…', type: ''});
-    try {
-      const res = await fetch(csvUrl);
-      if (!res.ok) throw new Error('HTTP '+res.status);
-      const text = await res.text();
-      const data = parseCSV(text);
-      if (!data.length) throw new Error('Empty or unreadable sheet');
-      
-      setSheetData(data);
-      localStorage.setItem('alfa_sheet_url', url);
-      localStorage.setItem('alfa_sheet_data', JSON.stringify(data));
-      setFeedStatus({msg: `✓ Loaded ${data.length} records from Google Sheets.`, type: 'ok'});
-    } catch(e) {
-      setFeedStatus({msg: 'Could not fetch sheet. Ensure it is published. Error: '+e.message, type: 'err'});
-    }
-  };
-
-  const handleClearSheet = () => {
-    setSheetData([]);
-    localStorage.removeItem('alfa_sheet_url');
-    localStorage.removeItem('alfa_sheet_data');
-    setFeedStatus({msg: 'Cleared connected sheet.', type: ''});
-  };
-
   const handleRefresh = () => {
     fetchSupabaseData();
-    const url = localStorage.getItem('alfa_sheet_url');
-    if (url) loadGoogleSheet(url);
-    else setFeedStatus({msg: 'Refreshed local data.', type: 'ok'});
   };
 
   const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
-
-  const combinedData = [...localAnnouncements, ...sheetData];
 
   const renderPage = () => {
     if (currentPage === 'home') {
       return (
         <Home 
-          sheetData={combinedData} 
+          announcements={localAnnouncements} 
           events={events} 
-          onSheetConnect={loadGoogleSheet}
-          onSheetClear={handleClearSheet}
-          feedStatus={feedStatus}
           isAdmin={isAdmin}
           loading={loading}
         />
@@ -328,7 +259,7 @@ function AppContent() {
         />
       );
     }
-    return <CouncilPage councilId={currentPage} sheetData={combinedData} events={events} isAdmin={isAdmin} loading={loading} />;
+    return <CouncilPage councilId={currentPage} announcements={localAnnouncements} events={events} isAdmin={isAdmin} loading={loading} />;
   };
 
   return (
@@ -347,7 +278,7 @@ function AppContent() {
         handleLogout={handleLogout}
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
-        announcements={combinedData}
+        announcements={localAnnouncements}
       />
       
       <div className="main-panel">
@@ -380,7 +311,7 @@ function AppContent() {
         </header>
 
         {showTicker && (
-          <Ticker data={combinedData} events={events} onClose={() => setShowTicker(false)} />
+          <Ticker data={localAnnouncements} events={events} onClose={() => setShowTicker(false)} />
         )}
 
         <main className="content pb-40">

@@ -14,6 +14,7 @@ const COUNCILS = [
   { id: 'athletic', label: 'Athletic Council', icon: 'fa-person-running' },
   { id: 'academic', label: 'Academic Council', icon: 'fa-graduation-cap' },
   { id: 'mto', label: 'MTO Council', icon: 'fa-person-military-pointing' },
+  { id: 'exo-council', label: 'EXO Council', icon: 'fa-clipboard-list' },
 ];
 
 export default function SideBar({ 
