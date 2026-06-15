@@ -50,8 +50,6 @@ export default function Home({ announcements, events, isAdmin, loading }) {
     .sort((a, b) => a.date.localeCompare(b.date))
     .slice(0, 5);
 
-    .slice(0, 5);
-
   // Animated stat counters
   const annCount = useCountUp(allAnn.length);
   const eventsCount = useCountUp(upcomingEvents.length);
