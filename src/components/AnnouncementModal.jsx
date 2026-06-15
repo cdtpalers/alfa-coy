@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import SimpleMdeReact from 'react-simplemde-editor';
+import 'easymde/dist/easymde.min.css';
+import { supabase } from '../lib/supabase';
 
 export default function AnnouncementModal({ isOpen, onClose, onSave, initialData = null, toast }) {
   const [title, setTitle] = useState('');
@@ -121,13 +124,39 @@ export default function AnnouncementModal({ isOpen, onClose, onSave, initialData
         </div>
         <div className="form-group">
           <label>Body *</label>
-          <textarea 
-            className="glass-input" 
-            placeholder="Detailed announcement content…" 
-            style={{width: '100%'}}
+          <SimpleMdeReact
             value={body}
-            onChange={(e) => setBody(e.target.value)}
-          ></textarea>
+            onChange={setBody}
+            options={{
+              uploadImage: true,
+              imageUploadFunction: async (file, onSuccess, onError) => {
+                try {
+                  const fileExt = file.name.split('.').pop();
+                  const fileName = `${Math.random().toString(36).substring(2)}_${Date.now()}.${fileExt}`;
+                  
+                  const { error: uploadError } = await supabase.storage
+                    .from('announcement-images')
+                    .upload(fileName, file);
+
+                  if (uploadError) {
+                    throw uploadError;
+                  }
+
+                  const { data } = supabase.storage
+                    .from('announcement-images')
+                    .getPublicUrl(fileName);
+
+                  onSuccess(data.publicUrl);
+                } catch (error) {
+                  console.error('Error uploading image:', error);
+                  onError('Failed to upload image. Ensure the "announcement-images" bucket is public.');
+                }
+              },
+              spellChecker: false,
+              placeholder: 'Detailed announcement content…',
+              status: false
+            }}
+          />
         </div>
         <div className="modal-actions">
           <button className="btn" onClick={onClose}><i className="fa fa-xmark"></i> CANCEL</button>

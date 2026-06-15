@@ -3045,3 +3045,34 @@ textarea.glass-input {
   .reactions-container, .toast-container, .sidebar, .panel-header, .ticker-wrap, .ann-modal-scroll::-webkit-scrollbar, .toast-close, .btn-icon { display: none !important; }
   .ann-modal-scroll { overflow: visible; max-height: none; }
 }
+
+/* ── SIMPLEMDE CUSTOM STYLES ── */
+.editor-toolbar {
+  border-color: var(--border) !important;
+  background: var(--card-bg) !important;
+  border-radius: 12px 12px 0 0 !important;
+  opacity: 1 !important;
+}
+.editor-toolbar a {
+  color: var(--text-muted) !important;
+}
+.editor-toolbar a.active, .editor-toolbar a:hover {
+  background: var(--surface-active) !important;
+  color: var(--text) !important;
+  border-color: transparent !important;
+}
+.CodeMirror {
+  border-color: var(--border) !important;
+  background: var(--card-bg) !important;
+  color: var(--text) !important;
+  border-radius: 0 0 12px 12px !important;
+  font-family: 'DM Sans', sans-serif !important;
+  padding: 12px !important;
+}
+.editor-preview {
+  background: var(--card-bg) !important;
+  color: var(--text) !important;
+}
+.editor-statusbar {
+  display: none !important;
+}
