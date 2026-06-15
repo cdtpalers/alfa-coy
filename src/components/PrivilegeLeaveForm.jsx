@@ -76,7 +76,7 @@ export default function PrivilegeLeaveForm({ isAdmin }) {
           </div>
         ) : (
           <>
-            {successMsg && <div style={{ color: '#39ff6e', marginBottom: '15px', fontWeight: 'bold' }}>{successMsg}</div>}
+            {successMsg && <div style={{ color: 'var(--g1)', marginBottom: '15px', fontWeight: 'bold' }}>{successMsg}</div>}
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div className="form-group">
                 <label>DATE OF PRIVILEGE / LEAVE</label>
@@ -199,7 +199,7 @@ export default function PrivilegeLeaveForm({ isAdmin }) {
                     </td>
                     {isAdmin && (
                       <td>
-                        <button onClick={() => handleDelete(r.id)} style={{ background: 'none', border: 'none', color: '#ff4444', cursor: 'pointer' }}>
+                        <button onClick={() => handleDelete(r.id)} style={{ background: 'none', border: 'none', color: 'var(--danger)', cursor: 'pointer' }}>
                           <i className="fa fa-trash"></i>
                         </button>
                       </td>

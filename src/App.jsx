@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { ToastProvider, useToast } from './components/Toast';
 import SideBar from './components/SideBar';
 import Ticker from './components/Ticker';
 import EventModal from './components/EventModal';
@@ -35,7 +36,8 @@ function parseCSV(text) {
   });
 }
 
-export default function App() {
+function AppContent() {
+  const toast = useToast();
   const [theme, setTheme] = useState('light');
   const [currentPage, setCurrentPage] = useState('home');
   const [sheetData, setSheetData] = useState([]);
@@ -46,17 +48,67 @@ export default function App() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [feedStatus, setFeedStatus] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [editEventData, setEditEventData] = useState(null);
   const [editAnnouncementData, setEditAnnouncementData] = useState(null);
+  const [showTicker, setShowTicker] = useState(() => {
+    const stored = localStorage.getItem('alfa_show_ticker');
+    return stored === null ? true : stored === 'true';
+  });
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
   useEffect(() => {
+    localStorage.setItem('alfa_show_ticker', String(showTicker));
+  }, [showTicker]);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    function handleKeyDown(e) {
+      const tag = (e.target.tagName || '').toLowerCase();
+      const isTyping = tag === 'input' || tag === 'textarea' || tag === 'select' || e.target.isContentEditable;
+
+      // Escape — close any open modal
+      if (e.key === 'Escape') {
+        if (isEventModalOpen) { setIsEventModalOpen(false); setEditEventData(null); }
+        else if (isAnnouncementModalOpen) { setIsAnnouncementModalOpen(false); setEditAnnouncementData(null); }
+        else if (isLoginModalOpen) { setIsLoginModalOpen(false); }
+        return;
+      }
+
+      // Don't fire shortcuts while typing
+      if (isTyping) return;
+
+      // Don't fire shortcuts while a modal is open
+      const anyModalOpen = isEventModalOpen || isAnnouncementModalOpen || isLoginModalOpen;
+
+      // t/T — toggle theme
+      if ((e.key === 't' || e.key === 'T') && !anyModalOpen) {
+        toggleTheme();
+        return;
+      }
+
+      // / — focus search input on Home page
+      if (e.key === '/' && !anyModalOpen) {
+        const searchInput = document.getElementById('home-search-input');
+        if (searchInput) {
+          e.preventDefault();
+          searchInput.focus();
+        }
+        return;
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isEventModalOpen, isAnnouncementModalOpen, isLoginModalOpen]);
+
+  useEffect(() => {
     try {
-      fetchSupabaseData();
+      fetchSupabaseData().finally(() => setLoading(false));
 
       const storedData = localStorage.getItem('alfa_sheet_data');
       if (storedData) {
@@ -71,6 +123,7 @@ export default function App() {
       }
     } catch (e) {
       console.error('Initialization error', e);
+      setLoading(false);
     }
   }, []);
 
@@ -117,7 +170,7 @@ export default function App() {
       const { error } = await supabase.from('events').update(eventData).eq('id', id);
       if (error) {
         console.error("Error updating event:", error);
-        alert("Failed to update event.");
+        toast.error("Failed to update event.");
         return;
       }
       setEvents(events.map(e => e.id === id ? { ...eventData, id } : e));
@@ -125,7 +178,7 @@ export default function App() {
       const { data, error } = await supabase.from('events').insert([eventData]).select();
       if (error) {
         console.error("Error adding event:", error);
-        alert("Failed to save event to database.");
+        toast.error("Failed to save event to database.");
         return;
       }
       if (data && data.length > 0) setEvents([...events, data[0]]);
@@ -138,7 +191,7 @@ export default function App() {
     const { error } = await supabase.from('events').delete().eq('id', id);
     if (error) {
       console.error("Error deleting event:", error);
-      alert("Failed to delete event.");
+      toast.error("Failed to delete event.");
       return;
     }
     setEvents(events.filter(e => e.id !== id));
@@ -159,7 +212,7 @@ export default function App() {
       const { error } = await supabase.from('announcements').update(dbRow).eq('id', id);
       if (error) {
         console.error("Error updating announcement:", error);
-        alert("Failed to update announcement.");
+        toast.error("Failed to update announcement.");
         return;
       }
       setLocalAnnouncements(localAnnouncements.map(a => a.id === id ? { ...annData, id } : a));
@@ -167,7 +220,7 @@ export default function App() {
       const { data, error } = await supabase.from('announcements').insert([dbRow]).select();
       if (error) {
         console.error("Error adding announcement:", error);
-        alert("Failed to save announcement.");
+        toast.error("Failed to save announcement.");
         return;
       }
       if (data && data.length > 0) {
@@ -183,7 +236,7 @@ export default function App() {
     const { error } = await supabase.from('announcements').delete().eq('id', id);
     if (error) {
       console.error("Error deleting announcement:", error);
-      alert("Failed to delete announcement.");
+      toast.error("Failed to delete announcement.");
       return;
     }
     setLocalAnnouncements(localAnnouncements.filter(a => a.id !== id));
@@ -244,6 +297,7 @@ export default function App() {
           onSheetClear={handleClearSheet}
           feedStatus={feedStatus}
           isAdmin={isAdmin}
+          loading={loading}
         />
       );
     }
@@ -274,7 +328,7 @@ export default function App() {
         />
       );
     }
-    return <CouncilPage councilId={currentPage} sheetData={combinedData} events={events} isAdmin={isAdmin} />;
+    return <CouncilPage councilId={currentPage} sheetData={combinedData} events={events} isAdmin={isAdmin} loading={loading} />;
   };
 
   return (
@@ -293,6 +347,7 @@ export default function App() {
         handleLogout={handleLogout}
         isOpen={isMobileMenuOpen}
         onClose={() => setIsMobileMenuOpen(false)}
+        announcements={combinedData}
       />
       
       <div className="main-panel">
@@ -324,18 +379,21 @@ export default function App() {
           </div>
         </header>
 
+        {showTicker && (
+          <Ticker data={combinedData} events={events} onClose={() => setShowTicker(false)} />
+        )}
+
         <main className="content pb-40">
           {renderPage()}
         </main>
       </div>
-
-      <Ticker data={combinedData} events={events} />
 
       <EventModal 
         isOpen={isEventModalOpen} 
         onClose={() => { setIsEventModalOpen(false); setEditEventData(null); }}
         onSave={(ev) => addEvent(ev)}
         initialData={editEventData}
+        toast={toast}
       />
 
       <AnnouncementModal 
@@ -343,13 +401,64 @@ export default function App() {
         onClose={() => { setIsAnnouncementModalOpen(false); setEditAnnouncementData(null); }}
         onSave={(ann) => addAnnouncement(ann)}
         initialData={editAnnouncementData}
+        toast={toast}
       />
 
       <LoginModal 
         isOpen={isLoginModalOpen} 
         onClose={() => setIsLoginModalOpen(false)}
         onLogin={handleLoginSuccess}
+        toast={toast}
       />
+
+      {/* Bottom Navigation Bar (visible on mobile only via CSS) */}
+      <nav className="bottom-nav">
+        <button
+          className={`bottom-nav-item ${currentPage === 'home' ? 'active' : ''}`}
+          onClick={() => setCurrentPage('home')}
+        >
+          <i className="fa fa-house"></i>
+          <span>Home</span>
+        </button>
+        <button
+          className={`bottom-nav-item ${currentPage === 'calendar' ? 'active' : ''}`}
+          onClick={() => setCurrentPage('calendar')}
+        >
+          <i className="fa fa-calendar"></i>
+          <span>Calendar</span>
+        </button>
+        <button
+          className={`bottom-nav-item ${currentPage === 'commanders' ? 'active' : ''}`}
+          onClick={() => setCurrentPage('commanders')}
+        >
+          <i className="fa fa-user-shield"></i>
+          <span>Staff</span>
+        </button>
+        <button
+          className={`bottom-nav-item ${currentPage === 'exo' ? 'active' : ''}`}
+          onClick={() => setCurrentPage('exo')}
+        >
+          <i className="fa fa-list-check"></i>
+          <span>EXO</span>
+        </button>
+        {isAdmin && (
+          <button
+            className={`bottom-nav-item ${currentPage === 'admin-dashboard' ? 'active' : ''}`}
+            onClick={() => setCurrentPage('admin-dashboard')}
+          >
+            <i className="fa fa-gear"></i>
+            <span>Admin</span>
+          </button>
+        )}
+      </nav>
     </div>
+  );
+}
+
+export default function App() {
+  return (
+    <ToastProvider>
+      <AppContent />
+    </ToastProvider>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function AnnouncementModal({ isOpen, onClose, onSave, initialData = null }) {
+export default function AnnouncementModal({ isOpen, onClose, onSave, initialData = null, toast }) {
   const [title, setTitle] = useState('');
   const [body, setBody] = useState('');
   const [date, setDate] = useState('');
@@ -32,7 +32,7 @@ export default function AnnouncementModal({ isOpen, onClose, onSave, initialData
 
   const handleSave = () => {
     if (!title.trim() || !body.trim() || !date) {
-      alert('Title, Body, and Date are required.');
+      if (toast) toast.warning('Title, Body, and Date are required.');
       return;
     }
     const newAnnouncement = {

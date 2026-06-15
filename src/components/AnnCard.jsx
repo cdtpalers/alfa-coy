@@ -132,7 +132,7 @@ export default function AnnCard({ item }) {
 
   return (
     <>
-      <div className="glass ann-card" onClick={() => setIsOpen(true)}>
+      <div className={`glass ann-card${item.Priority === 'high' ? ' priority-card' : ''}`} onClick={() => setIsOpen(true)}>
         <div className="ann-meta">
           <span className={`tag ${tagClass(item.Tag)}`}>
             {(item.Tag || 'INFO').toUpperCase()}
@@ -176,7 +176,10 @@ export default function AnnCard({ item }) {
                 )}
                 <span className="ann-date">{item.Date || ''}</span>
               </div>
-              <button className="btn-icon" onClick={() => setIsOpen(false)} style={{border: 'none', background: 'transparent', flexShrink: 0}}><i className="fa fa-xmark"></i></button>
+              <div style={{display: 'flex', gap: '4px', flexShrink: 0}}>
+                <button className="btn-icon" onClick={() => window.print()} title="Print announcement" style={{border: 'none', background: 'transparent'}}><i className="fa fa-print"></i></button>
+                <button className="btn-icon" onClick={() => setIsOpen(false)} style={{border: 'none', background: 'transparent'}}><i className="fa fa-xmark"></i></button>
+              </div>
             </div>
             
             <div className="ann-modal-scroll">

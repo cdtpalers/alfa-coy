@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-export default function LoginModal({ isOpen, onClose, onLogin }) {
+export default function LoginModal({ isOpen, onClose, onLogin, toast }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
@@ -33,7 +33,7 @@ export default function LoginModal({ isOpen, onClose, onLogin }) {
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
           />
-          {error && <p style={{color: '#ff4d4d', marginTop: '8px', fontSize: '14px', fontWeight: '500'}}>{error}</p>}
+          {error && <p style={{color: 'var(--danger)', marginTop: '8px', fontSize: '14px', fontWeight: '500'}}>{error}</p>}
         </div>
         <div className="modal-actions" style={{ marginTop: '20px' }}>
           <button className="btn" onClick={onClose}><i className="fa fa-xmark"></i> CANCEL</button>

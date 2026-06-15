@@ -45,44 +45,49 @@ export default function AdminDashboard({
           <h2>Content Management</h2>
         </div>
         <div className="cal-topbar-center">
-          <div className={`cal-tab ${activeTab === 'events' ? 'active' : ''}`} onClick={() => setActiveTab('events')} style={{cursor: 'pointer'}}>
+          <div className={`cal-tab cal-tab--clickable ${activeTab === 'events' ? 'active' : ''}`} onClick={() => setActiveTab('events')}>
             Events ({events.length})
           </div>
-          <div className={`cal-tab ${activeTab === 'announcements' ? 'active' : ''}`} onClick={() => setActiveTab('announcements')} style={{cursor: 'pointer'}}>
+          <div className={`cal-tab cal-tab--clickable ${activeTab === 'announcements' ? 'active' : ''}`} onClick={() => setActiveTab('announcements')}>
             Announcements ({announcements.length})
           </div>
-          <div className={`cal-tab ${activeTab === 'privileges' ? 'active' : ''}`} onClick={() => setActiveTab('privileges')} style={{cursor: 'pointer'}}>
+          <div className={`cal-tab cal-tab--clickable ${activeTab === 'privileges' ? 'active' : ''}`} onClick={() => setActiveTab('privileges')}>
             S1 Privileges ({privilegeDates.length})
           </div>
         </div>
       </div>
       
-      <div style={{ background: 'var(--card-bg)', borderRadius: '16px', border: '1px solid var(--border)', padding: '24px', overflowX: 'auto' }}>
+      <div className="admin-panel">
         {activeTab === 'events' && (
-          <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+          <table className="admin-table">
             <thead>
-              <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
-                <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase' }}>Title</th>
-                <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase' }}>Date</th>
-                <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase' }}>Category</th>
-                <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase' }}>Council</th>
-                <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
+              <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Category</th>
+                <th>Council</th>
+                <th className="admin-table--actions">Actions</th>
               </tr>
             </thead>
             <tbody>
               {events.length === 0 ? (
-                <tr><td colSpan="5" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>No events found.</td></tr>
+                <tr><td colSpan="5">
+                  <div className="empty-state">
+                    <i className="fa fa-calendar"></i>
+                    <p>No events found. Create one to get started.</p>
+                  </div>
+                </td></tr>
               ) : events.map(e => (
-                <tr key={e.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                  <td style={{ padding: '12px' }}><strong>{e.title}</strong></td>
-                  <td style={{ padding: '12px' }}>{e.date} {e.time && <span style={{color: 'var(--text-muted)', fontSize: '12px'}}>({e.time})</span>}</td>
-                  <td style={{ padding: '12px' }}><span className={`cal-pill pill-${e.cat === 'formation' || e.cat === 'ceremony' ? 'gold' : e.cat === 'academic' || e.cat === 'activity' ? 'blue' : 'green'}`} style={{margin: 0}}>{e.cat}</span></td>
-                  <td style={{ padding: '12px' }}>{e.council}</td>
-                  <td style={{ padding: '12px', textAlign: 'right' }}>
-                    <button className="btn btn-sm" onClick={() => onEditEvent(e)} style={{ marginRight: '8px', padding: '6px 12px' }}>
+                <tr key={e.id}>
+                  <td><strong>{e.title}</strong></td>
+                  <td>{e.date} {e.time && <span className="admin-time-hint">({e.time})</span>}</td>
+                  <td><span className={`cal-pill pill-${e.cat === 'formation' || e.cat === 'ceremony' ? 'gold' : e.cat === 'academic' || e.cat === 'activity' ? 'blue' : 'green'}`}>{e.cat}</span></td>
+                  <td>{e.council}</td>
+                  <td className="admin-table--actions">
+                    <button className="btn btn-sm admin-btn-edit" onClick={() => onEditEvent(e)}>
                       <i className="fa fa-pen"></i> Edit
                     </button>
-                    <button className="btn btn-sm" onClick={() => { if(window.confirm('Delete this event?')) onDeleteEvent(e.id); }} style={{ padding: '6px 12px', color: '#ff4d4d', borderColor: '#ff4d4d' }}>
+                    <button className="btn btn-sm admin-btn-delete" onClick={() => { if(window.confirm('Delete this event?')) onDeleteEvent(e.id); }}>
                       <i className="fa fa-trash"></i> Delete
                     </button>
                   </td>
@@ -93,30 +98,35 @@ export default function AdminDashboard({
         )}
 
         {activeTab === 'announcements' && (
-          <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+          <table className="admin-table">
             <thead>
-              <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
-                <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase' }}>Title</th>
-                <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase' }}>Date</th>
-                <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase' }}>Tag</th>
-                <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase' }}>Council</th>
-                <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
+              <tr>
+                <th>Title</th>
+                <th>Date</th>
+                <th>Tag</th>
+                <th>Council</th>
+                <th className="admin-table--actions">Actions</th>
               </tr>
             </thead>
             <tbody>
               {announcements.length === 0 ? (
-                <tr><td colSpan="5" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>No announcements found.</td></tr>
+                <tr><td colSpan="5">
+                  <div className="empty-state">
+                    <i className="fa fa-bullhorn"></i>
+                    <p>No announcements found. Add bulletins via Google Sheets.</p>
+                  </div>
+                </td></tr>
               ) : announcements.map(a => (
-                <tr key={a.id} style={{ borderBottom: '1px solid var(--border)' }}>
-                  <td style={{ padding: '12px' }}><strong>{a.Title}</strong></td>
-                  <td style={{ padding: '12px' }}>{a.Date}</td>
-                  <td style={{ padding: '12px' }}>{a.Tag}</td>
-                  <td style={{ padding: '12px' }}>{a.Council}</td>
-                  <td style={{ padding: '12px', textAlign: 'right' }}>
-                    <button className="btn btn-sm" onClick={() => onEditAnnouncement(a)} style={{ marginRight: '8px', padding: '6px 12px' }}>
+                <tr key={a.id}>
+                  <td><strong>{a.Title}</strong></td>
+                  <td>{a.Date}</td>
+                  <td>{a.Tag}</td>
+                  <td>{a.Council}</td>
+                  <td className="admin-table--actions">
+                    <button className="btn btn-sm admin-btn-edit" onClick={() => onEditAnnouncement(a)}>
                       <i className="fa fa-pen"></i> Edit
                     </button>
-                    <button className="btn btn-sm" onClick={() => { if(window.confirm('Delete this announcement?')) onDeleteAnnouncement(a.id); }} style={{ padding: '6px 12px', color: '#ff4d4d', borderColor: '#ff4d4d' }}>
+                    <button className="btn btn-sm admin-btn-delete" onClick={() => { if(window.confirm('Delete this announcement?')) onDeleteAnnouncement(a.id); }}>
                       <i className="fa fa-trash"></i> Delete
                     </button>
                   </td>
@@ -128,7 +138,7 @@ export default function AdminDashboard({
 
         {activeTab === 'privileges' && (
           <div>
-            <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
+            <div className="admin-privilege-form">
               <input 
                 type="date" 
                 className="glass-input" 
@@ -140,21 +150,26 @@ export default function AdminDashboard({
               </button>
             </div>
             
-            <table style={{ width: '100%', textAlign: 'left', borderCollapse: 'collapse' }}>
+            <table className="admin-table">
               <thead>
-                <tr style={{ borderBottom: '2px solid var(--border)', color: 'var(--text-muted)' }}>
-                  <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase' }}>Announced Date</th>
-                  <th style={{ padding: '12px', fontSize: '13px', textTransform: 'uppercase', textAlign: 'right' }}>Actions</th>
+                <tr>
+                  <th>Announced Date</th>
+                  <th className="admin-table--actions">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {privilegeDates.length === 0 ? (
-                  <tr><td colSpan="2" style={{ padding: '20px', textAlign: 'center', color: 'var(--text-muted)' }}>No privileges announced.</td></tr>
+                  <tr><td colSpan="2">
+                    <div className="empty-state">
+                      <i className="fa fa-calendar-check"></i>
+                      <p>No privileges announced. Add a date above.</p>
+                    </div>
+                  </td></tr>
                 ) : privilegeDates.map(date => (
-                  <tr key={date} style={{ borderBottom: '1px solid var(--border)' }}>
-                    <td style={{ padding: '12px' }}><strong>{date}</strong></td>
-                    <td style={{ padding: '12px', textAlign: 'right' }}>
-                      <button className="btn btn-sm" onClick={() => { if(window.confirm('Delete this announced privilege date?')) handleDeletePrivilege(date); }} style={{ padding: '6px 12px', color: '#ff4d4d', borderColor: '#ff4d4d' }}>
+                  <tr key={date}>
+                    <td><strong>{date}</strong></td>
+                    <td className="admin-table--actions">
+                      <button className="btn btn-sm admin-btn-delete" onClick={() => { if(window.confirm('Delete this announced privilege date?')) handleDeletePrivilege(date); }}>
                         <i className="fa fa-trash"></i> Delete
                       </button>
                     </td>

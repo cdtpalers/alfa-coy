@@ -142,51 +142,50 @@ export default function ExoPage() {
         </div>
       </div>
 
-      <div className="grid-3" style={{ marginBottom: '20px' }}>
-        <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, letterSpacing: '1px' }}>TOTAL DELINQUENT <i className="fa fa-users" style={{ marginLeft: '4px' }}></i></div>
-          <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--text-main)', lineHeight: 1 }}>{loading ? '-' : totalPunishments}</div>
-          <div style={{ color: 'var(--text-dim)', fontSize: '12px' }}>Active Punishments</div>
+      <div className="grid-3 exo-stats-row">
+        <div className="glass exo-stat-card">
+          <div className="exo-stat-label">TOTAL DELINQUENT <i className="fa fa-users"></i></div>
+          <div className="exo-stat-value">{loading ? '-' : totalPunishments}</div>
+          <div className="exo-stat-sub">Active Punishments</div>
         </div>
-        <div className="glass" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ color: 'var(--text-muted)', fontSize: '12px', fontWeight: 600, letterSpacing: '1px' }}>CONFINED <i className="fa fa-lock" style={{ marginLeft: '4px' }}></i></div>
-          <div style={{ fontSize: '36px', fontWeight: 700, color: 'var(--danger)', lineHeight: 1 }}>{loading ? '-' : totalConfined}</div>
-          <div style={{ color: 'var(--text-dim)', fontSize: '12px' }}>Currently Serving Confinement</div>
+        <div className="glass exo-stat-card">
+          <div className="exo-stat-label">CONFINED <i className="fa fa-lock"></i></div>
+          <div className="exo-stat-value exo-stat-value--danger">{loading ? '-' : totalConfined}</div>
+          <div className="exo-stat-sub">Currently Serving Confinement</div>
         </div>
       </div>
 
-      <div className="tabs" style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
+      <div className="exo-tabs">
         <button 
           className={`btn ${activeTab === 'punishments' ? 'btn-primary' : 'btn-secondary'}`}
           onClick={() => setActiveTab('punishments')}
-          style={{ flex: 1 }}
         >
-          <i className="fa fa-list" style={{ marginRight: '8px' }}></i> Punishment List
+          <i className="fa fa-list"></i> Punishment List
         </button>
         <button 
           className={`btn ${activeTab === 'merits' ? 'btn-primary' : 'btn-secondary'}`}
           onClick={() => setActiveTab('merits')}
-          style={{ flex: 1 }}
         >
-          <i className="fa fa-chart-line" style={{ marginRight: '8px' }}></i> Merit Allowance Tracker
+          <i className="fa fa-chart-line"></i> Merit Allowance Tracker
         </button>
       </div>
 
-      <div className="panel glass" style={{ padding: '20px', overflowX: 'auto' }}>
+      <div className="panel glass exo-panel">
         {activeTab === 'punishments' && (
           <>
-            <h3 style={{ marginTop: 0, marginBottom: '20px', fontSize: '18px', color: 'var(--text-main)', letterSpacing: '1px' }}>
+            <h3 className="exo-panel-title">
               ACTIVE PUNISHMENTS
             </h3>
             
             {loading && <p>Loading punishment list from Google Sheets...</p>}
-            {error && <p style={{ color: 'var(--danger)' }}>Error: {error}</p>}
+            {error && <p className="exo-error">Error: {error}</p>}
             
             {!loading && !error && punishments.length === 0 && (
               <p>No active punishments to display.</p>
             )}
 
             {!loading && !error && punishments.length > 0 && (
+              <div className="table-scroll-wrapper">
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)' }}>
@@ -263,24 +262,26 @@ export default function ExoPage() {
                   )})}
                 </tbody>
               </table>
+              </div>
             )}
           </>
         )}
 
         {activeTab === 'merits' && (
           <>
-            <h3 style={{ marginTop: 0, marginBottom: '20px', fontSize: '18px', color: 'var(--text-main)', letterSpacing: '1px' }}>
+            <h3 className="exo-panel-title">
               REMAINING MERIT ALLOWANCE
             </h3>
             
             {meritLoading && <p>Loading merit list from Google Sheets...</p>}
-            {meritError && <p style={{ color: 'var(--danger)' }}>Error: {meritError}</p>}
+            {meritError && <p className="exo-error">Error: {meritError}</p>}
             
             {!meritLoading && !meritError && merits.length === 0 && (
               <p>No merit records to display.</p>
             )}
 
             {!meritLoading && !meritError && merits.length > 0 && (
+              <div className="table-scroll-wrapper">
               <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left' }}>
                 <thead>
                   <tr style={{ borderBottom: '1px solid var(--border)', color: 'var(--text-muted)' }}>
@@ -346,6 +347,7 @@ export default function ExoPage() {
                   })}
                 </tbody>
               </table>
+              </div>
             )}
           </>
         )}

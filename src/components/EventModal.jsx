@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-export default function EventModal({ isOpen, onClose, onSave, initialData = null }) {
+export default function EventModal({ isOpen, onClose, onSave, initialData = null, toast }) {
   const [title, setTitle] = useState('');
   const [cat, setCat] = useState('training');
   const [date, setDate] = useState('');
@@ -32,7 +32,7 @@ export default function EventModal({ isOpen, onClose, onSave, initialData = null
 
   const handleSave = () => {
     if (!title.trim() || !date) {
-      alert('Title and date are required.');
+      if (toast) toast.warning('Title and date are required.');
       return;
     }
     const newEvent = {

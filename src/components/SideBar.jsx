@@ -28,8 +28,19 @@ export default function SideBar({
   openLoginModal,
   handleLogout,
   isOpen,
-  onClose
+  onClose,
+  announcements = []
 }) {
+  // Count priority announcements for the Home badge
+  const priorityCount = announcements.filter(a => a.Priority === 'high').length;
+
+  // Count announcements per council for council badges
+  const councilCounts = {};
+  COUNCILS.forEach(c => {
+    councilCounts[c.id] = announcements.filter(
+      a => (a.Council || '').toLowerCase() === c.id.toLowerCase()
+    ).length;
+  });
   const handleNavClick = (page) => {
     setCurrentPage(page);
     if (onClose) onClose();
@@ -61,6 +72,7 @@ export default function SideBar({
             >
               <i className="fa fa-house"></i>
               <span>Home Overview</span>
+              {priorityCount > 0 && <span className="sidebar-dot" title={`${priorityCount} priority`}></span>}
             </button>
             <button 
               className={`sidebar-menu-item ${currentPage === 'commanders' ? 'active' : ''}`} 
@@ -112,6 +124,7 @@ export default function SideBar({
               >
                 <i className={`fa ${c.icon}`}></i>
                 <span>{c.label}</span>
+                {councilCounts[c.id] > 0 && <span className="sidebar-badge">{councilCounts[c.id]}</span>}
               </button>
             ))}
           </nav>
@@ -153,7 +166,7 @@ export default function SideBar({
               <button className="sidebar-action-btn" title="Add announcement" onClick={openAnnouncementModal} style={{color: '#44aaff'}}>
                 <i className="fa fa-bullhorn"></i>
               </button>
-              <button className="sidebar-action-btn" title="Logout" onClick={handleLogout} style={{color: '#ff4d4d'}}>
+              <button className="sidebar-action-btn" title="Logout" onClick={handleLogout} style={{color: 'var(--danger)'}}>
                 <i className="fa fa-arrow-right-from-bracket"></i>
               </button>
             </>

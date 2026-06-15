@@ -9,6 +9,7 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
   const [calDate, setCalDate] = useState(new Date());
   const [selectedDate, setSelectedDate] = useState(null);
   const [birthdays, setBirthdays] = useState([]);
+  const [hoveredDay, setHoveredDay] = useState(null);
   
   const allFilters = ['training', 'formation', 'academic', 'athletic', 'ceremony', 'activity', 'other', 'bessang pass', 'birthdays'];
   const [filters, setFilters] = useState(new Set(allFilters));
@@ -141,13 +142,37 @@ export default function Calendar({ events, openEventModal, isAdmin }) {
             {DAYS.map(day => <div className="cal-day-name" key={day}>{day}</div>)}
             {daysGrid.map((d, i) => {
               const dayEvents = events.filter(e => e.date === d.dateStr && filters.has(e.cat || 'other'));
+              const dayBdays = !d.isOtherMonth && filters.has('birthdays') && d.birthdays ? d.birthdays : [];
+              const tooltipEvents = dayEvents.slice(0, 3);
+              const tooltipExtra = dayEvents.length - 3;
+              const showTooltip = hoveredDay === d.dateStr && !d.isOtherMonth && (dayEvents.length > 0 || dayBdays.length > 0);
               return (
               <div 
                 key={i} 
                 className={`cal-day ${d.isOtherMonth ? 'other-month' : ''} ${d.isToday ? 'today' : ''} ${selectedDate === d.dateStr ? 'selected' : ''}`}
                 onClick={() => { if(!d.isOtherMonth) setSelectedDate(d.dateStr); }}
+                onMouseEnter={() => { if(!d.isOtherMonth && (dayEvents.length > 0 || dayBdays.length > 0)) setHoveredDay(d.dateStr); }}
+                onMouseLeave={() => setHoveredDay(null)}
               >
                 <div className="cal-day-num">{d.day}</div>
+
+                {/* Hover tooltip preview */}
+                {showTooltip && (
+                  <div className="cal-day-tooltip">
+                    <div className="cal-day-tooltip-title">
+                      {dayEvents.length} event{dayEvents.length !== 1 ? 's' : ''}{dayBdays.length > 0 ? ` · ${dayBdays.length} birthday${dayBdays.length !== 1 ? 's' : ''}` : ''}
+                    </div>
+                    {tooltipEvents.map((e, idx) => (
+                      <div key={idx} className="cal-day-tooltip-item">
+                        <span className="cal-day-tooltip-time">{e.time || '—'}</span>
+                        <span>{e.title}</span>
+                      </div>
+                    ))}
+                    {tooltipExtra > 0 && (
+                      <div className="cal-day-tooltip-more">+{tooltipExtra} more…</div>
+                    )}
+                  </div>
+                )}
                 
                 {!d.isOtherMonth && dayEvents.map((e, idx) => {
                   let pillClass = `pill-${CAT_COLORS[e.cat]?.split('-')[1] || 'green'}`;

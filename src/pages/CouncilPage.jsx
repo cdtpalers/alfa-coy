@@ -2,6 +2,7 @@ import React from 'react';
 import AnnCard from '../components/AnnCard';
 import FinanceDashboard from '../components/FinanceDashboard';
 import PrivilegeLeaveForm from '../components/PrivilegeLeaveForm';
+import { SkeletonGrid, SkeletonEventItem } from '../components/Skeleton';
 
 const COUNCILS_META = {
   s1: { name:'S1 COUNCIL', sub:'Personnel & Administration', icon:'👤', color:'#39ff6e', mission:'Responsible for personnel records, administrative matters, cadet welfare, and human resource management of ALFA Company.', cols:['Name','Rank','Position','Status'] },
@@ -19,7 +20,7 @@ const COUNCILS_META = {
   mto: { name:'MTO COUNCIL', sub:'Military Training Officer', icon:'⚔️', color:'#ff4444', mission:'Oversees military training, disciplinary actions, and standard operating procedures for the company.', cols:['Activity','Date','Status','Remarks'] },
 };
 
-export default function CouncilPage({ councilId, sheetData, events, isAdmin }) {
+export default function CouncilPage({ councilId, sheetData, events, isAdmin, loading }) {
   const c = COUNCILS_META[councilId];
 
   if (!c) return null;
@@ -51,14 +52,16 @@ export default function CouncilPage({ councilId, sheetData, events, isAdmin }) {
         </div>
       </div>
       
-      {items.length ? (
+      {loading ? (
+        <SkeletonGrid count={3} />
+      ) : items.length ? (
         <div className="grid-3">
           {items.map((item, i) => <AnnCard key={i} item={item} />)}
         </div>
       ) : (
-        <div className="glass empty-state" style={{padding: '40px', textAlign: 'center'}}>
-          <i className="fa fa-inbox" style={{fontSize: '40px', opacity: 0.3, display: 'block', marginBottom: '10px'}}></i>
-          <p style={{fontFamily: "'Share Tech Mono', monospace", color: 'var(--text-dim)'}}>
+        <div className="glass empty-state" style={{gridColumn: '1/-1'}}>
+          <i className="fa fa-bullhorn"></i>
+          <p>
             No bulletins from {c.name}. Connect a Google Sheet to populate.
           </p>
         </div>
@@ -86,30 +89,38 @@ export default function CouncilPage({ councilId, sheetData, events, isAdmin }) {
           <div><h2>COUNCIL EVENTS</h2><p>UPCOMING ACTIVITIES</p></div>
         </div>
       </div>
-      <div className="event-list">
-        {councilEvents.length ? councilEvents.map((e, i) => {
-          const [y,m,d]=e.date.split('-');
-          const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1];
-          const CAT_COLORS = { training:'tag-green', formation:'tag-gold', academic:'tag-blue', athletic:'tag-green', ceremony:'tag-gold', activity:'tag-blue', other:'tag-green' };
-          return (
-            <div className="event-item" key={i}>
-              <div className="event-date-badge"><div className="d">{d}</div><div className="m">{mon} {y}</div></div>
-              <div className="event-info">
-                <h4>{e.title}</h4>
-                <p>{e.time||''} {e.desc||''}</p>
-                <div className="event-tags">
-                  <span className={`tag ${CAT_COLORS[e.cat]||'tag-green'}`}>{(e.cat||'event').toUpperCase()}</span>
-                  {e.council&&e.council!=='all'&&<span className="tag tag-blue">{e.council}</span>}
+      {loading ? (
+        <div className="event-list">
+          <SkeletonEventItem />
+          <SkeletonEventItem />
+        </div>
+      ) : (
+        <div className="event-list">
+          {councilEvents.length ? councilEvents.map((e, i) => {
+            const [y,m,d]=e.date.split('-');
+            const mon=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][+m-1];
+            const CAT_COLORS = { training:'tag-green', formation:'tag-gold', academic:'tag-blue', athletic:'tag-green', ceremony:'tag-gold', activity:'tag-blue', other:'tag-green' };
+            return (
+              <div className="event-item" key={i}>
+                <div className="event-date-badge"><div className="d">{d}</div><div className="m">{mon} {y}</div></div>
+                <div className="event-info">
+                  <h4>{e.title}</h4>
+                  <p>{e.time||''} {e.desc||''}</p>
+                  <div className="event-tags">
+                    <span className={`tag ${CAT_COLORS[e.cat]||'tag-green'}`}>{(e.cat||'event').toUpperCase()}</span>
+                    {e.council&&e.council!=='all'&&<span className="tag tag-blue">{e.council}</span>}
+                  </div>
                 </div>
               </div>
+            );
+          }) : (
+            <div className="glass empty-state">
+              <i className="fa fa-calendar-xmark"></i>
+              <p>No upcoming events for this council.</p>
             </div>
-          );
-        }) : (
-          <div className="glass empty-state" style={{padding: '40px'}}>
-            <i className="fa fa-calendar-xmark"></i><p>No upcoming events for this council.</p>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {items.length > 0 && (
         <>
