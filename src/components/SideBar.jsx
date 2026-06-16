@@ -86,7 +86,7 @@ export default function SideBar({
               className={`sidebar-menu-item ${currentPage === 'taco-corner' ? 'active' : ''}`} 
               onClick={() => handleNavClick('taco-corner')}
             >
-              <i className="fa fa-crown" style={{color: '#ffd700'}}></i>
+              <i className="fa fa-hands-holding" style={{color: '#ffd700'}}></i>
               <span>TAC-O's Corner</span>
             </button>
             <button 

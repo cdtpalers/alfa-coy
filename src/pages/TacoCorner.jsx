@@ -43,7 +43,7 @@ export default function TacoCorner({ announcements, loading }) {
             color: '#d4af37',
             textShadow: '0 2px 10px rgba(212,175,55,0.4)'
           }}>
-            <i className="fa fa-crown"></i>
+            <i className="fa fa-hands-holding"></i>
           </div>
           <h1 style={{ 
             fontFamily: '"Times New Roman", Times, serif', 
@@ -54,7 +54,7 @@ export default function TacoCorner({ announcements, loading }) {
             margin: '0 0 10px 0',
             textTransform: 'uppercase'
           }}>
-            MAJ FEL BSAGUIN PA
+            MAJ FEL SAGUIN
           </h1>
           <p style={{
             fontSize: '1.2rem',
