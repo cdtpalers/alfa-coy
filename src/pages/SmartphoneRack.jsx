@@ -177,23 +177,77 @@ export default function SmartphoneRack() {
       </div>
 
       <div className="rack-grid">
-        {slots.map((slot, idx) => (
-          <div 
-            key={`${slot.rackNumber}-${idx}`} 
-            className={`rack-slot ${slot.status ? 'status-in' : 'status-out'}`}
-          >
-            <div className="slot-number">#{slot.rackNumber}</div>
-            <i className={`fa fa-mobile-screen slot-icon`}></i>
-            <div className="slot-info">
-              <h4>{slot.name}</h4>
-              <p>{slot.brand} {slot.model}</p>
-              {slot.remarks && <p style={{ fontSize: '11px', fontStyle: 'italic', marginTop: '6px', color: 'var(--accent-base)', fontWeight: 'bold' }}>{slot.remarks}</p>}
+        {slots.map((slot, idx) => {
+          const isIphone = slot.brand.toLowerCase().includes('apple') || slot.brand.toLowerCase().includes('iphone');
+          const mockupClass = isIphone ? 'iphone-mockup' : 'android-mockup';
+          const statusClass = slot.status ? 'status-in' : 'status-out';
+          
+          // Extract last name
+          const nameParts = slot.name.trim().split(' ');
+          const lastName = nameParts[nameParts.length - 1];
+          
+          // Generate an avatar based on initials
+          const initial = lastName.charAt(0);
+          const avatarUrl = `https://ui-avatars.com/api/?name=${initial}&background=${slot.status ? '047857' : '171822'}&color=fff&size=128&bold=true`;
+
+          return (
+            <div 
+              key={`${slot.rackNumber}-${idx}`} 
+              className={`phone-mockup ${mockupClass} ${statusClass}`}
+            >
+              {/* Hardware elements */}
+              <div className="phone-buttons"></div>
+              <div className="phone-power"></div>
+              <div className="phone-home-indicator"></div>
+              
+              {isIphone ? <div className="dynamic-island"></div> : <div className="hole-punch"></div>}
+
+              {/* Status Bar */}
+              <div className="status-bar">
+                <span>9:41</span>
+                <div className="status-dot"></div>
+              </div>
+
+              {/* Content Area */}
+              <div className="phone-content">
+                <div className="avatar-container">
+                  <img src={avatarUrl} alt={`${lastName} avatar`} />
+                </div>
+                
+                <h4 className="cadet-name">{lastName}</h4>
+                <div className="cadet-status-text">
+                  {slot.status ? 'LOGGED IN' : 'LOGGED OUT'}
+                </div>
+
+                <div className="app-icons">
+                  <div className="app-icon-wrapper">
+                    <div className="app-icon">
+                      <i className="fa fa-phone" style={{ color: slot.status ? '#fff' : '#aaa' }}></i>
+                    </div>
+                    <span>Phone</span>
+                  </div>
+                  <div className="app-icon-wrapper">
+                    <div className="app-icon">
+                      {isIphone ? (
+                        <i className="fa fa-comment" style={{ color: slot.status ? '#3b82f6' : '#aaa' }}></i>
+                      ) : (
+                        <i className="fa fa-message" style={{ color: slot.status ? '#10b981' : '#aaa' }}></i>
+                      )}
+                    </div>
+                    <span>{isIphone ? 'Signal' : 'Messages'}</span>
+                  </div>
+                </div>
+
+                {!slot.status && slot.remarks && (
+                  <div className="authorized-reason">
+                    <div className="authorized-reason-title">Authorized Reason</div>
+                    <div className="authorized-reason-text">{slot.remarks}</div>
+                  </div>
+                )}
+              </div>
             </div>
-            <div className="slot-status-badge">
-              {slot.status ? 'IN (SURRENDERED)' : 'NOT IN'}
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
