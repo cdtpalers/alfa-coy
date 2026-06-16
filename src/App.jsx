@@ -13,6 +13,7 @@ import ExoPage from './pages/ExoPage';
 import LoginModal from './components/LoginModal';
 import AdminDashboard from './pages/AdminDashboard';
 import SmartphoneRack from './pages/SmartphoneRack';
+import TacoCorner from './pages/TacoCorner';
 import { supabase } from './lib/supabase';
 
 const INITIAL_EVENTS = [];
@@ -234,6 +235,9 @@ function AppContent() {
     }
     if (currentPage === 'commanders') {
       return <CompanyStaff />;
+    }
+    if (currentPage === 'taco-corner') {
+      return <TacoCorner announcements={localAnnouncements} loading={loading} />;
     }
     if (currentPage === 'exo') {
       return <ExoPage />;

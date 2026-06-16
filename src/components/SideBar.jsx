@@ -83,6 +83,13 @@ export default function SideBar({
               <span>Company Staff</span>
             </button>
             <button 
+              className={`sidebar-menu-item ${currentPage === 'taco-corner' ? 'active' : ''}`} 
+              onClick={() => handleNavClick('taco-corner')}
+            >
+              <i className="fa fa-crown" style={{color: '#ffd700'}}></i>
+              <span>TAC-O's Corner</span>
+            </button>
+            <button 
               className={`sidebar-menu-item ${currentPage === 'calendar' ? 'active' : ''}`} 
               onClick={() => handleNavClick('calendar')}
             >

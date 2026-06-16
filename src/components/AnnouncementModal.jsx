@@ -108,6 +108,7 @@ export default function AnnouncementModal({ isOpen, onClose, onSave, initialData
               <option value="s5">S5</option><option value="s6">S6</option><option value="s7">S7</option><option value="s8">S8</option>
               <option value="s10">S10</option><option value="rso">RSO Council</option><option value="athletic">Athletic Council</option><option value="academic">Academic Council</option>
               <option value="exo-council">EXO Council</option>
+              <option value="taco-corner">TAC-O's Corner</option>
             </select>
           </div>
           <div className="form-group" style={{flex: 1}}>
