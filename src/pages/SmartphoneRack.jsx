@@ -3,6 +3,7 @@ import './SmartphoneRack.css';
 
 const URL_1CL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQysEcov38gZR35RvnqLAGnVSNLLOYk_gnXHP9pkHOb5D5Fk-eUaOujsSrPzpdUA8IlQ5Vx6K5V0qdD/pub?gid=0&single=true&output=csv';
 const URL_2CL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQysEcov38gZR35RvnqLAGnVSNLLOYk_gnXHP9pkHOb5D5Fk-eUaOujsSrPzpdUA8IlQ5Vx6K5V0qdD/pub?gid=1510726778&single=true&output=csv';
+const URL_3CL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQysEcov38gZR35RvnqLAGnVSNLLOYk_gnXHP9pkHOb5D5Fk-eUaOujsSrPzpdUA8IlQ5Vx6K5V0qdD/pub?gid=148922328&single=true&output=csv';
 
 export default function SmartphoneRack() {
   const [activeTab, setActiveTab] = useState('1CL');
@@ -20,7 +21,7 @@ export default function SmartphoneRack() {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const csvUrl = activeTab === '1CL' ? URL_1CL : URL_2CL;
+      const csvUrl = activeTab === '1CL' ? URL_1CL : activeTab === '2CL' ? URL_2CL : URL_3CL;
       const res = await fetch(csvUrl);
       if (!res.ok) throw new Error('Failed to fetch data');
       const text = await res.text();
@@ -157,6 +158,12 @@ export default function SmartphoneRack() {
             onClick={() => setActiveTab('2CL')}
           >
             2CL Cadets
+          </button>
+          <button 
+            className={`btn ${activeTab === '3CL' ? 'btn-primary' : 'btn-outline'}`}
+            onClick={() => setActiveTab('3CL')}
+          >
+            3CL Cadets
           </button>
         </div>
         
