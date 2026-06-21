@@ -2,6 +2,7 @@ import React from 'react';
 import AnnCard from '../components/AnnCard';
 import FinanceDashboard from '../components/FinanceDashboard';
 import PrivilegeLeaveForm from '../components/PrivilegeLeaveForm';
+import AcademicDeficiencies from '../components/AcademicDeficiencies';
 import { SkeletonGrid, SkeletonEventItem } from '../components/Skeleton';
 
 const COUNCILS_META = {
@@ -77,6 +78,18 @@ export default function CouncilPage({ councilId, announcements, events, isAdmin,
             </div>
           </div>
           <FinanceDashboard />
+        </>
+      )}
+
+      {councilId === 'academic' && (
+        <>
+          <div className="section-header">
+            <div className="section-title">
+              <div className="section-icon">📉</div>
+              <div><h2>ACADEMIC DEFICIENCIES</h2><p>ALFA COMPANY WEEK 3</p></div>
+            </div>
+          </div>
+          <AcademicDeficiencies />
         </>
       )}
 
