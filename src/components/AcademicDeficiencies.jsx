@@ -6,17 +6,22 @@ export default function AcademicDeficiencies() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [details, setDetails] = useState([]);
+  const [errorMsg, setErrorMsg] = useState(null);
 
   useEffect(() => {
     const fetchDeficiencies = async () => {
       try {
         const url = import.meta.env.BASE_URL + 'week3_deficiencies.csv';
         const res = await fetch(url);
-        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
+        if (!res.ok) {
+          setErrorMsg(`HTTP error! status: ${res.status}`);
+          setLoading(false);
+          return;
+        }
         const text = await res.text();
         
         if (text.trim().startsWith('<')) {
-          console.error("Fetched HTML instead of CSV! Check your base URL or file path.");
+          setErrorMsg(`Fetched HTML instead of CSV! URL tried: ${url}`);
           setLoading(false);
           return;
         }
@@ -26,13 +31,27 @@ export default function AcademicDeficiencies() {
           skipEmptyLines: true,
           complete: (results) => {
             const rows = results.data;
+            if (!rows || rows.length === 0) {
+               setErrorMsg('CSV parsed, but no rows found.');
+               setLoading(false);
+               return;
+            }
+            
+            let debugCoyKey = '';
+            let debugFirstCoy = '';
             
             // Filter alfa company (usually 'A' or 'ALFA')
-            const alfaRows = rows.filter(r => {
+            const alfaRows = rows.filter((r, idx) => {
               const coyKey = Object.keys(r).find(k => k.trim().toLowerCase() === 'company');
+              if (idx === 0) debugCoyKey = coyKey || 'none found';
               const coy = coyKey ? (r[coyKey] || '').trim().toUpperCase() : '';
+              if (idx === 0) debugFirstCoy = coy;
               return coy === 'A' || coy === 'ALFA';
             });
+            
+            if (alfaRows.length === 0) {
+               setErrorMsg(`No Alfa cadets found. Total rows: ${rows.length}. First row coyKey: ${debugCoyKey}, value: ${debugFirstCoy}`);
+            }
             
             // Sort out per course
             const courseCounts = {};
@@ -60,7 +79,7 @@ export default function AcademicDeficiencies() {
           }
         });
       } catch (err) {
-        console.error("Failed to fetch academic data:", err);
+        setErrorMsg(`Failed to fetch academic data: ${err.message}`);
         setLoading(false);
       }
     };
@@ -69,6 +88,10 @@ export default function AcademicDeficiencies() {
 
   if (loading) {
     return <div className="glass" style={{padding: '40px', textAlign: 'center'}}>Loading academic deficiencies...</div>;
+  }
+  
+  if (errorMsg) {
+    return <div className="glass" style={{padding: '40px', textAlign: 'center', color: 'var(--danger)'}}>Error: {errorMsg}</div>;
   }
 
   const COLORS = ['#1A301E', '#39ff6e', '#44aaff', '#ffd700', '#ff9944', '#aa88ff', '#ff88aa', '#dc3545'];
