@@ -10,9 +10,17 @@ export default function AcademicDeficiencies() {
   useEffect(() => {
     const fetchDeficiencies = async () => {
       try {
-        const res = await fetch('/week3_deficiencies.csv');
+        const url = import.meta.env.BASE_URL + 'week3_deficiencies.csv';
+        const res = await fetch(url);
+        if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
         const text = await res.text();
         
+        if (text.trim().startsWith('<')) {
+          console.error("Fetched HTML instead of CSV! Check your base URL or file path.");
+          setLoading(false);
+          return;
+        }
+
         Papa.parse(text, {
           header: true,
           skipEmptyLines: true,
@@ -21,7 +29,8 @@ export default function AcademicDeficiencies() {
             
             // Filter alfa company (usually 'A' or 'ALFA')
             const alfaRows = rows.filter(r => {
-              const coy = (r.company || '').trim().toUpperCase();
+              const coyKey = Object.keys(r).find(k => k.trim().toLowerCase() === 'company');
+              const coy = coyKey ? (r[coyKey] || '').trim().toUpperCase() : '';
               return coy === 'A' || coy === 'ALFA';
             });
             
