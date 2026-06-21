@@ -1,6 +1,26 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Papa from 'papaparse';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid } from 'recharts';
+
+// Hook to measure a container's width, re-measuring on resize
+function useContainerWidth() {
+  const ref = useRef(null);
+  const [width, setWidth] = useState(0);
+  const measure = useCallback(() => {
+    if (ref.current) setWidth(ref.current.offsetWidth);
+  }, []);
+  useEffect(() => {
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [measure]);
+  // also re-measure when ref attaches
+  const setRef = useCallback(node => {
+    ref.current = node;
+    if (node) setWidth(node.offsetWidth);
+  }, []);
+  return [setRef, width];
+}
 
 const COLORS = [
   '#e63946', '#457b9d', '#f4a261', '#2a9d8f', '#e76f51',
@@ -8,6 +28,134 @@ const COLORS = [
 ];
 
 const CLASS_ORDER = ['ALL', '1CL', '2CL', '3CL'];
+
+const chartCardStyle = {
+  background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: '16px',
+  padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)', overflow: 'hidden',
+};
+const chartHeadingStyle = {
+  fontSize: '14px', color: 'var(--text-muted)', textTransform: 'uppercase',
+  letterSpacing: '0.5px', marginBottom: '16px', fontWeight: 600,
+};
+
+function ChartRow({ courseChartData, activeCourse, setActiveCourse }) {
+  const [pieRef, pieWidth] = useContainerWidth();
+  const [barRef, barWidth] = useContainerWidth();
+
+  const pieH = 280;
+  const barH = Math.max(courseChartData.length * 40 + 40, 200);
+
+  return (
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '20px', marginBottom: '20px' }}>
+      {/* Donut Chart */}
+      <div ref={pieRef} style={chartCardStyle}>
+        <h3 style={chartHeadingStyle}>Deficiencies by Course</h3>
+        {courseChartData.length > 0 && pieWidth > 0 ? (
+          <>
+            <PieChart width={pieWidth - 48} height={pieH}>
+              <Pie
+                data={courseChartData}
+                cx={(pieWidth - 48) / 2}
+                cy={pieH / 2}
+                innerRadius={Math.min(pieH, pieWidth - 48) * 0.22}
+                outerRadius={Math.min(pieH, pieWidth - 48) * 0.36}
+                paddingAngle={3}
+                dataKey="value"
+                stroke="var(--card-bg)"
+                strokeWidth={2}
+              >
+                {courseChartData.map((_, i) => (
+                  <Cell key={`cell-${i}`} fill={COLORS[i % COLORS.length]} />
+                ))}
+              </Pie>
+              <Tooltip
+                content={({ active, payload }) => {
+                  if (!active || !payload || !payload.length) return null;
+                  return (
+                    <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border)', padding: '12px 16px', borderRadius: '10px', boxShadow: 'var(--shadow-card)' }}>
+                      <p style={{ margin: 0, fontWeight: 700, color: 'var(--text)', fontSize: '13px' }}>{payload[0].name}</p>
+                      <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '12px' }}>{payload[0].value} deficiencies ({(payload[0].percent * 100).toFixed(1)}%)</p>
+                    </div>
+                  );
+                }}
+              />
+            </PieChart>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 16px', marginTop: '12px', justifyContent: 'center' }}>
+              {courseChartData.map((entry, i) => (
+                <div
+                  key={i}
+                  onClick={() => setActiveCourse(activeCourse === entry.name ? 'ALL' : entry.name)}
+                  style={{
+                    display: 'flex', alignItems: 'center', fontSize: '12px',
+                    color: activeCourse === entry.name ? 'var(--text)' : 'var(--text-muted)',
+                    cursor: 'pointer', fontWeight: activeCourse === entry.name ? 700 : 400,
+                    transition: 'all 0.2s ease',
+                  }}
+                >
+                  <span style={{
+                    display: 'inline-block', width: '10px', height: '10px',
+                    backgroundColor: COLORS[i % COLORS.length], borderRadius: '3px',
+                    marginRight: '6px',
+                  }} />
+                  {entry.name} ({entry.value})
+                </div>
+              ))}
+            </div>
+          </>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: pieH, color: 'var(--text-dim)' }}>
+            {pieWidth === 0 ? 'Measuring...' : 'No data for current filters.'}
+          </div>
+        )}
+      </div>
+
+      {/* Bar Chart */}
+      <div ref={barRef} style={chartCardStyle}>
+        <h3 style={chartHeadingStyle}>Cadets per Course</h3>
+        {courseChartData.length > 0 && barWidth > 0 ? (
+          <BarChart
+            data={courseChartData}
+            layout="vertical"
+            width={barWidth - 48}
+            height={barH}
+            margin={{ top: 0, right: 20, left: 10, bottom: 0 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
+            <XAxis type="number" stroke="var(--text-dim)" tick={{ fill: 'var(--text-dim)', fontSize: 11 }} allowDecimals={false} />
+            <YAxis
+              dataKey="name"
+              type="category"
+              width={140}
+              tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
+              stroke="none"
+            />
+            <Tooltip
+              content={({ active, payload, label }) => {
+                if (!active || !payload || !payload.length) return null;
+                return (
+                  <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border)', padding: '12px 16px', borderRadius: '10px', boxShadow: 'var(--shadow-card)' }}>
+                    <p style={{ margin: 0, fontWeight: 700, color: 'var(--text)', fontSize: '13px' }}>{label}</p>
+                    <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '12px' }}>{payload[0].value} cadets</p>
+                  </div>
+                );
+              }}
+              cursor={{ fill: 'var(--surface-active)' }}
+            />
+            <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={18}>
+              {courseChartData.map((_, i) => (
+                <Cell key={`bar-${i}`} fill={COLORS[i % COLORS.length]} />
+              ))}
+            </Bar>
+          </BarChart>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 200, color: 'var(--text-dim)' }}>
+            {barWidth === 0 ? 'Measuring...' : 'No data for current filters.'}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
 
 export default function AcademicDeficiencies() {
   const [allDetails, setAllDetails] = useState([]);
@@ -135,30 +283,6 @@ export default function AcademicDeficiencies() {
     );
   }
 
-  const CustomPieTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border)', padding: '12px 16px', borderRadius: '10px', boxShadow: 'var(--shadow-card)' }}>
-          <p style={{ margin: 0, fontWeight: 700, color: 'var(--text)', fontSize: '13px' }}>{payload[0].name}</p>
-          <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '12px' }}>{payload[0].value} deficiencies ({(payload[0].percent * 100).toFixed(1)}%)</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
-  const CustomBarTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div style={{ background: 'var(--card-bg)', border: '1px solid var(--border)', padding: '12px 16px', borderRadius: '10px', boxShadow: 'var(--shadow-card)' }}>
-          <p style={{ margin: 0, fontWeight: 700, color: 'var(--text)', fontSize: '13px' }}>{label}</p>
-          <p style={{ margin: '4px 0 0', color: 'var(--text-muted)', fontSize: '12px' }}>{payload[0].value} cadets</p>
-        </div>
-      );
-    }
-    return null;
-  };
-
   const gradeColor = (grade) => {
     const g = parseFloat(grade);
     if (g < 5.0) return '#e63946';
@@ -280,105 +404,7 @@ export default function AcademicDeficiencies() {
       </div>
 
       {/* ── CHARTS ROW ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
-        {/* Donut Chart */}
-        <div style={{
-          background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: '16px',
-          padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-        }}>
-          <h3 style={{ fontSize: '14px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '16px', fontWeight: 600 }}>
-            Deficiencies by Course
-          </h3>
-          {courseChartData.length > 0 ? (
-            <>
-              <div style={{ width: '100%', height: 280 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={courseChartData}
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={65}
-                      outerRadius={105}
-                      paddingAngle={3}
-                      dataKey="value"
-                      stroke="var(--card-bg)"
-                      strokeWidth={2}
-                    >
-                      {courseChartData.map((entry, i) => (
-                        <Cell key={`cell-${i}`} fill={COLORS[i % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip content={<CustomPieTooltip />} />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px 16px', marginTop: '12px', justifyContent: 'center' }}>
-                {courseChartData.map((entry, i) => (
-                  <div
-                    key={i}
-                    onClick={() => setActiveCourse(activeCourse === entry.name ? 'ALL' : entry.name)}
-                    style={{
-                      display: 'flex', alignItems: 'center', fontSize: '12px',
-                      color: activeCourse === entry.name ? 'var(--text)' : 'var(--text-muted)',
-                      cursor: 'pointer', fontWeight: activeCourse === entry.name ? 700 : 400,
-                      transition: 'all 0.2s ease',
-                    }}
-                  >
-                    <span style={{
-                      display: 'inline-block', width: '10px', height: '10px',
-                      backgroundColor: COLORS[i % COLORS.length], borderRadius: '3px',
-                      marginRight: '6px',
-                    }} />
-                    {entry.name} ({entry.value})
-                  </div>
-                ))}
-              </div>
-            </>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 280, color: 'var(--text-dim)' }}>
-              No data for current filters.
-            </div>
-          )}
-        </div>
-
-        {/* Bar Chart */}
-        <div style={{
-          background: 'var(--card-bg)', border: '1px solid var(--border)', borderRadius: '16px',
-          padding: '24px', boxShadow: '0 4px 20px rgba(0,0,0,0.05)',
-        }}>
-          <h3 style={{ fontSize: '14px', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.5px', marginBottom: '16px', fontWeight: 600 }}>
-            Cadets per Course
-          </h3>
-          {courseChartData.length > 0 ? (
-            <div style={{ width: '100%', height: 320 }}>
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={courseChartData} layout="vertical" margin={{ top: 0, right: 20, left: 10, bottom: 0 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" horizontal={false} />
-                  <XAxis type="number" stroke="var(--text-dim)" tick={{ fill: 'var(--text-dim)', fontSize: 11 }} allowDecimals={false} />
-                  <YAxis
-                    dataKey="name"
-                    type="category"
-                    width={140}
-                    tick={{ fill: 'var(--text-muted)', fontSize: 11 }}
-                    stroke="none"
-                  />
-                  <Tooltip content={<CustomBarTooltip />} cursor={{ fill: 'var(--surface-active)' }} />
-                  <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={18}>
-                    {courseChartData.map((entry, i) => (
-                      <Cell key={`bar-${i}`} fill={COLORS[i % COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 320, color: 'var(--text-dim)' }}>
-              No data for current filters.
-            </div>
-          )}
-        </div>
-      </div>
+      <ChartRow courseChartData={courseChartData} activeCourse={activeCourse} setActiveCourse={setActiveCourse} />
 
       {/* ── CADET TABLE ── */}
       <div style={{
