@@ -81,6 +81,7 @@ export default function AnnouncementModal({ isOpen, onClose, onSave, initialData
               <option value="urgent">Urgent</option>
               <option value="training">Training</option>
               <option value="activity">Activity</option>
+              <option value="honor">Honor</option>
             </select>
           </div>
         </div>
@@ -109,6 +110,7 @@ export default function AnnouncementModal({ isOpen, onClose, onSave, initialData
               <option value="s10">S10</option><option value="rso">RSO Council</option><option value="athletic">Athletic Council</option><option value="academic">Academic Council</option>
               <option value="exo-council">EXO Council</option>
               <option value="taco-corner">TAC-O's Corner</option>
+              <option value="Honor Committee">Honor Committee</option>
             </select>
           </div>
           <div className="form-group" style={{flex: 1}}>

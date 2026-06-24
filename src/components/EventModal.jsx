@@ -79,6 +79,7 @@ export default function EventModal({ isOpen, onClose, onSave, initialData = null
               <option value="athletic">Athletic</option>
               <option value="ceremony">Ceremony</option>
               <option value="activity">Activity</option>
+              <option value="honor">Honor</option>
               <option value="other">Other</option>
               <option value="bessang pass">Bessang Pass</option>
             </select>
@@ -118,6 +119,7 @@ export default function EventModal({ isOpen, onClose, onSave, initialData = null
               <option value="s5">S5</option><option value="s6">S6</option><option value="s7">S7</option><option value="s8">S8</option>
               <option value="s10">S10</option><option value="rso">RSO Council</option><option value="athletic">Athletic Council</option><option value="academic">Academic Council</option><option value="mto">MTO Council</option>
               <option value="exo-council">EXO Council</option>
+              <option value="Honor Committee">Honor Committee</option>
             </select>
           </div>
         </div>
