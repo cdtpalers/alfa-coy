@@ -29,6 +29,10 @@ const NEXUS_COLORS = [
 const CLASS_ORDER = ['ALL', '1CL', '2CL', '3CL'];
 
 export default function AcademicDeficiencies() {
+  const [areaRef, areaWidth] = useContainerWidth();
+  const [barRef, barWidth] = useContainerWidth();
+  const [pieRef, pieWidth] = useContainerWidth();
+
   const [allDetails, setAllDetails] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -374,7 +378,7 @@ export default function AcademicDeficiencies() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px', marginBottom: '24px' }}>
         
         {/* Main Area Chart - Deficiencies Overview */}
-        <div className="nexus-card" style={{ gridColumn: '1 / -1', minHeight: '380px' }}>
+        <div className="nexus-card" style={{ gridColumn: '1 / -1', minHeight: '380px' }} ref={areaRef}>
           <div className="nexus-chart-header">
             <div className="nexus-chart-title">
               <i className="fa-solid fa-chart-area" style={{ color: '#5e35b1' }}></i>
@@ -393,9 +397,8 @@ export default function AcademicDeficiencies() {
           </div>
 
           <div style={{ width: '100%', height: '250px' }}>
-            {overviewData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={overviewData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+            {overviewData.length > 0 && areaWidth > 0 ? (
+                <AreaChart width={areaWidth - 48} height={250} data={overviewData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                   <defs>
                     <linearGradient id="color1CL" x1="0" y1="0" x2="0" y2="1">
                       <stop offset="5%" stopColor="#5e35b1" stopOpacity={0.8}/>
@@ -421,10 +424,9 @@ export default function AcademicDeficiencies() {
                   <Area type="monotone" dataKey="2CL" stackId="1" stroke="#1e88e5" fill="url(#color2CL)" strokeWidth={2} />
                   <Area type="monotone" dataKey="3CL" stackId="1" stroke="#00acc1" fill="url(#color3CL)" strokeWidth={2} />
                 </AreaChart>
-              </ResponsiveContainer>
             ) : (
                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-dim)' }}>
-                 No data to display.
+                 {areaWidth === 0 ? 'Loading chart...' : 'No data to display.'}
                </div>
             )}
           </div>
@@ -436,16 +438,15 @@ export default function AcademicDeficiencies() {
         </div>
 
         {/* Secondary Charts */}
-        <div className="nexus-card">
+        <div className="nexus-card" ref={barRef}>
           <div className="nexus-chart-header">
             <div className="nexus-chart-title">
               Total Deficiencies per Course
             </div>
           </div>
           <div style={{ width: '100%', height: '250px' }}>
-            {courseChartData.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={courseChartData.slice(0, 5)} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+            {courseChartData.length > 0 && barWidth > 0 ? (
+                <BarChart width={barWidth - 48} height={250} data={courseChartData.slice(0, 5)} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
                   <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} tickFormatter={(val) => val.substring(0, 6) + '...'} />
                   <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
@@ -461,16 +462,15 @@ export default function AcademicDeficiencies() {
                     ))}
                   </Bar>
                 </BarChart>
-              </ResponsiveContainer>
             ) : (
                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-dim)' }}>
-                 No data to display.
+                 {barWidth === 0 ? 'Loading chart...' : 'No data to display.'}
                </div>
             )}
           </div>
         </div>
 
-        <div className="nexus-card">
+        <div className="nexus-card" ref={pieRef}>
           <div className="nexus-chart-header">
             <div className="nexus-chart-title">
               Deficiencies Distribution
@@ -480,12 +480,14 @@ export default function AcademicDeficiencies() {
             </div>
           </div>
           <div style={{ width: '100%', height: '250px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
-            {courseChartData.length > 0 ? (
+            {courseChartData.length > 0 && pieWidth > 0 ? (
               <>
-                <ResponsiveContainer width="100%" height="80%">
-                  <PieChart>
+                <div style={{ width: '100%', height: '80%' }}>
+                  <PieChart width={pieWidth - 48} height={200}>
                     <Pie
                       data={courseChartData.slice(0, 4)}
+                      cx={(pieWidth - 48) / 2}
+                      cy={100}
                       innerRadius={60}
                       outerRadius={80}
                       paddingAngle={5}
@@ -501,7 +503,7 @@ export default function AcademicDeficiencies() {
                       itemStyle={{ fontSize: '12px', fontWeight: 600 }}
                     />
                   </PieChart>
-                </ResponsiveContainer>
+                </div>
                 <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'center', gap: '12px', marginTop: '12px' }}>
                   {courseChartData.slice(0, 4).map((entry, index) => (
                     <div key={index} style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}>
@@ -513,7 +515,7 @@ export default function AcademicDeficiencies() {
               </>
             ) : (
                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-dim)' }}>
-                 No data to display.
+                 {pieWidth === 0 ? 'Loading chart...' : 'No data to display.'}
                </div>
             )}
           </div>
