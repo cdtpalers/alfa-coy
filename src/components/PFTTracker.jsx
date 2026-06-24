@@ -4,17 +4,21 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Cell, Tooltip as RechartsTo
 
 // Custom hook to measure container width to prevent Recharts layout bugs
 function useContainerWidth() {
-  const [width, setWidth] = useState(0);
   const ref = React.useRef(null);
-  useEffect(() => {
-    if (!ref.current) return;
-    const observer = new ResizeObserver((entries) => {
-      for (let entry of entries) setWidth(entry.contentRect.width);
-    });
-    observer.observe(ref.current);
-    return () => observer.disconnect();
+  const [width, setWidth] = useState(0);
+  const measure = React.useCallback(() => {
+    if (ref.current) setWidth(ref.current.offsetWidth);
   }, []);
-  return [ref, width];
+  useEffect(() => {
+    measure();
+    window.addEventListener('resize', measure);
+    return () => window.removeEventListener('resize', measure);
+  }, [measure]);
+  const setRef = React.useCallback(node => {
+    ref.current = node;
+    if (node) setWidth(node.offsetWidth);
+  }, []);
+  return [setRef, width];
 }
 
 const NEXUS_COLORS = ['#5e35b1', '#1e88e5', '#00acc1', '#fb8c00', '#eb5757', '#43a047'];
