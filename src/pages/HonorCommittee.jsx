@@ -1,15 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import AnnCard from '../components/AnnCard';
 import { SkeletonGrid } from '../components/Skeleton';
+import AnnouncementModal from '../components/AnnouncementModal';
+import { useToast } from '../components/Toast';
 
 export default function HonorCommittee({ isAdmin }) {
   const [reminders, setReminders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const toast = useToast();
 
-  useEffect(() => {
-    const fetchReminders = async () => {
-      try {
+  const fetchReminders = useCallback(async () => {
+    setLoading(true);
+    try {
         const { data, error } = await supabase
           .from('announcements')
           .select('*')
@@ -36,10 +40,33 @@ export default function HonorCommittee({ isAdmin }) {
       } finally {
         setLoading(false);
       }
+  }, []);
+
+  useEffect(() => {
+    fetchReminders();
+  }, [fetchReminders]);
+
+  const handleSaveAnnouncement = async (ann) => {
+    const { id, ...annData } = ann;
+    const dbRow = {
+      title: annData.Title,
+      body: annData.Body,
+      date: annData.Date,
+      council: 'Honor Committee',
+      tag: annData.Tag || 'important',
+      priority: annData.Priority || 'normal'
     };
 
-    fetchReminders();
-  }, []);
+    const { error } = await supabase.from('announcements').insert([dbRow]);
+    if (error) {
+      console.error("Error adding honor announcement:", error);
+      toast.error("Failed to save honor announcement.");
+    } else {
+      toast.success("Honor announcement published successfully.");
+      fetchReminders(); // Refresh list
+    }
+    setIsModalOpen(false);
+  };
 
   return (
     <div className="page active" id="page-honor">
@@ -76,11 +103,20 @@ export default function HonorCommittee({ isAdmin }) {
         </div>
       </div>
 
-      <div className="section-header">
+      <div className="section-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div className="section-title">
           <div className="section-icon" style={{ background: 'rgba(212, 175, 55, 0.2)', color: '#d4af37' }}>📌</div>
           <div><h2>HONOR CODE REMINDERS</h2><p>BULLETINS & NOTICES</p></div>
         </div>
+        {isAdmin && (
+          <button 
+            className="sidebar-action-btn btn-success" 
+            style={{ padding: '8px 16px', borderRadius: '8px', fontSize: '13px', fontWeight: 'bold' }}
+            onClick={() => setIsModalOpen(true)}
+          >
+            <i className="fa-solid fa-plus"></i> ADD REMINDER
+          </button>
+        )}
       </div>
       
       {loading ? (
@@ -97,6 +133,15 @@ export default function HonorCommittee({ isAdmin }) {
           </p>
         </div>
       )}
+
+      {/* Local Add Announcement Modal */}
+      <AnnouncementModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleSaveAnnouncement}
+        toast={toast}
+        initialData={{ Council: 'Honor Committee', Tag: 'important', Priority: 'high' }}
+      />
     </div>
   );
 }
