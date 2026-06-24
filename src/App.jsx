@@ -14,6 +14,7 @@ import LoginModal from './components/LoginModal';
 import AdminDashboard from './pages/AdminDashboard';
 import SmartphoneRack from './pages/SmartphoneRack';
 import TacoCorner from './pages/TacoCorner';
+import HonorCommittee from './pages/HonorCommittee';
 import { supabase } from './lib/supabase';
 
 const INITIAL_EVENTS = [];
@@ -247,6 +248,9 @@ function AppContent() {
     }
     if (currentPage === 'rack') {
       return <SmartphoneRack />;
+    }
+    if (currentPage === 'honor') {
+      return <HonorCommittee isAdmin={isAdmin} />;
     }
     if (currentPage === 'roster') {
       return <RosterPage />;

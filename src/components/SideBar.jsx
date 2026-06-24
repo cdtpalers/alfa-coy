@@ -104,6 +104,13 @@ export default function SideBar({
               <span>Smartphone Rack</span>
             </button>
             <button 
+              className={`sidebar-menu-item ${currentPage === 'honor' ? 'active' : ''}`} 
+              onClick={() => handleNavClick('honor')}
+            >
+              <i className="fa-solid fa-scale-balanced" style={{color: '#d4af37'}}></i>
+              <span>Honor Committee</span>
+            </button>
+            <button 
               className={`sidebar-menu-item ${currentPage === 'roster' ? 'active' : ''}`} 
               onClick={() => handleNavClick('roster')}
             >
