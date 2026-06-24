@@ -31,6 +31,7 @@ export default function PFTTracker() {
   const [errorMsg, setErrorMsg] = useState(null);
   const [barRef, barWidth] = useContainerWidth();
   const [searchTerm, setSearchTerm] = useState('');
+  const [activeClass, setActiveClass] = useState('ALL');
   
   useEffect(() => {
     Papa.parse(PFT_CSV_URL, {
@@ -40,21 +41,29 @@ export default function PFTTracker() {
         try {
           const rows = results.data;
           const parsedData = [];
+          let currentClass = 'Unknown';
           
           for (let i = 0; i < rows.length; i++) {
             const r = rows[i];
             const name = r[0]?.trim();
+
+            if (name && name.match(/^[1-4]CL$/i)) {
+              currentClass = name.toUpperCase();
+              continue;
+            }
+
             const remarks = r[10]?.trim()?.toUpperCase() || '';
             const avgScoreStr = r[9]?.trim() || '0';
             const avgScore = parseFloat(avgScoreStr);
             
-            // Skip headers, empty names, or class dividers (like '1CL')
-            if (!name || name === 'NAME' || name.match(/^[1-4]CL$/i)) continue;
+            // Skip headers, empty names
+            if (!name || name === 'NAME') continue;
             // Additional check: valid rows usually have a numerical score or a pass/fail remark
             if (isNaN(avgScore) && remarks !== 'PASSED' && remarks !== 'FAILED') continue;
             
             parsedData.push({
               name,
+              cls: currentClass,
               pushupCount: r[1]?.trim() || '-',
               pushupScore: parseFloat(r[2]) || 0,
               situpCount: r[3]?.trim() || '-',
@@ -148,9 +157,15 @@ export default function PFTTracker() {
   }, [data, stats, chartData]);
 
   const filteredData = useMemo(() => {
-    if (!searchTerm) return data;
-    return data.filter(d => d.name.toLowerCase().includes(searchTerm.toLowerCase()));
-  }, [data, searchTerm]);
+    let result = data;
+    if (activeClass !== 'ALL') {
+      result = result.filter(d => d.cls === activeClass);
+    }
+    if (searchTerm) {
+      result = result.filter(d => d.name.toLowerCase().includes(searchTerm.toLowerCase()));
+    }
+    return result;
+  }, [data, searchTerm, activeClass]);
 
   if (loading) {
     return (
@@ -270,8 +285,30 @@ export default function PFTTracker() {
 
       {/* ── CADET DATA TABLE ── */}
       <div className="nexus-card" style={{ overflow: 'hidden' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: '1px solid var(--border)', background: 'var(--surface-active)' }}>
-          <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text)' }}>Detailed PFT Results</h3>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '20px 24px', borderBottom: '1px solid var(--border)', background: 'var(--surface-active)', flexWrap: 'wrap', gap: '16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexWrap: 'wrap' }}>
+            <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 600, color: 'var(--text)' }}>Detailed PFT Results</h3>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              {['ALL', '1CL', '2CL', '3CL', '4CL'].map(cls => (
+                <button
+                  key={cls}
+                  onClick={() => setActiveClass(cls)}
+                  style={{
+                    padding: '4px 12px',
+                    borderRadius: '6px',
+                    border: activeClass === cls ? '1px solid #1e88e5' : '1px solid var(--border)',
+                    background: activeClass === cls ? 'rgba(30, 136, 229, 0.1)' : 'transparent',
+                    color: activeClass === cls ? '#1e88e5' : 'var(--text-muted)',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer'
+                  }}
+                >
+                  {cls}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="search-bar" style={{ width: '250px' }}>
              <i className="fa fa-search"></i>
              <input 
@@ -301,7 +338,10 @@ export default function PFTTracker() {
             <tbody>
               {filteredData.map((d, i) => (
                 <tr key={i} style={{ borderBottom: '1px solid var(--border)', transition: 'background 0.2s', ':hover': { background: 'var(--surface-active)' } }}>
-                  <td style={{ padding: '12px 24px', fontWeight: 600, color: 'var(--text)' }}>{d.name}</td>
+                  <td style={{ padding: '12px 24px', fontWeight: 600, color: 'var(--text)' }}>
+                    {d.name}
+                    <div style={{ fontSize: '11px', color: 'var(--text-muted)', fontWeight: 400 }}>{d.cls}</div>
+                  </td>
                   <td style={{ padding: '12px 16px' }}>
                     <div style={{ fontSize: '14px', color: 'var(--text)' }}>{d.pushupCount}</div>
                     <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>Scr: {d.pushupScore}</div>
