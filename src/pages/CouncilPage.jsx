@@ -87,7 +87,7 @@ export default function CouncilPage({ councilId, announcements, events, isAdmin,
           <div className="section-header">
             <div className="section-title">
               <div className="section-icon">📉</div>
-              <div><h2>ACADEMIC DEFICIENCIES</h2><p>ALFA COMPANY WEEK 3</p></div>
+              <div><h2>ACADEMIC DEFICIENCIES TRACKER</h2><p>ALFA COMPANY</p></div>
             </div>
           </div>
           <AcademicDeficiencies />
