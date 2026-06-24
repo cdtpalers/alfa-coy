@@ -3306,3 +3306,211 @@ textarea.glass-input {
 .editor-statusbar {
   display: none !important;
 }
+
+/* ── NEXUS DASHBOARD STYLES ── */
+.nexus-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.02);
+  padding: 24px;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.nexus-card:hover {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  transform: translateY(-2px);
+}
+
+.nexus-metric-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-muted);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.nexus-metric-icon {
+  background: var(--surface-active);
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-muted);
+}
+
+.nexus-metric-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+
+.nexus-metric-value {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.nexus-trend {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.nexus-trend.up {
+  background: rgba(38, 194, 129, 0.1);
+  color: #26c281;
+}
+
+.nexus-trend.down {
+  background: rgba(235, 87, 87, 0.1);
+  color: #eb5757;
+}
+
+.nexus-chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.nexus-chart-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nexus-chart-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.nexus-btn-outline {
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.nexus-btn-outline:hover {
+  background: var(--surface-active);
+  color: var(--text);
+}
+
+.nexus-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.nexus-table th {
+  padding: 12px 16px;
+  text-align: left;
+  font-size: 11px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 700;
+  border-bottom: 1px solid var(--border);
+}
+
+.nexus-table td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 13px;
+}
+
+.nexus-table tr:last-child td {
+  border-bottom: none;
+}
+
+.nexus-table tr:hover td {
+  background: rgba(0,0,0,0.01);
+}
+
+[data-theme="dark"] .nexus-table tr:hover td {
+  background: rgba(255,255,255,0.02);
+}
+
+.nexus-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 12px;
+  color: #fff;
+}
+
+.nexus-insights-box {
+  background: linear-gradient(135deg, rgba(94, 53, 177, 0.05) 0%, rgba(30, 136, 229, 0.05) 100%);
+  border: 1px solid rgba(94, 53, 177, 0.1);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="dark"] .nexus-insights-box {
+  background: linear-gradient(135deg, rgba(94, 53, 177, 0.1) 0%, rgba(30, 136, 229, 0.1) 100%);
+  border-color: rgba(94, 53, 177, 0.2);
+}
+
+.nexus-insights-icon {
+  position: absolute;
+  right: -20px;
+  top: -20px;
+  font-size: 100px;
+  opacity: 0.05;
+  color: #5e35b1;
+}
+
+.nexus-insights-content {
+  position: relative;
+  z-index: 1;
+}
+
+.nexus-insights-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #5e35b1;
+  margin-bottom: 8px;
+}
+
+[data-theme="dark"] .nexus-insights-title {
+  color: #b388ff;
+}
+
+.nexus-insights-text {
+  font-size: 14px;
+  color: var(--text);
+  line-height: 1.5;
+}
