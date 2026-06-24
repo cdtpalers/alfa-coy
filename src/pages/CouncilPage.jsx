@@ -3,6 +3,7 @@ import AnnCard from '../components/AnnCard';
 import FinanceDashboard from '../components/FinanceDashboard';
 import PrivilegeLeaveForm from '../components/PrivilegeLeaveForm';
 import AcademicDeficiencies from '../components/AcademicDeficiencies';
+import PFTTracker from '../components/PFTTracker';
 import { SkeletonGrid, SkeletonEventItem } from '../components/Skeleton';
 
 const COUNCILS_META = {
@@ -90,6 +91,18 @@ export default function CouncilPage({ councilId, announcements, events, isAdmin,
             </div>
           </div>
           <AcademicDeficiencies />
+        </>
+      )}
+
+      {councilId === 'athletic' && (
+        <>
+          <div className="section-header">
+            <div className="section-title">
+              <div className="section-icon">🏃‍♂️</div>
+              <div><h2>PHYSICAL FITNESS TEST TRACKER</h2><p>ALFA COMPANY PFT RESULTS</p></div>
+            </div>
+          </div>
+          <PFTTracker />
         </>
       )}
 
