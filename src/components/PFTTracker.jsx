@@ -30,6 +30,7 @@ export default function PFTTracker() {
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
   const [barRef, barWidth] = useContainerWidth();
+  const [rawBarRef, rawBarWidth] = useContainerWidth();
   const [searchTerm, setSearchTerm] = useState('');
   const [activeClass, setActiveClass] = useState('ALL');
   
@@ -99,6 +100,17 @@ export default function PFTTracker() {
     
     let sumPushup = 0, sumSitup = 0, sumPullup = 0, sumRun = 0;
     let countPushup = 0, countSitup = 0, countPullup = 0, countRun = 0;
+    
+    let sumPCount = 0, sumSCount = 0, sumPlCount = 0, sumRSec = 0;
+    let numPCount = 0, numSCount = 0, numPlCount = 0, numRSec = 0;
+
+    const parseTime = (str) => {
+      if (!str || str === '-') return 0;
+      const c = str.replace(/[^0-9]/g, '');
+      if (c.length === 4) return parseInt(c.substring(0, 2)) * 60 + parseInt(c.substring(2));
+      if (c.length === 3) return parseInt(c.substring(0, 1)) * 60 + parseInt(c.substring(1));
+      return parseInt(c) || 0;
+    };
 
     data.forEach(d => {
       if (d.remarks === 'PASSED') passed++;
@@ -109,6 +121,11 @@ export default function PFTTracker() {
       if (d.situpScore > 0) { sumSitup += d.situpScore; countSitup++; }
       if (d.pullupScore > 0) { sumPullup += d.pullupScore; countPullup++; }
       if (d.runScore > 0) { sumRun += d.runScore; countRun++; }
+      
+      const p = parseInt(d.pushupCount); if (!isNaN(p)) { sumPCount += p; numPCount++; }
+      const s = parseInt(d.situpCount); if (!isNaN(s)) { sumSCount += s; numSCount++; }
+      const pl = parseInt(d.pullupCount); if (!isNaN(pl)) { sumPlCount += pl; numPlCount++; }
+      const r = parseTime(d.runTime); if (r > 0) { sumRSec += r; numRSec++; }
     });
 
     return {
@@ -121,6 +138,10 @@ export default function PFTTracker() {
       avgSitup: countSitup > 0 ? (sumSitup / countSitup).toFixed(1) : 0,
       avgPullup: countPullup > 0 ? (sumPullup / countPullup).toFixed(1) : 0,
       avgRun: countRun > 0 ? (sumRun / countRun).toFixed(1) : 0,
+      rawPushup: numPCount > 0 ? (sumPCount / numPCount).toFixed(1) : 0,
+      rawSitup: numSCount > 0 ? (sumSCount / numSCount).toFixed(1) : 0,
+      rawPullup: numPlCount > 0 ? (sumPlCount / numPlCount).toFixed(1) : 0,
+      rawRunSec: numRSec > 0 ? sumRSec / numRSec : 0,
     };
   }, [data]);
 
@@ -132,6 +153,34 @@ export default function PFTTracker() {
       { name: '3.2km Run', value: parseFloat(stats.avgRun) || 0 }
     ];
   }, [stats]);
+
+  const rawChartData = useMemo(() => {
+    const formatTime = (secs) => {
+      const m = Math.floor(secs / 60);
+      const s = Math.floor(secs % 60).toString().padStart(2, '0');
+      return `${m}:${s}`;
+    };
+    return [
+      { name: 'Push Up', value: parseFloat(stats.rawPushup) || 0, displayVal: `${stats.rawPushup} reps` },
+      { name: 'Sit Up', value: parseFloat(stats.rawSitup) || 0, displayVal: `${stats.rawSitup} reps` },
+      { name: 'Pull Up', value: parseFloat(stats.rawPullup) || 0, displayVal: `${stats.rawPullup} reps` },
+      { name: '3.2km Run', value: parseFloat((stats.rawRunSec / 60).toFixed(2)) || 0, displayVal: formatTime(stats.rawRunSec) }
+    ];
+  }, [stats]);
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      return (
+        <div style={{ borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', padding: '12px' }}>
+          <p style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text)', marginBottom: '8px', margin: 0 }}>{label}</p>
+          <p style={{ fontSize: '12px', fontWeight: 600, color: payload[0].fill, margin: 0 }}>
+            {payload[0].payload.displayVal || payload[0].value}
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   const generativeInsight = useMemo(() => {
     if (data.length === 0) return "No data available.";
@@ -278,6 +327,35 @@ export default function PFTTracker() {
            ) : (
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-dim)' }}>
                 {barWidth === 0 ? 'Loading chart...' : 'No data to display.'}
+              </div>
+           )}
+        </div>
+      </div>
+
+      {/* ── RAW PERFORMANCE AVERAGES CHART ── */}
+      <div className="nexus-card" style={{ marginBottom: '24px' }} ref={rawBarRef}>
+        <div className="nexus-chart-header">
+          <div className="nexus-chart-title">
+            <i className="fa-solid fa-dumbbell" style={{ color: '#43a047' }}></i>
+            Average Performance (Repetitions / Time)
+          </div>
+        </div>
+        <div style={{ width: '100%', height: '280px', paddingTop: '16px' }}>
+           {rawChartData.length > 0 && rawBarWidth > 0 ? (
+              <BarChart width={rawBarWidth - 48} height={250} data={rawChartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                <RechartsTooltip content={<CustomTooltip />} cursor={{ fill: 'var(--surface-active)' }} />
+                <Bar dataKey="value" radius={[6, 6, 0, 0]} barSize={40}>
+                  {rawChartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={NEXUS_COLORS[index % NEXUS_COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+           ) : (
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-dim)' }}>
+                {rawBarWidth === 0 ? 'Loading chart...' : 'No data to display.'}
               </div>
            )}
         </div>
