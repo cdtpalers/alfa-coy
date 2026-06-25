@@ -514,6 +514,14 @@ class,course,course_name,cadet,cn,sec,company,lesson_sum,lesson_cnt,unit_sum,uni
 3CL,MAT231,Differential Calculus,"HINDAC, W, O",28175,I,F,48.7500,7,0,0,0,-0.25,6.96428
 3CL,MAT231,Differential Calculus,"VILLAR, K, F",29340,M,G,41.7500,6,0,0,0,-0.25,6.95833
 3CL,MAT231,Differential Calculus,"MANANGAN, M, A",28220,E,C,48.8000,7,0,0,0,-0.20,6.97142
+3CL,OM231,Operations Management,"ABONITA, R, C",29001,E,D,22.5000,3,22.5300,1,0,-10.97,5.62875
+3CL,OM231,Operations Management,"LIWANAG, K, D",29184,F,D,28.3500,4,29.5000,1,0,-5.15,6.42777
+3CL,OM231,Operations Management,"RAMOGA, N, B",29266,E,C,17.2500,2,27.8600,1,0,-3.89,6.44428
+3CL,OM231,Operations Management,"CESNEROS, L, T",29091,F,D,23.4810,3,30.7300,1,0,-1.789,6.77637
+3CL,OM231,Operations Management,"PEDRO, R, S",29251,E,C,32.8150,4,29.0900,1,0,-1.095,6.87833
+3CL,OM231,Operations Management,"SANICO, R, D",29297,F,D,34.2500,4,28.6800,1,0,-0.07,6.99222
+3CL,OM231,Operations Management,"PATULOT, H, M",29249,C,B,22.7900,3,33.1900,1,0,-0.02,6.9975
+3CL,OM231,Operations Management,"VALENCERINA, B, L",29334,M,G,34.3000,4,28.6800,1,0,-0.02,6.99777
 3CL,PHI231,Military Ethics,"GELLANG, C, J",29147,I,F,29.2000,5,0,0,0,-5.80,5.84
 3CL,PHI231,Military Ethics,"CUSTODIO, M, A",29101,F,D,37.8600,6,0,0,0,-4.14,6.31
 3CL,PHI231,Military Ethics,"FLORES, J, E",29134,F,D,24.1000,4,0,0,0,-3.90,6.02499
