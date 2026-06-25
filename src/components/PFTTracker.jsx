@@ -298,8 +298,11 @@ export default function PFTTracker() {
 
       </div>
 
+      {/* ── CHARTS CONTAINER ── */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+
       {/* ── EVENT AVERAGES CHART ── */}
-      <div className="nexus-card" style={{ marginBottom: '24px' }} ref={barRef}>
+      <div className="nexus-card" style={{ marginBottom: '0' }} ref={barRef}>
         <div className="nexus-chart-header">
           <div className="nexus-chart-title">
             <i className="fa-solid fa-chart-column" style={{ color: '#1e88e5' }}></i>
@@ -333,7 +336,7 @@ export default function PFTTracker() {
       </div>
 
       {/* ── RAW PERFORMANCE AVERAGES CHART ── */}
-      <div className="nexus-card" style={{ marginBottom: '24px' }} ref={rawBarRef}>
+      <div className="nexus-card" style={{ marginBottom: '0' }} ref={rawBarRef}>
         <div className="nexus-chart-header">
           <div className="nexus-chart-title">
             <i className="fa-solid fa-dumbbell" style={{ color: '#43a047' }}></i>
@@ -359,6 +362,7 @@ export default function PFTTracker() {
               </div>
            )}
         </div>
+      </div>
       </div>
 
       {/* ── CADET DATA TABLE ── */}
