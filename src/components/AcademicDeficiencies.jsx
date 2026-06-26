@@ -375,7 +375,7 @@ export default function AcademicDeficiencies() {
           <div className="nexus-card" ref={trendRef} style={{ marginBottom: '24px' }}>
             <div className="nexus-chart-header">
               <div className="nexus-chart-title">
-                <i className="fa-solid fa-chart-line" style={{ color: '#1e88e5' }}></i> Cadet Corps Deficiency Trend
+                <i className="fa-solid fa-chart-line" style={{ color: '#1e88e5' }}></i> Alfa company academic deficiency trend
               </div>
             </div>
             <div style={{ width: '100%', height: '300px', paddingTop: '16px' }}>
