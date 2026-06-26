@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import Papa from 'papaparse';
-import { AreaChart, Area, PieChart, Pie, Cell, Tooltip as RechartsTooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend } from 'recharts';
+import { AreaChart, Area, PieChart, Pie, Cell, Tooltip as RechartsTooltip, BarChart, Bar, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Legend, LineChart, Line } from 'recharts';
 
 function useContainerWidth() {
   const ref = useRef(null);
@@ -32,13 +32,15 @@ export default function AcademicDeficiencies() {
   const [barRef, barWidth] = useContainerWidth();
   const [pieRef, pieWidth] = useContainerWidth();
   const [compBarRef, compBarWidth] = useContainerWidth();
+  const [trendRef, trendWidth] = useContainerWidth();
 
-  const [week3Data, setWeek3Data] = useState([]);
-  const [week4Data, setWeek4Data] = useState([]);
+  const [historicalData, setHistoricalData] = useState({});
+  const [availableWeeks, setAvailableWeeks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [errorMsg, setErrorMsg] = useState(null);
 
-  const [activeView, setActiveView] = useState('week4'); // 'week3', 'week4', 'compare'
+  const [activeView, setActiveView] = useState('compare'); // 'single', 'compare'
+  const [activeWeek, setActiveWeek] = useState(null);
 
   // Filters & sorting for single-week view
   const [activeClass, setActiveClass] = useState('ALL');
@@ -47,7 +49,8 @@ export default function AcademicDeficiencies() {
   const [searchText, setSearchText] = useState('');
 
   useEffect(() => {
-    const fetchCSV = async (filename) => {
+    const fetchCSV = async (weekNum) => {
+      const filename = `week${weekNum}_deficiencies.csv`;
       const url = import.meta.env.BASE_URL + filename;
       const res = await fetch(url);
       if (!res.ok) throw new Error(`Failed to load ${filename} (HTTP ${res.status}).`);
@@ -65,7 +68,7 @@ export default function AcademicDeficiencies() {
               const coy = coyKey ? (r[coyKey] || '').trim().toUpperCase() : '';
               return coy === 'A' || coy === 'ALFA';
             });
-            resolve(alfaRows);
+            resolve({ week: weekNum, data: alfaRows });
           },
           error: (err) => reject(err)
         });
@@ -74,12 +77,28 @@ export default function AcademicDeficiencies() {
 
     const fetchAll = async () => {
       try {
-        const [w3, w4] = await Promise.all([
-          fetchCSV('week3_deficiencies.csv'),
-          fetchCSV('week4_deficiencies.csv')
-        ]);
-        setWeek3Data(w3);
-        setWeek4Data(w4);
+        const promises = [];
+        for (let i = 1; i <= 10; i++) {
+          promises.push(fetchCSV(i));
+        }
+        const results = await Promise.allSettled(promises);
+        const validData = {};
+        const weeks = [];
+        results.forEach(res => {
+          if (res.status === 'fulfilled') {
+            validData[res.value.week] = res.value.data;
+            weeks.push(res.value.week);
+          }
+        });
+        
+        weeks.sort((a, b) => b - a); // Descending
+        setHistoricalData(validData);
+        setAvailableWeeks(weeks);
+        if (weeks.length > 0) {
+          setActiveWeek(weeks[0]);
+        } else {
+          setErrorMsg("No weekly deficiency data found. Please upload a weekX_deficiencies.csv file.");
+        }
         setLoading(false);
       } catch (err) {
         setErrorMsg(`Network error: ${err.message}`);
@@ -89,8 +108,8 @@ export default function AcademicDeficiencies() {
     fetchAll();
   }, []);
 
-  // ── SINGLE WEEK LOGIC ──
-  const allDetails = activeView === 'week3' ? week3Data : week4Data;
+  // ── DYNAMIC WEEK LOGIC ──
+  const allDetails = activeWeek && historicalData[activeWeek] ? historicalData[activeWeek] : [];
 
   const courses = useMemo(() => {
     const set = new Set(allDetails.map(d => d.course_name || d.course || 'Unknown'));
@@ -157,45 +176,71 @@ export default function AcademicDeficiencies() {
   }, [filtered, courseChartData, classCounts, avgGrade]);
 
 
-  // ── COMPARATIVE LOGIC ──
+  // ── COMPARATIVE & TREND LOGIC ──
+  const trendChartData = useMemo(() => {
+    const sortedWeeks = [...availableWeeks].sort((a, b) => a - b); // Ascending for X-axis
+    return sortedWeeks.map(w => {
+      const wData = historicalData[w];
+      const unique = new Set(wData.map(d => d.cadet)).size;
+      return {
+        name: `Week ${w}`,
+        'Affected Cadets': unique,
+        'Total Deficiencies': wData.length
+      };
+    });
+  }, [availableWeeks, historicalData]);
+
+  const prevWeek = useMemo(() => {
+    if (!activeWeek || availableWeeks.length === 0) return null;
+    const idx = availableWeeks.indexOf(activeWeek); // availableWeeks is desc
+    return idx >= 0 && idx + 1 < availableWeeks.length ? availableWeeks[idx + 1] : null;
+  }, [activeWeek, availableWeeks]);
+
   const compStats = useMemo(() => {
-    if (activeView !== 'compare') return null;
-    const w3Unique = new Set(week3Data.map(d => d.cadet)).size;
-    const w4Unique = new Set(week4Data.map(d => d.cadet)).size;
-    const w3Avg = week3Data.length ? (week3Data.reduce((s, r) => s + parseFloat(r.grade || 0), 0) / week3Data.length) : 0;
-    const w4Avg = week4Data.length ? (week4Data.reduce((s, r) => s + parseFloat(r.grade || 0), 0) / week4Data.length) : 0;
+    if (activeView !== 'compare' || !activeWeek || !prevWeek) return null;
+    const wCurData = historicalData[activeWeek] || [];
+    const wPrevData = historicalData[prevWeek] || [];
+
+    const wPrevUnique = new Set(wPrevData.map(d => d.cadet)).size;
+    const wCurUnique = new Set(wCurData.map(d => d.cadet)).size;
+    const wPrevAvg = wPrevData.length ? (wPrevData.reduce((s, r) => s + parseFloat(r.grade || 0), 0) / wPrevData.length) : 0;
+    const wCurAvg = wCurData.length ? (wCurData.reduce((s, r) => s + parseFloat(r.grade || 0), 0) / wCurData.length) : 0;
+    
     return {
-      w3Total: week3Data.length,
-      w4Total: week4Data.length,
-      totalDiff: week4Data.length - week3Data.length,
-      w3Unique,
-      w4Unique,
-      uniqueDiff: w4Unique - w3Unique,
-      w3Avg: w3Avg.toFixed(2),
-      w4Avg: w4Avg.toFixed(2),
-      avgDiff: (w4Avg - w3Avg).toFixed(2),
+      wPrevTotal: wPrevData.length,
+      wCurTotal: wCurData.length,
+      totalDiff: wCurData.length - wPrevData.length,
+      wPrevUnique,
+      wCurUnique,
+      uniqueDiff: wCurUnique - wPrevUnique,
+      wPrevAvg: wPrevAvg.toFixed(2),
+      wCurAvg: wCurAvg.toFixed(2),
+      avgDiff: (wCurAvg - wPrevAvg).toFixed(2),
     };
-  }, [week3Data, week4Data, activeView]);
+  }, [historicalData, activeWeek, prevWeek, activeView]);
 
   const compChartData = useMemo(() => {
-    if (activeView !== 'compare') return [];
+    if (activeView !== 'compare' || !activeWeek || !prevWeek) return [];
     const classes = ['1CL', '2CL', '3CL'];
+    const wCurData = historicalData[activeWeek] || [];
+    const wPrevData = historicalData[prevWeek] || [];
+
     return classes.map(cls => {
-      const w3 = week3Data.filter(d => (d.class || '').toUpperCase() === cls).length;
-      const w4 = week4Data.filter(d => (d.class || '').toUpperCase() === cls).length;
-      return { name: cls, Week3: w3, Week4: w4 };
+      const prev = wPrevData.filter(d => (d.class || '').toUpperCase() === cls).length;
+      const cur = wCurData.filter(d => (d.class || '').toUpperCase() === cls).length;
+      return { name: cls, [`Week ${prevWeek}`]: prev, [`Week ${activeWeek}`]: cur };
     });
-  }, [week3Data, week4Data, activeView]);
+  }, [historicalData, activeWeek, prevWeek, activeView]);
 
   const comparativeInsight = useMemo(() => {
-    if (!compStats) return "";
+    if (!compStats) return "Select a week that has previous week data to view comparative insights.";
     let insight = `ALFA Company saw `;
     if (compStats.totalDiff < 0) {
-      insight += `an improvement with a decrease of ${Math.abs(compStats.totalDiff)} total deficiencies from Week 3 to Week 4. `;
+      insight += `an improvement with a decrease of ${Math.abs(compStats.totalDiff)} total deficiencies from Week ${prevWeek} to Week ${activeWeek}. `;
     } else if (compStats.totalDiff > 0) {
-      insight += `an increase of ${compStats.totalDiff} total deficiencies from Week 3 to Week 4, indicating a need for greater academic focus. `;
+      insight += `an increase of ${compStats.totalDiff} total deficiencies from Week ${prevWeek} to Week ${activeWeek}, indicating a need for greater academic focus. `;
     } else {
-      insight += `no change in the total number of deficiencies between Week 3 and Week 4. `;
+      insight += `no change in the total number of deficiencies between Week ${prevWeek} and Week ${activeWeek}. `;
     }
     
     if (compStats.uniqueDiff < 0) {
@@ -208,32 +253,35 @@ export default function AcademicDeficiencies() {
     if (avgDiffNum > 0) {
       insight += `The average grade among deficient cadets slightly improved by +${avgDiffNum}.`;
     } else if (avgDiffNum < 0) {
-      insight += `The average grade among deficient cadets worsened by ${avgDiffNum}.`;
+      insight += `The average grade among deficient cadets worsened by ${Math.abs(avgDiffNum)}.`;
     }
     
     return insight;
-  }, [compStats]);
+  }, [compStats, activeWeek, prevWeek]);
 
   const cadetProgress = useMemo(() => {
-    if (activeView !== 'compare') return [];
-    const w3Cadets = new Set(week3Data.map(d => d.cadet));
-    const w4Cadets = new Set(week4Data.map(d => d.cadet));
+    if (activeView !== 'compare' || !activeWeek || !prevWeek) return [];
+    const wCurData = historicalData[activeWeek] || [];
+    const wPrevData = historicalData[prevWeek] || [];
+
+    const wPrevCadets = new Set(wPrevData.map(d => d.cadet));
+    const wCurCadets = new Set(wCurData.map(d => d.cadet));
     
     const progress = [];
-    w3Cadets.forEach(cadet => {
-      if (!w4Cadets.has(cadet)) progress.push({ cadet, status: 'IMPROVED', class: week3Data.find(d => d.cadet === cadet)?.class });
+    wPrevCadets.forEach(cadet => {
+      if (!wCurCadets.has(cadet)) progress.push({ cadet, status: 'IMPROVED', class: wPrevData.find(d => d.cadet === cadet)?.class });
     });
-    w4Cadets.forEach(cadet => {
-      if (!w3Cadets.has(cadet)) progress.push({ cadet, status: 'WORSENED', class: week4Data.find(d => d.cadet === cadet)?.class });
+    wCurCadets.forEach(cadet => {
+      if (!wPrevCadets.has(cadet)) progress.push({ cadet, status: 'WORSENED', class: wCurData.find(d => d.cadet === cadet)?.class });
     });
     
     // Also find those who stayed deficient but improved/worsened their grade sum
-    w4Cadets.forEach(cadet => {
-      if (w3Cadets.has(cadet)) {
-        const w3Grades = week3Data.filter(d => d.cadet === cadet).reduce((s, d) => s + parseFloat(d.grade), 0);
-        const w4Grades = week4Data.filter(d => d.cadet === cadet).reduce((s, d) => s + parseFloat(d.grade), 0);
-        if (w4Grades > w3Grades) progress.push({ cadet, status: 'SLIGHT_IMPROVEMENT', class: week4Data.find(d => d.cadet === cadet)?.class });
-        else if (w4Grades < w3Grades) progress.push({ cadet, status: 'SLIGHT_DECLINE', class: week4Data.find(d => d.cadet === cadet)?.class });
+    wCurCadets.forEach(cadet => {
+      if (wPrevCadets.has(cadet)) {
+        const prevGrades = wPrevData.filter(d => d.cadet === cadet).reduce((s, d) => s + parseFloat(d.grade), 0);
+        const curGrades = wCurData.filter(d => d.cadet === cadet).reduce((s, d) => s + parseFloat(d.grade), 0);
+        if (curGrades > prevGrades) progress.push({ cadet, status: 'SLIGHT_IMPROVEMENT', class: wCurData.find(d => d.cadet === cadet)?.class });
+        else if (curGrades < prevGrades) progress.push({ cadet, status: 'SLIGHT_DECLINE', class: wCurData.find(d => d.cadet === cadet)?.class });
       }
     });
 
@@ -241,7 +289,7 @@ export default function AcademicDeficiencies() {
       const rank = { 'IMPROVED': 1, 'SLIGHT_IMPROVEMENT': 2, 'SLIGHT_DECLINE': 3, 'WORSENED': 4 };
       return rank[a.status] - rank[b.status];
     });
-  }, [week3Data, week4Data, activeView]);
+  }, [historicalData, activeWeek, prevWeek, activeView]);
 
   // ── RENDER HELPERS ──
   const gradeColor = (grade) => {
@@ -285,26 +333,36 @@ export default function AcademicDeficiencies() {
   return (
     <div style={{ marginTop: '16px' }}>
       
-      {/* ── VIEW TOGGLE ── */}
-      <div style={{ display: 'flex', gap: '8px', marginBottom: '24px', background: 'var(--card-bg)', padding: '6px', borderRadius: '12px', border: '1px solid var(--border)', width: 'fit-content' }}>
-        <button 
-          onClick={() => setActiveView('week3')}
-          style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeView === 'week3' ? 'var(--surface-active)' : 'transparent', color: activeView === 'week3' ? 'var(--text)' : 'var(--text-muted)', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
-        >
-          Week 3 Data
-        </button>
-        <button 
-          onClick={() => setActiveView('week4')}
-          style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeView === 'week4' ? 'var(--surface-active)' : 'transparent', color: activeView === 'week4' ? 'var(--text)' : 'var(--text-muted)', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
-        >
-          Week 4 Data
-        </button>
-        <button 
-          onClick={() => setActiveView('compare')}
-          style={{ padding: '8px 16px', borderRadius: '8px', border: activeView === 'compare' ? '1px solid #5e35b1' : '1px solid transparent', background: activeView === 'compare' ? 'rgba(94, 53, 177, 0.1)' : 'transparent', color: activeView === 'compare' ? '#5e35b1' : 'var(--text-muted)', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
-        >
-          <i className="fa-solid fa-code-compare" style={{ marginRight: '6px' }}></i> Comparative Insights
-        </button>
+      {/* ── VIEW NAVIGATION ── */}
+      <div style={{ marginBottom: '24px' }}>
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', background: 'var(--card-bg)', padding: '6px', borderRadius: '12px', border: '1px solid var(--border)', width: 'fit-content' }}>
+          <button 
+            onClick={() => setActiveView('single')}
+            style={{ padding: '8px 16px', borderRadius: '8px', border: 'none', background: activeView === 'single' ? 'var(--surface-active)' : 'transparent', color: activeView === 'single' ? 'var(--text)' : 'var(--text-muted)', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+          >
+            {activeWeek ? `Week ${activeWeek} Data` : 'Weekly Data'}
+          </button>
+          <button 
+            onClick={() => setActiveView('compare')}
+            style={{ padding: '8px 16px', borderRadius: '8px', border: activeView === 'compare' ? '1px solid #5e35b1' : '1px solid transparent', background: activeView === 'compare' ? 'rgba(94, 53, 177, 0.1)' : 'transparent', color: activeView === 'compare' ? '#5e35b1' : 'var(--text-muted)', fontWeight: 600, cursor: 'pointer', transition: 'all 0.2s' }}
+          >
+            <i className="fa-solid fa-code-compare" style={{ marginRight: '6px' }}></i> Comparative Insights
+          </button>
+        </div>
+
+        {availableWeeks.length > 0 && (
+          <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', background: 'rgba(255,255,255,0.02)', padding: '12px', borderRadius: '12px', border: '1px solid var(--border)' }}>
+            {availableWeeks.map(w => (
+              <button 
+                key={w}
+                onClick={() => setActiveWeek(w)}
+                style={{ padding: '8px 16px', borderRadius: '8px', border: activeWeek === w ? '1px solid #1e88e5' : '1px solid transparent', background: activeWeek === w ? '#1e88e5' : 'transparent', color: activeWeek === w ? '#fff' : 'var(--text-muted)', fontWeight: 600, fontSize: '13px', cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', gap: '8px' }}
+              >
+                <i className="fa-regular fa-calendar"></i> Week {w}
+              </button>
+            ))}
+          </div>
+        )}
       </div>
 
       {activeView === 'compare' ? (
@@ -312,94 +370,125 @@ export default function AcademicDeficiencies() {
         //         COMPARATIVE INSIGHTS VIEW
         // ==========================================
         <div className="fade-in">
-          <div className="nexus-insights-box">
-            <div className="nexus-insights-icon"><i className="fa-solid fa-scale-balanced"></i></div>
-            <div className="nexus-insights-content">
-              <div className="nexus-insights-title"><i className="fa-solid fa-sparkles"></i> AI Generated Comparison</div>
-              <div className="nexus-insights-text">{comparativeInsight}</div>
+
+          {/* ── TREND CHART ── */}
+          <div className="nexus-card" ref={trendRef} style={{ marginBottom: '24px' }}>
+            <div className="nexus-chart-header">
+              <div className="nexus-chart-title">
+                <i className="fa-solid fa-chart-line" style={{ color: '#1e88e5' }}></i> Cadet Corps Deficiency Trend
+              </div>
+            </div>
+            <div style={{ width: '100%', height: '300px', paddingTop: '16px' }}>
+              {trendChartData.length > 0 && trendWidth > 0 ? (
+                <LineChart width={trendWidth - 48} height={270} data={trendChartData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
+                  <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                  <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} dy={10} />
+                  <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} dx={-10} />
+                  <RechartsTooltip cursor={{ stroke: 'var(--border)', strokeWidth: 2 }} contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)' }} />
+                  <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', color: 'var(--text-muted)', paddingTop: '20px' }} />
+                  <Line type="monotone" dataKey="Affected Cadets" stroke="#1e88e5" strokeWidth={3} dot={{ r: 4, fill: '#1e88e5', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+                  <Line type="monotone" dataKey="Total Deficiencies" stroke="#00acc1" strokeWidth={3} dot={{ r: 4, fill: '#00acc1', strokeWidth: 2, stroke: '#fff' }} activeDot={{ r: 6 }} />
+                </LineChart>
+              ) : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-dim)' }}>Loading trend...</div>}
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '24px' }}>
-            <div className="nexus-card">
-              <div className="nexus-metric-title"><div className="nexus-metric-icon"><i className="fa-regular fa-file-lines"></i></div> Total Deficiencies</div>
-              <div className="nexus-metric-value-row">
-                <div className="nexus-metric-value">{compStats.w4Total}</div>
-                <div className={`nexus-trend ${compStats.totalDiff <= 0 ? 'down' : 'up'}`} style={{ color: compStats.totalDiff <= 0 ? '#43a047' : '#eb5757', background: compStats.totalDiff <= 0 ? 'rgba(67,160,71,0.1)' : 'rgba(235,87,87,0.1)' }}>
-                  {compStats.totalDiff > 0 ? '+' : ''}{compStats.totalDiff} from W3
+          {compStats ? (
+            <>
+              <div className="nexus-insights-box">
+                <div className="nexus-insights-icon"><i className="fa-solid fa-scale-balanced"></i></div>
+                <div className="nexus-insights-content">
+                  <div className="nexus-insights-title"><i className="fa-solid fa-sparkles"></i> AI Generated Comparison</div>
+                  <div className="nexus-insights-text">{comparativeInsight}</div>
                 </div>
               </div>
-            </div>
-            <div className="nexus-card">
-              <div className="nexus-metric-title"><div className="nexus-metric-icon" style={{ color: '#1e88e5', background: 'rgba(30, 136, 229, 0.1)' }}><i className="fa-solid fa-users"></i></div> Affected Cadets</div>
-              <div className="nexus-metric-value-row">
-                <div className="nexus-metric-value">{compStats.w4Unique}</div>
-                <div className={`nexus-trend ${compStats.uniqueDiff <= 0 ? 'down' : 'up'}`} style={{ color: compStats.uniqueDiff <= 0 ? '#43a047' : '#eb5757', background: compStats.uniqueDiff <= 0 ? 'rgba(67,160,71,0.1)' : 'rgba(235,87,87,0.1)' }}>
-                  {compStats.uniqueDiff > 0 ? '+' : ''}{compStats.uniqueDiff} from W3
+              
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+                <div className="nexus-card">
+                  <div className="nexus-metric-title"><div className="nexus-metric-icon"><i className="fa-regular fa-file-lines"></i></div> Total Deficiencies</div>
+                  <div className="nexus-metric-value-row">
+                    <div className="nexus-metric-value">{compStats.wCurTotal}</div>
+                    <div className={`nexus-trend ${compStats.totalDiff <= 0 ? 'down' : 'up'}`} style={{ color: compStats.totalDiff <= 0 ? '#43a047' : '#eb5757', background: compStats.totalDiff <= 0 ? 'rgba(67,160,71,0.1)' : 'rgba(235,87,87,0.1)' }}>
+                      {compStats.totalDiff > 0 ? '+' : ''}{compStats.totalDiff} from W{prevWeek}
+                    </div>
+                  </div>
+                </div>
+                <div className="nexus-card">
+                  <div className="nexus-metric-title"><div className="nexus-metric-icon" style={{ color: '#1e88e5', background: 'rgba(30, 136, 229, 0.1)' }}><i className="fa-solid fa-users"></i></div> Affected Cadets</div>
+                  <div className="nexus-metric-value-row">
+                    <div className="nexus-metric-value">{compStats.wCurUnique}</div>
+                    <div className={`nexus-trend ${compStats.uniqueDiff <= 0 ? 'down' : 'up'}`} style={{ color: compStats.uniqueDiff <= 0 ? '#43a047' : '#eb5757', background: compStats.uniqueDiff <= 0 ? 'rgba(67,160,71,0.1)' : 'rgba(235,87,87,0.1)' }}>
+                      {compStats.uniqueDiff > 0 ? '+' : ''}{compStats.uniqueDiff} from W{prevWeek}
+                    </div>
+                  </div>
+                </div>
+                <div className="nexus-card">
+                  <div className="nexus-metric-title"><div className="nexus-metric-icon" style={{ color: '#fb8c00', background: 'rgba(251, 140, 0, 0.1)' }}><i className="fa-solid fa-chart-line"></i></div> Average Grade</div>
+                  <div className="nexus-metric-value-row">
+                    <div className="nexus-metric-value">{compStats.wCurAvg}</div>
+                    <div className={`nexus-trend ${compStats.avgDiff >= 0 ? 'up' : 'down'}`} style={{ color: compStats.avgDiff >= 0 ? '#43a047' : '#eb5757', background: compStats.avgDiff >= 0 ? 'rgba(67,160,71,0.1)' : 'rgba(235,87,87,0.1)' }}>
+                      {compStats.avgDiff > 0 ? '+' : ''}{compStats.avgDiff} pts
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="nexus-card">
-              <div className="nexus-metric-title"><div className="nexus-metric-icon" style={{ color: '#fb8c00', background: 'rgba(251, 140, 0, 0.1)' }}><i className="fa-solid fa-chart-line"></i></div> Average Grade</div>
-              <div className="nexus-metric-value-row">
-                <div className="nexus-metric-value">{compStats.w4Avg}</div>
-                <div className={`nexus-trend ${compStats.avgDiff >= 0 ? 'up' : 'down'}`} style={{ color: compStats.avgDiff >= 0 ? '#43a047' : '#eb5757', background: compStats.avgDiff >= 0 ? 'rgba(67,160,71,0.1)' : 'rgba(235,87,87,0.1)' }}>
-                  {compStats.avgDiff > 0 ? '+' : ''}{compStats.avgDiff} pts
-                </div>
-              </div>
-            </div>
-          </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px', marginBottom: '24px' }}>
-            <div className="nexus-card" ref={compBarRef}>
-              <div className="nexus-chart-header">
-                <div className="nexus-chart-title"><i className="fa-solid fa-chart-simple" style={{ color: '#00acc1' }}></i> Deficiencies per Class (W3 vs W4)</div>
-              </div>
-              <div style={{ width: '100%', height: '280px', paddingTop: '16px' }}>
-                {compBarWidth > 0 ? (
-                  <BarChart width={compBarWidth - 48} height={250} data={compChartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
-                    <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-                    <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
-                    <RechartsTooltip cursor={{ fill: 'var(--surface-active)' }} contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)' }} />
-                    <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', color: 'var(--text-muted)' }} />
-                    <Bar dataKey="Week3" fill="#5e35b1" radius={[4, 4, 0, 0]} barSize={24} />
-                    <Bar dataKey="Week4" fill="#1e88e5" radius={[4, 4, 0, 0]} barSize={24} />
-                  </BarChart>
-                ) : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-dim)' }}>Loading chart...</div>}
-              </div>
-            </div>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+                <div className="nexus-card" ref={compBarRef}>
+                  <div className="nexus-chart-header">
+                    <div className="nexus-chart-title"><i className="fa-solid fa-chart-simple" style={{ color: '#00acc1' }}></i> Deficiencies per Class (W{prevWeek} vs W{activeWeek})</div>
+                  </div>
+                  <div style={{ width: '100%', height: '280px', paddingTop: '16px' }}>
+                    {compBarWidth > 0 ? (
+                      <BarChart width={compBarWidth - 48} height={250} data={compChartData} margin={{ top: 0, right: 0, left: -20, bottom: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                        <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                        <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 12, fill: 'var(--text-muted)' }} />
+                        <RechartsTooltip cursor={{ fill: 'var(--surface-active)' }} contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)' }} />
+                        <Legend iconType="circle" wrapperStyle={{ fontSize: '12px', color: 'var(--text-muted)' }} />
+                        <Bar dataKey={`Week ${prevWeek}`} fill="#5e35b1" radius={[4, 4, 0, 0]} barSize={24} />
+                        <Bar dataKey={`Week ${activeWeek}`} fill="#1e88e5" radius={[4, 4, 0, 0]} barSize={24} />
+                      </BarChart>
+                    ) : <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', color: 'var(--text-dim)' }}>Loading chart...</div>}
+                  </div>
+                </div>
 
-            <div className="nexus-card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)' }}>
-                <h3 className="nexus-chart-title"><i className="fa-solid fa-arrow-trend-up" style={{ color: '#43a047' }}></i> Cadet Progress Tracker</h3>
+                <div className="nexus-card" style={{ padding: '0', overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+                  <div style={{ padding: '20px 24px', borderBottom: '1px solid var(--border)' }}>
+                    <h3 className="nexus-chart-title"><i className="fa-solid fa-arrow-trend-up" style={{ color: '#43a047' }}></i> Cadet Progress Tracker</h3>
+                  </div>
+                  <div style={{ overflowY: 'auto', flex: 1, maxHeight: '300px' }}>
+                    <table className="nexus-table" style={{ width: '100%' }}>
+                      <tbody>
+                        {cadetProgress.map((p, i) => (
+                          <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
+                            <td style={{ padding: '12px 24px', fontWeight: 600, color: 'var(--text)' }}>
+                              {p.cadet} <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{p.class}</div>
+                            </td>
+                            <td style={{ padding: '12px 24px', textAlign: 'right' }}>
+                              {p.status === 'IMPROVED' && <span className="nexus-badge" style={{ background: 'rgba(67,160,71,0.1)', color: '#43a047' }}>CLEARED (W{prevWeek} to W{activeWeek})</span>}
+                              {p.status === 'WORSENED' && <span className="nexus-badge" style={{ background: 'rgba(235,87,87,0.1)', color: '#eb5757' }}>NEWLY DEFICIENT (W{activeWeek})</span>}
+                              {p.status === 'SLIGHT_IMPROVEMENT' && <span className="nexus-badge" style={{ background: 'rgba(251,140,0,0.1)', color: '#fb8c00' }}>GRADE IMPROVED</span>}
+                              {p.status === 'SLIGHT_DECLINE' && <span className="nexus-badge" style={{ background: 'rgba(235,87,87,0.1)', color: '#eb5757' }}>GRADE WORSENED</span>}
+                            </td>
+                          </tr>
+                        ))}
+                        {cadetProgress.length === 0 && <tr><td colSpan="2" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>No significant changes between Week {prevWeek} and Week {activeWeek}.</td></tr>}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
               </div>
-              <div style={{ overflowY: 'auto', flex: 1, maxHeight: '300px' }}>
-                <table className="nexus-table" style={{ width: '100%' }}>
-                  <tbody>
-                    {cadetProgress.map((p, i) => (
-                      <tr key={i} style={{ borderBottom: '1px solid var(--border)' }}>
-                        <td style={{ padding: '12px 24px', fontWeight: 600, color: 'var(--text)' }}>
-                          {p.cadet} <div style={{ fontSize: '11px', color: 'var(--text-muted)' }}>{p.class}</div>
-                        </td>
-                        <td style={{ padding: '12px 24px', textAlign: 'right' }}>
-                          {p.status === 'IMPROVED' && <span className="nexus-badge" style={{ background: 'rgba(67,160,71,0.1)', color: '#43a047' }}>CLEARED (W3 to W4)</span>}
-                          {p.status === 'WORSENED' && <span className="nexus-badge" style={{ background: 'rgba(235,87,87,0.1)', color: '#eb5757' }}>NEWLY DEFICIENT (W4)</span>}
-                          {p.status === 'SLIGHT_IMPROVEMENT' && <span className="nexus-badge" style={{ background: 'rgba(251,140,0,0.1)', color: '#fb8c00' }}>GRADE IMPROVED</span>}
-                          {p.status === 'SLIGHT_DECLINE' && <span className="nexus-badge" style={{ background: 'rgba(235,87,87,0.1)', color: '#eb5757' }}>GRADE WORSENED</span>}
-                        </td>
-                      </tr>
-                    ))}
-                    {cadetProgress.length === 0 && <tr><td colSpan="2" style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)' }}>No significant changes between Week 3 and Week 4.</td></tr>}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
+            </>
+          ) : (
+             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-muted)' }}>
+               You are currently viewing Week {activeWeek}, but there is no previous week's data to compare against. Upload another week's data to see comparisons!
+             </div>
+          )}
         </div>
       ) : (
         // ==========================================
-        //         SINGLE WEEK VIEW (W3 / W4)
+        //         SINGLE WEEK VIEW
         // ==========================================
         <div className="fade-in">
           <div className="nexus-insights-box">
@@ -482,20 +571,19 @@ export default function AcademicDeficiencies() {
             </div>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '20px', marginBottom: '24px' }}>
-            <div className="nexus-card" style={{ gridColumn: '1 / -1', minHeight: '380px' }} ref={areaRef}>
-              <div className="nexus-chart-header">
-                <div className="nexus-chart-title"><i className="fa-solid fa-chart-area" style={{ color: '#5e35b1' }}></i> Deficiencies Overview</div>
-              </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+            <div className="nexus-card" ref={areaRef}>
+              <div className="nexus-chart-header"><div className="nexus-chart-title">Class Distribution Trend</div></div>
               <div style={{ width: '100%', height: '250px' }}>
                 {overviewData.length > 0 && areaWidth > 0 ? (
-                    <AreaChart width={areaWidth - 48} height={250} data={overviewData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
+                    <AreaChart width={areaWidth - 48} height={250} data={overviewData} margin={{ top: 10, right: 0, left: -20, bottom: 0 }}>
                       <defs>
-                        <linearGradient id="color1CL" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#5e35b1" stopOpacity={0.8}/><stop offset="95%" stopColor="#5e35b1" stopOpacity={0}/></linearGradient>
-                        <linearGradient id="color2CL" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#1e88e5" stopOpacity={0.8}/><stop offset="95%" stopColor="#1e88e5" stopOpacity={0}/></linearGradient>
-                        <linearGradient id="color3CL" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#00acc1" stopOpacity={0.8}/><stop offset="95%" stopColor="#00acc1" stopOpacity={0}/></linearGradient>
+                        <linearGradient id="color1CL" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#5e35b1" stopOpacity={0.3}/><stop offset="95%" stopColor="#5e35b1" stopOpacity={0}/></linearGradient>
+                        <linearGradient id="color2CL" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#1e88e5" stopOpacity={0.3}/><stop offset="95%" stopColor="#1e88e5" stopOpacity={0}/></linearGradient>
+                        <linearGradient id="color3CL" x1="0" y1="0" x2="0" y2="1"><stop offset="5%" stopColor="#00acc1" stopOpacity={0.3}/><stop offset="95%" stopColor="#00acc1" stopOpacity={0}/></linearGradient>
                       </defs>
-                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} tickFormatter={(val) => val.substring(0, 10) + '...'} />
+                      <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="var(--border)" />
+                      <XAxis dataKey="name" axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} tickFormatter={(val) => val.substring(0, 6) + '...'} />
                       <YAxis axisLine={false} tickLine={false} tick={{ fontSize: 11, fill: 'var(--text-muted)' }} />
                       <RechartsTooltip contentStyle={{ borderRadius: '12px', border: '1px solid var(--border)', background: 'var(--card-bg)' }} />
                       <Area type="monotone" dataKey="1CL" stackId="1" stroke="#5e35b1" fill="url(#color1CL)" />
