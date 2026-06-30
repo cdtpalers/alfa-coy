@@ -198,59 +198,60 @@ export default function SmartphoneRack() {
           const avatarUrl = `https://ui-avatars.com/api/?name=${initial}&background=${slot.status ? '047857' : '171822'}&color=fff&size=128&bold=true`;
 
           return (
-            <div 
-              key={`${slot.rackNumber}-${idx}`} 
-              className={`phone-mockup ${mockupClass} ${statusClass}`}
-            >
-              {/* Hardware elements */}
-              <div className="phone-buttons"></div>
-              <div className="phone-power"></div>
-              <div className="phone-home-indicator"></div>
-              
-              {isIphone ? <div className="dynamic-island"></div> : <div className="hole-punch"></div>}
-
-              {/* Status Bar */}
-              <div className="status-bar">
-                <span>9:41</span>
-                <div className="status-dot"></div>
-              </div>
-
-              {/* Content Area */}
-              <div className="phone-content">
-                <div className="avatar-container">
-                  <img src={avatarUrl} alt={`${lastName} avatar`} />
-                </div>
+            <div key={`${slot.rackNumber}-${idx}`} className="phone-mockup-container">
+              <div 
+                className={`phone-mockup ${mockupClass} ${statusClass}`}
+              >
+                {/* Hardware elements */}
+                <div className="phone-buttons"></div>
+                <div className="phone-power"></div>
+                <div className="phone-home-indicator"></div>
                 
-                <h4 className="cadet-name">{lastName}</h4>
-                <div className="cadet-status-text">
-                  {slot.status ? 'LOGGED IN' : 'LOGGED OUT'}
+                {isIphone ? <div className="dynamic-island"></div> : <div className="hole-punch"></div>}
+
+                {/* Status Bar */}
+                <div className="status-bar">
+                  <span>9:41</span>
+                  <div className="status-dot"></div>
                 </div>
 
-                <div className="app-icons">
-                  <div className="app-icon-wrapper">
-                    <div className="app-icon">
-                      <i className="fa fa-phone" style={{ color: slot.status ? '#fff' : '#aaa' }}></i>
-                    </div>
-                    <span>Phone</span>
+                {/* Content Area */}
+                <div className="phone-content">
+                  <div className="avatar-container">
+                    <img src={avatarUrl} alt={`${lastName} avatar`} />
                   </div>
-                  <div className="app-icon-wrapper">
-                    <div className="app-icon">
-                      {isIphone ? (
-                        <i className="fa fa-comment" style={{ color: slot.status ? '#3b82f6' : '#aaa' }}></i>
-                      ) : (
-                        <i className="fa fa-message" style={{ color: slot.status ? '#10b981' : '#aaa' }}></i>
-                      )}
-                    </div>
-                    <span>{isIphone ? 'Signal' : 'Messages'}</span>
+                  
+                  <h4 className="cadet-name">{lastName}</h4>
+                  <div className="cadet-status-text">
+                    {slot.status ? 'LOGGED IN' : 'LOGGED OUT'}
                   </div>
-                </div>
 
-                {!slot.status && slot.remarks && (
-                  <div className="authorized-reason">
-                    <div className="authorized-reason-title">Authorized Reason</div>
-                    <div className="authorized-reason-text">{slot.remarks}</div>
+                  <div className="app-icons">
+                    <div className="app-icon-wrapper">
+                      <div className="app-icon">
+                        <i className="fa fa-phone" style={{ color: slot.status ? '#fff' : '#aaa' }}></i>
+                      </div>
+                      <span>Phone</span>
+                    </div>
+                    <div className="app-icon-wrapper">
+                      <div className="app-icon">
+                        {isIphone ? (
+                          <i className="fa fa-comment" style={{ color: slot.status ? '#3b82f6' : '#aaa' }}></i>
+                        ) : (
+                          <i className="fa fa-message" style={{ color: slot.status ? '#10b981' : '#aaa' }}></i>
+                        )}
+                      </div>
+                      <span>{isIphone ? 'Signal' : 'Messages'}</span>
+                    </div>
                   </div>
-                )}
+
+                  {!slot.status && slot.remarks && (
+                    <div className="authorized-reason">
+                      <div className="authorized-reason-title">Authorized Reason</div>
+                      <div className="authorized-reason-text">{slot.remarks}</div>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           );
