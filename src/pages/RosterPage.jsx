@@ -63,15 +63,7 @@ export default function RosterPage() {
   }, []);
 
   return (
-    <div className="page active" id="page-roster">
-      <div className="glass council-hero" style={{borderLeftColor: 'var(--g1)'}}>
-        <div className="council-crest">👥</div>
-        <div className="council-info">
-          <h2>ALFA COMPANY ROSTER</h2>
-          <p>LIVE CADET DATASHEET</p>
-          <div className="council-mission">Official master list and personnel records of ALFA Company cadets.</div>
-        </div>
-      </div>
+    <div className="roster-widget fade-in" id="page-roster">
 
       <div className="section-header">
         <div className="section-title">

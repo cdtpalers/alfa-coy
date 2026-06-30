@@ -97,25 +97,11 @@ export default function SideBar({
               <span>Event Calendar</span>
             </button>
             <button 
-              className={`sidebar-menu-item ${currentPage === 'rack' ? 'active' : ''}`} 
-              onClick={() => handleNavClick('rack')}
-            >
-              <i className="fa fa-mobile-screen"></i>
-              <span>Smartphone Rack</span>
-            </button>
-            <button 
               className={`sidebar-menu-item ${currentPage === 'honor' ? 'active' : ''}`} 
               onClick={() => handleNavClick('honor')}
             >
               <i className="fa-solid fa-scale-balanced" style={{color: '#d4af37'}}></i>
               <span>Honor Committee</span>
-            </button>
-            <button 
-              className={`sidebar-menu-item ${currentPage === 'roster' ? 'active' : ''}`} 
-              onClick={() => handleNavClick('roster')}
-            >
-              <i className="fa fa-address-book"></i>
-              <span>Company Roster</span>
             </button>
             <button 
               className={`sidebar-menu-item ${currentPage === 'exo' ? 'active' : ''}`} 

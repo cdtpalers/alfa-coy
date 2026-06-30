@@ -8,11 +8,9 @@ import Home from './pages/Home';
 import CouncilPage from './pages/CouncilPage';
 import CompanyStaff from './pages/CompanyStaff';
 import Calendar from './pages/Calendar';
-import RosterPage from './pages/RosterPage';
 import ExoPage from './pages/ExoPage';
 import LoginModal from './components/LoginModal';
 import AdminDashboard from './pages/AdminDashboard';
-import SmartphoneRack from './pages/SmartphoneRack';
 import TacoCorner from './pages/TacoCorner';
 import HonorCommittee from './pages/HonorCommittee';
 import { supabase } from './lib/supabase';
@@ -246,14 +244,8 @@ function AppContent() {
     if (currentPage === 'calendar') {
       return <Calendar events={events} openEventModal={() => setIsEventModalOpen(true)} isAdmin={isAdmin} />;
     }
-    if (currentPage === 'rack') {
-      return <SmartphoneRack />;
-    }
     if (currentPage === 'honor') {
       return <HonorCommittee isAdmin={isAdmin} />;
-    }
-    if (currentPage === 'roster') {
-      return <RosterPage />;
     }
     if (currentPage === 'admin-dashboard' && isAdmin) {
       return (

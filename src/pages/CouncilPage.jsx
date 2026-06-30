@@ -5,6 +5,8 @@ import PrivilegeLeaveForm from '../components/PrivilegeLeaveForm';
 import AcademicDeficiencies from '../components/AcademicDeficiencies';
 import PFTTracker from '../components/PFTTracker';
 import { SkeletonGrid, SkeletonEventItem } from '../components/Skeleton';
+import RosterPage from './RosterPage';
+import SmartphoneRack from './SmartphoneRack';
 
 const COUNCILS_META = {
   s1: { name:'S1 COUNCIL', sub:'Personnel & Administration', icon:'👤', color:'#39ff6e', mission:'Responsible for personnel records, administrative matters, cadet welfare, and human resource management of ALFA Company.', cols:['Name','Rank','Position','Status'] },
@@ -107,7 +109,14 @@ export default function CouncilPage({ councilId, announcements, events, isAdmin,
       )}
 
       {councilId === 's1' && (
-        <PrivilegeLeaveForm isAdmin={isAdmin} />
+        <>
+          <RosterPage />
+          <PrivilegeLeaveForm isAdmin={isAdmin} />
+        </>
+      )}
+
+      {councilId === 's6' && (
+        <SmartphoneRack />
       )}
 
       <div className="section-header">
