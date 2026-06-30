@@ -30,6 +30,7 @@ export default function FinanceDashboard() {
   
   const [ledgerData, setLedgerData] = useState([]);
   const [trackerData, setTrackerData] = useState([]);
+  const [dashboardData, setDashboardData] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -39,13 +40,15 @@ export default function FinanceDashboard() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const [ledgerRes, trackerRes] = await Promise.all([
+        const [ledgerRes, trackerRes, dashboardRes] = await Promise.all([
           fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQIKQFrBgVcm0eZJJEKqdu_wengdLW9fo4fmaZiJyq4DBDCWCgM8nHfPyBVbSkZMVQdy85Tb6gDriQV/pub?gid=1495821086&single=true&output=csv'),
-          fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQIKQFrBgVcm0eZJJEKqdu_wengdLW9fo4fmaZiJyq4DBDCWCgM8nHfPyBVbSkZMVQdy85Tb6gDriQV/pub?gid=834856310&single=true&output=csv')
+          fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQIKQFrBgVcm0eZJJEKqdu_wengdLW9fo4fmaZiJyq4DBDCWCgM8nHfPyBVbSkZMVQdy85Tb6gDriQV/pub?gid=834856310&single=true&output=csv'),
+          fetch('https://docs.google.com/spreadsheets/d/e/2PACX-1vQIKQFrBgVcm0eZJJEKqdu_wengdLW9fo4fmaZiJyq4DBDCWCgM8nHfPyBVbSkZMVQdy85Tb6gDriQV/pub?gid=1306784777&single=true&output=csv')
         ]);
 
         const ledgerText = await ledgerRes.text();
         const trackerText = await trackerRes.text();
+        const dashboardText = await dashboardRes.text();
 
         Papa.parse(ledgerText, {
           header: true,
@@ -77,6 +80,24 @@ export default function FinanceDashboard() {
           }
         });
 
+        Papa.parse(dashboardText, {
+          header: false,
+          skipEmptyLines: true,
+          complete: (results) => {
+            const parsedDash = {};
+            results.data.forEach(row => {
+              const reserveIndex = row.indexOf('Reserve Fund');
+              if (reserveIndex !== -1 && row.length > reserveIndex + 1) {
+                const val = row[reserveIndex + 1];
+                if (val) {
+                  parsedDash.reserveFund = parseFloat(val.replace(/[^\d.-]/g, '')) || 0;
+                }
+              }
+            });
+            setDashboardData(parsedDash);
+          }
+        });
+
         setLoading(false);
       } catch (err) {
         console.error("Error fetching finance data:", err);
@@ -92,7 +113,7 @@ export default function FinanceDashboard() {
     let totalExpenses = 0;
     let totalIncome = 0;
     let currentBalance = 0;
-    let reserveFund = 0;
+    let reserveFund = dashboardData.reserveFund || 0;
     let receiptPending = 0;
     let receiptCompleted = 0;
     let receiptMissing = 0;
@@ -124,7 +145,6 @@ export default function FinanceDashboard() {
           }
         }
       });
-      reserveFund = allocations['Emergency'];
     }
 
     const allocTotal = Object.values(allocations).reduce((a, b) => a + b, 0);
@@ -134,7 +154,7 @@ export default function FinanceDashboard() {
       receiptCompleted, receiptPending, receiptMissing,
       allocations, allocTotal
     };
-  }, [ledgerData]);
+  }, [ledgerData, dashboardData]);
 
   // ─── LINE CHART DATA ───
   const chartData = useMemo(() => {
