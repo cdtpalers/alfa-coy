@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 
 export default function RosterPage() {
   const [rosterData, setRosterData] = useState([]);
@@ -177,10 +178,10 @@ export default function RosterPage() {
       </div>
 
       {/* ─── SOI MODAL OVERLAY ─── */}
-      {selectedCadet && (
+      {selectedCadet && typeof document !== 'undefined' && createPortal(
         <div 
           className="fade-in"
-          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', zIndex: 1000, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', overflowY: 'auto' }}
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, width: '100vw', height: '100vh', background: 'rgba(0,0,0,0.7)', backdropFilter: 'blur(8px)', zIndex: 99999, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '20px', overflowY: 'auto' }}
           onClick={() => setSelectedCadet(null)}
         >
           <div 
@@ -308,7 +309,7 @@ export default function RosterPage() {
             </div>
           </div>
         </div>
-      )}
+      , document.body)}
 
     </div>
   );
