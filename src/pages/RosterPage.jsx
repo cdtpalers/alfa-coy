@@ -206,10 +206,9 @@ export default function RosterPage() {
             {/* Modal Content */}
             <div style={{ padding: '32px', maxHeight: '75vh', overflowY: 'auto' }}>
               
-              {/* Profile Header Block */}
               <div style={{ display: 'flex', gap: '32px', marginBottom: '32px', flexWrap: 'wrap' }}>
                 <img 
-                  src={`/${(selectedCadet[2] || '').toLowerCase()}.webp`} 
+                  src={`/${(selectedCadet[2] || '').toLowerCase().replace(/\s/g, '')}.webp`} 
                   alt="Cadet Portrait"
                   onError={(e) => { e.target.onerror = null; e.target.src = '/logo.webp'; }}
                   style={{ width: '140px', height: '140px', objectFit: 'cover', borderRadius: '12px', border: '2px solid var(--border)', background: 'var(--surface-active)' }}
