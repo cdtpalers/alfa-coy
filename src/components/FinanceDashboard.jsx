@@ -235,43 +235,31 @@ export default function FinanceDashboard() {
   if (error) return <div className="glass" style={{ padding: '40px', textAlign: 'center', color: '#eb5757' }}>{error}</div>;
 
   return (
-    <div style={{ marginTop: '16px', color: 'var(--text)' }}>
+    <div className="fade-in" style={{ marginTop: '16px', color: 'var(--text)' }}>
       {/* ── METRICS BAR ── */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '24px' }}>
-        <div className="nexus-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px' }}>
-          <div>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Reserve Fund</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, fontFamily: "'Share Tech Mono', monospace" }}>{formatCurrency(metrics.reserveFund)}</div>
-          </div>
-          <div style={{ background: 'rgba(67, 160, 71, 0.1)', color: '#43a047', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
-            <i className="fa-solid fa-piggy-bank"></i>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '24px' }}>
+        <div className="nexus-card">
+          <div className="nexus-metric-title"><div className="nexus-metric-icon" style={{ color: '#43a047', background: 'rgba(67, 160, 71, 0.1)' }}><i className="fa-solid fa-piggy-bank"></i></div> Reserve Fund</div>
+          <div className="nexus-metric-value-row">
+            <div className="nexus-metric-value" style={{ fontFamily: "'Share Tech Mono', monospace" }}>{formatCurrency(metrics.reserveFund)}</div>
           </div>
         </div>
-        <div className="nexus-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px' }}>
-          <div>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Current Balance</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, fontFamily: "'Share Tech Mono', monospace" }}>{formatCurrency(metrics.currentBalance)}</div>
-          </div>
-          <div style={{ background: 'rgba(30, 136, 229, 0.1)', color: '#1e88e5', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
-            <i className="fa-solid fa-wallet"></i>
+        <div className="nexus-card">
+          <div className="nexus-metric-title"><div className="nexus-metric-icon" style={{ color: '#1e88e5', background: 'rgba(30, 136, 229, 0.1)' }}><i className="fa-solid fa-wallet"></i></div> Current Balance</div>
+          <div className="nexus-metric-value-row">
+            <div className="nexus-metric-value" style={{ fontFamily: "'Share Tech Mono', monospace" }}>{formatCurrency(metrics.currentBalance)}</div>
           </div>
         </div>
-        <div className="nexus-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px' }}>
-          <div>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Total Expenses</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, fontFamily: "'Share Tech Mono', monospace" }}>{formatCurrency(metrics.totalExpenses)}</div>
-          </div>
-          <div style={{ background: 'rgba(235, 87, 87, 0.1)', color: '#eb5757', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
-            <i className="fa-solid fa-money-bill-transfer"></i>
+        <div className="nexus-card">
+          <div className="nexus-metric-title"><div className="nexus-metric-icon" style={{ color: '#eb5757', background: 'rgba(235, 87, 87, 0.1)' }}><i className="fa-solid fa-money-bill-transfer"></i></div> Total Expenses</div>
+          <div className="nexus-metric-value-row">
+            <div className="nexus-metric-value" style={{ fontFamily: "'Share Tech Mono', monospace" }}>{formatCurrency(metrics.totalExpenses)}</div>
           </div>
         </div>
-        <div className="nexus-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '24px' }}>
-          <div>
-            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '8px' }}>Collection Rate</div>
-            <div style={{ fontSize: '28px', fontWeight: 700, fontFamily: "'Share Tech Mono', monospace" }}>{collectionStats.rate}%</div>
-          </div>
-          <div style={{ background: 'rgba(67, 160, 71, 0.1)', color: '#43a047', width: '48px', height: '48px', borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '20px' }}>
-            <i className="fa-solid fa-arrow-trend-up"></i>
+        <div className="nexus-card">
+          <div className="nexus-metric-title"><div className="nexus-metric-icon" style={{ color: '#00acc1', background: 'rgba(0, 172, 193, 0.1)' }}><i className="fa-solid fa-arrow-trend-up"></i></div> Collection Rate</div>
+          <div className="nexus-metric-value-row">
+            <div className="nexus-metric-value" style={{ fontFamily: "'Share Tech Mono', monospace" }}>{collectionStats.rate}%</div>
           </div>
         </div>
       </div>
@@ -281,13 +269,13 @@ export default function FinanceDashboard() {
         
         {/* LINE CHART */}
         <div className="nexus-card" ref={lineChartRef} style={{ display: 'flex', flexDirection: 'column' }}>
-          <div style={{ marginBottom: '24px' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 8px 0' }}>Financial Overview</h3>
-            <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: 'var(--text-muted)' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#43a047' }}></div> Income</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#eb5757' }}></div> Expenses</span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#5e35b1' }}></div> Balance</span>
-            </div>
+          <div className="nexus-chart-header">
+            <div className="nexus-chart-title">Financial Overview</div>
+          </div>
+          <div style={{ display: 'flex', gap: '16px', fontSize: '13px', color: 'var(--text-muted)', marginBottom: '16px' }}>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#43a047' }}></div> Income</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#eb5757' }}></div> Expenses</span>
+            <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><div style={{ width: '10px', height: '10px', borderRadius: '2px', background: '#5e35b1' }}></div> Balance</span>
           </div>
           
           <div style={{ flex: 1, minHeight: '250px' }}>
@@ -325,7 +313,9 @@ export default function FinanceDashboard() {
 
         {/* FUND ALLOCATION */}
         <div className="nexus-card">
-          <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 8px 0' }}>Fund Allocation</h3>
+          <div className="nexus-chart-header">
+            <div className="nexus-chart-title">Fund Allocation</div>
+          </div>
           <p style={{ fontSize: '13px', color: 'var(--text-muted)', marginBottom: '24px' }}>Cumulative usage per category</p>
           
           <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
@@ -359,7 +349,7 @@ export default function FinanceDashboard() {
         
         <div className="nexus-card" style={{ padding: 0, overflow: 'hidden' }}>
           <div style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, margin: 0 }}>Recent Transactions</h3>
+            <div className="nexus-chart-title">Recent Transactions</div>
           </div>
           <div>
             {ledgerData.slice().reverse().slice(0, 5).map((row, i) => {
@@ -395,7 +385,9 @@ export default function FinanceDashboard() {
         </div>
 
         <div className="nexus-card" style={{ display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 24px 0' }}>Receipt Compliance</h3>
+          <div className="nexus-chart-header">
+            <div className="nexus-chart-title">Receipt Compliance</div>
+          </div>
           <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '40px' }}>
             <div style={{ width: '160px', height: '160px' }}>
               <ResponsiveContainer>
@@ -438,7 +430,7 @@ export default function FinanceDashboard() {
       <div className="nexus-card" style={{ padding: 0, overflow: 'hidden', marginBottom: '24px' }}>
         <div style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)' }}>
           <div>
-            <h3 style={{ fontSize: '18px', fontWeight: 600, margin: '0 0 4px 0' }}>Company Fund Collection (Monthly)</h3>
+            <div className="nexus-chart-title" style={{ marginBottom: '4px' }}>Company Fund Collection (Monthly)</div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', fontSize: '12px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--text-muted)' }}>Progress <div style={{ width: '100px', height: '6px', background: 'var(--surface-active)', borderRadius: '3px' }}><div style={{ width: `${collectionStats.rate}%`, height: '100%', background: '#43a047', borderRadius: '3px' }}></div></div> <span style={{ fontWeight: 700, color: 'var(--text)' }}>{collectionStats.rate}%</span></div>
               <div style={{ color: '#43a047' }}>Collected <strong style={{fontSize:'14px'}}>{collectionStats.collected}</strong></div>
@@ -490,7 +482,7 @@ export default function FinanceDashboard() {
       {/* ── MASTER LEDGER TABLE ── */}
       <div className="nexus-card" style={{ padding: 0, overflow: 'hidden', marginBottom: '24px' }}>
         <div style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px', borderBottom: '1px solid var(--border)' }}>
-          <h3 style={{ fontSize: '18px', fontWeight: 600, margin: 0 }}>Master Ledger</h3>
+          <div className="nexus-chart-title" style={{ margin: 0 }}>Master Ledger</div>
           <div style={{ display: 'flex', gap: '12px' }}>
             <select 
               value={ledgerFilter} onChange={e => setLedgerFilter(e.target.value)}
